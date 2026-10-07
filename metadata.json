@@ -1,0 +1,6 @@
+{
+  "name": "Fikir & Zəka | Texnologiya və Şəxsi İnkişaf Portalı",
+  "description": "Texnologiya, innovasiya, şəxsi inkişaf və maraqlı video təhlillərin yer aldığı müasir onlayn jurnal və bloq platforması.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
