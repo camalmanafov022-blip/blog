@@ -15,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS (Direct CDN support for raw static hosting) -->
+    <!-- Tailwind CSS (Direct CDN for 100% standalone execution everywhere) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -31,11 +31,1260 @@
         }
       }
     </script>
-    <style>body{color:#1a1c1e;background-color:#faf8f5;font-family:Plus Jakarta Sans,sans-serif}.dark body,body.dark{color:#e4e6eb;background-color:#0c0d0e}.font-editorial{font-family:Newsreader,serif}.article-dropcap:first-letter{float:left;color:#1a1c1e;margin-top:.25rem;margin-right:.75rem;font-family:Newsreader,serif;font-size:3.5rem;font-weight:600;line-height:.85}.dark .article-dropcap:first-letter{color:#f3f4f6}::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:0 0}::-webkit-scrollbar-thumb{background:#8c8c8c40;border-radius:4px}::-webkit-scrollbar-thumb:hover{background:#8c8c8c73}</style>
-    <script type="module" crossorigin src="./assets/index-DbMp7H2u.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-B7Zsxc27.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+
+    <style>body{color:#1a1c1e;background-color:#faf8f5;font-family:Plus Jakarta Sans,sans-serif;transition:background-color .2s,color .2s}.dark body,body.dark{color:#e4e6eb;background-color:#0c0d0e}.font-editorial{font-family:Newsreader,Georgia,serif}.font-mono-code{font-family:JetBrains Mono,monospace}.article-dropcap:first-letter{float:left;color:#1a1c1e;margin-top:.25rem;margin-right:.75rem;font-family:Newsreader,serif;font-size:3.5rem;font-weight:600;line-height:.85}.dark .article-dropcap:first-letter{color:#f3f4f6}::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:0 0}::-webkit-scrollbar-thumb{background:#8c8c8c40;border-radius:4px}::-webkit-scrollbar-thumb:hover{background:#8c8c8c73}</style>
   </head>
-  <body class="bg-[#faf8f5] dark:bg-[#0c0d0e] text-[#1a1c1e] dark:text-[#e4e6eb] font-sans antialiased transition-colors duration-200">
-    <div id="root"></div>
+  <body class="bg-[#faf8f5] dark:bg-[#0c0d0e] text-[#1a1c1e] dark:text-[#e4e6eb] font-sans antialiased">
+    
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-40 w-full bg-[#faf8f5]/90 dark:bg-[#0c0d0e]/90 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800/80">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        
+        <!-- Zone 1: Single text wordmark -->
+        <a href="#top" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;" class="group cursor-pointer">
+          <span class="font-editorial text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100 group-hover:text-stone-700 dark:group-hover:text-stone-300 transition-colors">
+            FİKİR & ZƏKA
+          </span>
+        </a>
+
+        <!-- Zone 2: Navigation Links -->
+        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-stone-600 dark:text-stone-300">
+          <button onclick="filterCategory('all'); scrollToId('articles-feed')" class="hover:text-stone-900 dark:hover:text-white transition-colors cursor-pointer">
+            Bütün Məqalələr
+          </button>
+          <button onclick="filterCategory('texnologiya'); scrollToId('articles-feed')" class="hover:text-stone-900 dark:hover:text-white transition-colors cursor-pointer">
+            Texnologiya
+          </button>
+          <button onclick="filterCategory('sexsi-inkisaf'); scrollToId('articles-feed')" class="hover:text-stone-900 dark:hover:text-white transition-colors cursor-pointer">
+            Şəxsi İnkişaf
+          </button>
+          <button onclick="scrollToId('video-gallery')" class="hover:text-stone-900 dark:hover:text-white transition-colors cursor-pointer">
+            Videolar
+          </button>
+          <button onclick="scrollToId('personal-column')" class="hover:text-stone-900 dark:hover:text-white transition-colors cursor-pointer">
+            Şəxsi Bloq
+          </button>
+        </nav>
+
+        <!-- Zone 3: Actions -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- Search -->
+          <button onclick="openSearchModal()" class="p-2 text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/50 dark:hover:bg-stone-800/60 rounded-md transition-colors flex items-center gap-2 text-xs font-mono" title="Axtarış (Cmd+K)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+            <span class="hidden lg:inline text-stone-400 dark:text-stone-500 border border-stone-300 dark:border-stone-700 px-1.5 py-0.5 rounded text-[10px]">⌘K</span>
+          </button>
+
+          <!-- Bookmarks Counter -->
+          <button id="header-bookmark-btn" onclick="toggleSavedFilter()" class="p-2 text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/50 dark:hover:bg-stone-800/60 rounded-md transition-colors relative" title="Yadda saxlanılanlar">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"/></svg>
+            <span id="header-bookmark-count" class="hidden absolute -top-0.5 -right-0.5 w-4 h-4 bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 text-[10px] font-bold rounded-full items-center justify-center">0</span>
+          </button>
+
+          <!-- Dark / Light Theme Switch -->
+          <button onclick="toggleTheme()" class="p-2 text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/50 dark:hover:bg-stone-800/60 rounded-md transition-colors" title="Qaranlıq / İşıqlı rejim">
+            <svg id="theme-icon-sun" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/></svg>
+            <svg id="theme-icon-moon" class="w-4 h-4 text-stone-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"/></svg>
+          </button>
+
+          <!-- Admin Panel Button -->
+          <button onclick="openAdminModal()" class="px-3 py-1.5 text-xs font-medium rounded-md bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 hover:bg-stone-800 dark:hover:bg-stone-200 transition-colors flex items-center gap-1.5 whitespace-nowrap cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
+            <span class="hidden sm:inline">İdarəetmə (Admin)</span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Google Ads Top Leaderboard -->
+    <div id="top-ad-banner" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+      <div class="my-3 w-full border border-dashed border-stone-300 dark:border-stone-800 bg-stone-100/60 dark:bg-stone-900/40 rounded-lg p-3 text-center">
+        <div class="flex items-center justify-between text-[11px] font-mono uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-1 px-1">
+          <span>Sponsorlu Məzmun · Google Ads</span>
+          <span id="adsense-pub-display">ID: ca-pub-9847291847192841</span>
+        </div>
+        <p class="text-xs font-medium text-stone-700 dark:text-stone-300">Google AdSense Leaderboard (728x90 / Responsive)</p>
+        <p class="text-[11px] text-stone-500">Monetizasiya aktivdir. Admin panelindən real Publisher ID və reklam parametrləri idarə oluna bilər.</p>
+      </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <main id="app-container" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      
+      <!-- HERO SECTION -->
+      <section id="hero-section" class="pt-2 pb-12 border-b border-stone-200 dark:border-stone-800">
+        <div class="flex items-center justify-between text-xs font-mono tracking-widest text-stone-500 dark:text-stone-400 mb-6 uppercase">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-stone-900 dark:bg-stone-100"></span>
+            <span>HƏFTƏNİN SEÇİLMİŞ TƏHLİLLƏRİ</span>
+            <span aria-hidden="true">·</span>
+            <span>BURAXILIŞ № 42</span>
+          </div>
+          <div class="hidden sm:flex items-center gap-2 text-[11px] text-stone-400">
+            <span>RƏQƏMSAL NƏŞR</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Lead Story -->
+          <div id="lead-story-container" class="lg:col-span-7 group cursor-pointer">
+            <!-- Dynamically injected -->
+          </div>
+
+          <!-- Secondary Features -->
+          <div id="secondary-stories-container" class="lg:col-span-5 flex flex-col gap-6 lg:border-l lg:border-stone-200 lg:dark:border-stone-800 lg:pl-8">
+            <!-- Dynamically injected -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ARTICLES FEED SECTION -->
+      <section id="articles-feed" class="py-10">
+        <!-- Filter Tabs -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-stone-200 dark:border-stone-800 mb-8">
+          <div class="flex items-center gap-1.5 overflow-x-auto py-1 text-xs font-medium" id="category-tabs">
+            <button onclick="filterCategory('all')" class="cat-tab px-3.5 py-2 rounded-lg bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 font-bold" data-cat="all">Bütün Mövzular</button>
+            <button onclick="filterCategory('texnologiya')" class="cat-tab px-3.5 py-2 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-800/60" data-cat="texnologiya">Texnologiya & AI</button>
+            <button onclick="filterCategory('sexsi-inkisaf')" class="cat-tab px-3.5 py-2 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-800/60" data-cat="sexsi-inkisaf">Şəxsi İnkişaf</button>
+            <button onclick="filterCategory('mehsuldarliq')" class="cat-tab px-3.5 py-2 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-800/60" data-cat="mehsuldarliq">Məhsuldarlıq</button>
+            <button onclick="filterCategory('felsefe')" class="cat-tab px-3.5 py-2 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-800/60" data-cat="felsefe">Fəlsəfə & Stoitsizm</button>
+            <button onclick="filterCategory('innovasiya')" class="cat-tab px-3.5 py-2 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-800/60" data-cat="innovasiya">Gələcək Trendlər</button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="filter-saved-btn" onclick="toggleSavedFilter()" class="px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100 flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"/></svg>
+              <span>Saxlananlar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Articles Grid -->
+        <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+          <!-- Dynamically injected -->
+        </div>
+      </section>
+
+      <!-- VIDEO SECTION -->
+      <section id="video-gallery" class="py-12 border-t border-stone-200 dark:border-stone-800">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <div>
+            <div class="flex items-center gap-2 text-xs font-mono text-stone-500 uppercase tracking-widest mb-1.5">
+              <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span>MARAQLI VİDEO TƏHLİLLƏR & ESSELƏR</span>
+            </div>
+            <h2 class="font-editorial text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100">
+              Texnologiya və Şəxsi İnkişaf Video Klubu
+            </h2>
+          </div>
+        </div>
+        <div id="videos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Dynamically injected -->
+        </div>
+      </section>
+
+      <!-- PERSONAL BLOG SECTION -->
+      <section id="personal-column" class="py-12 bg-stone-100/50 dark:bg-stone-900/30 rounded-2xl p-6 sm:p-8 my-8 border border-stone-200/80 dark:border-stone-800">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div class="lg:col-span-4 p-6 bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-500/30 bg-stone-200">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Author" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <h3 class="font-editorial text-lg font-bold text-stone-900 dark:text-stone-100">Camal Mənafov</h3>
+                <p class="text-xs text-stone-500 font-mono">Müəllifin Şəxsi Qeydləri</p>
+              </div>
+            </div>
+            <p class="text-sm text-stone-600 dark:text-stone-400 leading-relaxed mb-4 italic font-editorial">
+              "Bu guşədə texnologiyanın insan həyatına təsiri, şəxsi intizam, stoitsizm prinsipləri və oxuduğum kitablardan çıxardığım ən dəyərli dərsləri səmimi dildə qələmə alıram."
+            </p>
+            <div class="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs font-mono text-stone-500">
+              <span>Şəxsi Sütun</span>
+              <span class="text-amber-600 dark:text-amber-400 font-semibold">Gündəlik Fikirlər</span>
+            </div>
+          </div>
+
+          <div id="personal-posts-list" class="lg:col-span-8 flex flex-col gap-4">
+            <!-- Dynamically injected -->
+          </div>
+        </div>
+      </section>
+
+      <!-- NEWSLETTER SECTION -->
+      <section class="py-16 my-10 bg-stone-900 text-stone-100 rounded-3xl relative overflow-hidden shadow-xl border border-stone-800">
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+          <div class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-amber-400 mb-3">
+            <span>FİKİR & ZƏKA E-BÜLLETEN</span>
+          </div>
+          <h2 class="font-editorial text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4 text-balance">
+            Hər həftə ən dəyərli texnoloji təhlillər və şəxsi inkişaf fəlsəfəsi poçtunuzda.
+          </h2>
+          <p class="text-stone-400 text-sm sm:text-base max-w-2xl mx-auto mb-8 leading-relaxed">
+            Spam yoxdur. Sadəcə diqqətlə seçilmiş məqalələr, qısa kitab xülasələri və gələcəyə yön verən ideyalar.
+          </p>
+
+          <form onsubmit="handleNewsletterSubmit(event)" class="max-w-lg mx-auto space-y-4">
+            <div class="flex items-center justify-center gap-2 p-1 bg-stone-800/80 rounded-xl max-w-sm mx-auto text-xs font-medium">
+              <button type="button" onclick="setNewsFrequency('weekly')" id="freq-weekly" class="flex-1 py-1.5 rounded-lg bg-stone-700 text-white font-semibold">Həftəlik Xülasə</button>
+              <button type="button" onclick="setNewsFrequency('all')" id="freq-all" class="flex-1 py-1.5 rounded-lg text-stone-400 hover:text-white">Bütün Yazılar</button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input type="email" id="newsletter-email" required placeholder="E-poçt ünvanınızı daxil edin..." class="w-full px-4 py-3 bg-stone-800/90 border border-stone-700 rounded-xl text-sm text-white placeholder:text-stone-500 focus:outline-none focus:border-amber-400">
+              <button type="submit" class="px-6 py-3 bg-amber-400 text-stone-950 font-bold text-sm rounded-xl hover:bg-amber-300 transition-all cursor-pointer whitespace-nowrap">
+                Abunə Ol
+              </button>
+            </div>
+            <p id="newsletter-feedback" class="text-xs font-mono text-emerald-400 hidden"></p>
+          </form>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ARTICLE READER VIEW (Dynamically shown when reading) -->
+    <div id="article-reader-view" class="hidden min-h-screen pb-24">
+      <!-- Fixed Reading Bar -->
+      <div class="fixed top-16 left-0 w-full z-30 bg-[#faf8f5]/95 dark:bg-[#0c0d0e]/95 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800/80">
+        <!-- Progress Bar Line -->
+        <div class="w-full bg-stone-200 dark:bg-stone-800 h-1">
+          <div id="reader-progress-fill" class="bg-stone-900 dark:bg-amber-400 h-1 transition-all duration-100" style="width: 0%"></div>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 h-11 flex items-center justify-between text-xs font-mono">
+          <button onclick="closeArticleReader()" class="flex items-center gap-1.5 text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white cursor-pointer font-bold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+            <span>Geri Qayıt</span>
+          </button>
+
+          <!-- Dynamic Remaining Reading Time Indicator -->
+          <div class="flex items-center gap-2 px-3 py-1 bg-stone-200/70 dark:bg-stone-800/80 rounded-full text-stone-800 dark:text-stone-200 font-semibold">
+            <svg class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 animate-pulse" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+            <span id="reader-remaining-time" class="tabular-nums">Hesablanır...</span>
+          </div>
+
+          <!-- Font Scaling -->
+          <div class="flex items-center gap-2">
+            <button onclick="toggleFontSize()" class="p-1 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 rounded font-bold" title="Şrift ölçüsü">
+              <span id="font-size-label">A+</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Article Reader Body -->
+      <div class="pt-20 max-w-4xl mx-auto px-4 sm:px-6">
+        <div id="reader-content-area">
+          <!-- Dynamically filled -->
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEO MODAL -->
+    <div id="video-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div class="bg-stone-900 text-white rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl border border-stone-800">
+        <div class="p-4 bg-stone-950 flex items-center justify-between border-b border-stone-800">
+          <p id="video-modal-title" class="text-sm font-bold truncate max-w-md"></p>
+          <button onclick="closeVideoModal()" class="p-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300">&times;</button>
+        </div>
+        <div class="relative aspect-[16/9] w-full bg-black">
+          <iframe id="video-modal-iframe" class="w-full h-full border-0" allowfullscreen allow="autoplay"></iframe>
+        </div>
+        <div class="p-5 bg-stone-900">
+          <p id="video-modal-desc" class="text-xs text-stone-300 leading-relaxed mb-3"></p>
+          <div id="video-modal-takeaways" class="p-3 bg-stone-800/80 rounded-lg text-xs space-y-1"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH MODAL -->
+    <div id="search-modal" class="fixed inset-0 z-50 hidden items-start justify-center pt-20 px-4 bg-black/60 backdrop-blur-sm">
+      <div class="w-full max-w-2xl bg-white dark:bg-stone-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden">
+        <div class="p-4 border-b border-stone-200 dark:border-stone-800 flex items-center gap-3">
+          <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="Məqalə, mövzu və ya video axtarın..." class="flex-1 bg-transparent text-base text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none">
+          <button onclick="closeSearchModal()" class="text-xs font-mono px-2 py-1 bg-stone-100 dark:bg-stone-800 rounded">ESC</button>
+        </div>
+        <div id="search-results" class="max-h-96 overflow-y-auto p-4 space-y-2">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN CMS MODAL -->
+    <div id="admin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
+      <div class="bg-white dark:bg-stone-900 rounded-2xl w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden my-auto">
+        <!-- Top -->
+        <div class="p-4 bg-stone-900 text-white flex items-center justify-between">
+          <div>
+            <h2 class="font-editorial text-lg font-bold">Məzmun və Sistem İdarəetmə Paneli (CMS)</h2>
+            <p class="text-xs text-stone-400 font-mono">Fikir & Zəka · Redaksiya Mərkəzi</p>
+          </div>
+          <button onclick="closeAdminModal()" class="p-1.5 text-stone-400 hover:text-white rounded-lg">&times;</button>
+        </div>
+
+        <!-- Auth Form or Content -->
+        <div id="admin-auth-screen" class="p-8 max-w-md mx-auto my-auto text-center space-y-4">
+          <h3 class="font-editorial text-xl font-bold text-stone-900 dark:text-stone-100">PIN Girişi</h3>
+          <p class="text-xs text-stone-500">Məqalə əlavə etmək və tənzimləmələr üçün PIN daxil edin (Standart: admin123):</p>
+          <input type="password" id="admin-pin-input" placeholder="admin123" class="w-full px-4 py-2 text-center text-lg font-mono bg-stone-50 dark:bg-stone-950 border border-stone-300 dark:border-stone-700 rounded-xl">
+          <p id="admin-pin-err" class="text-xs text-rose-500 hidden">Yanlış PIN kod.</p>
+          <button onclick="verifyAdminPin()" class="w-full py-2.5 bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 font-bold text-xs rounded-xl cursor-pointer">Daxil Ol</button>
+        </div>
+
+        <div id="admin-dashboard-screen" class="hidden flex-1 flex flex-col min-h-0">
+          <!-- Admin Tabs -->
+          <div class="px-4 bg-stone-100 dark:bg-stone-950 border-b border-stone-200 dark:border-stone-800 flex items-center gap-2 overflow-x-auto text-xs font-medium">
+            <button onclick="switchAdminTab('articles')" class="admin-tab py-3 px-3.5 border-b-2 border-stone-900 dark:border-white font-bold" data-tab="articles">Məqalələr</button>
+            <button onclick="switchAdminTab('new-article')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-stone-500" data-tab="new-article">+ Yeni Məqalə</button>
+            <button onclick="switchAdminTab('subscribers')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-stone-500" data-tab="subscribers">Abunəçilər</button>
+            <button onclick="switchAdminTab('settings')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-stone-500" data-tab="settings">Google Ads & Ayarlar</button>
+          </div>
+
+          <div class="p-4 sm:p-6 overflow-y-auto flex-1 text-xs">
+            <!-- Tab: Articles List -->
+            <div id="admin-tab-articles" class="space-y-3">
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-bold text-sm">Mövcud Məqalələr</span>
+                <button onclick="switchAdminTab('new-article')" class="px-3 py-1.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 rounded font-bold">+ Yeni Əlavə Et</button>
+              </div>
+              <div id="admin-articles-table-body" class="space-y-2">
+                <!-- Dynamically filled -->
+              </div>
+            </div>
+
+            <!-- Tab: Create Article -->
+            <div id="admin-tab-new-article" class="hidden space-y-3 max-w-2xl">
+              <h4 class="font-bold text-sm">Yeni Məqalə Paylaş</h4>
+              <input type="text" id="new-art-title" placeholder="Məqalə Başlığı *" class="w-full px-3 py-2 bg-stone-50 dark:bg-stone-950 border rounded-lg">
+              <select id="new-art-cat" class="w-full px-3 py-2 bg-stone-50 dark:bg-stone-950 border rounded-lg">
+                <option value="texnologiya">Texnologiya & AI</option>
+                <option value="sexsi-inkisaf">Şəxsi İnkişaf</option>
+                <option value="mehsuldarliq">Məhsuldarlıq</option>
+                <option value="felsefe">Fəlsəfə & Stoitsizm</option>
+                <option value="bloq">Şəxsi Bloq</option>
+                <option value="innovasiya">Gələcək Trendlər</option>
+              </select>
+              <textarea id="new-art-excerpt" placeholder="Qısa xülasə *" rows="2" class="w-full px-3 py-2 bg-stone-50 dark:bg-stone-950 border rounded-lg"></textarea>
+              <textarea id="new-art-content" placeholder="Məqalənin tam mətni (Abzaslar, ### Başlıqlar, > Sitatlar) *" rows="7" class="w-full px-3 py-2 bg-stone-50 dark:bg-stone-950 border rounded-lg font-sans"></textarea>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" id="new-art-image" placeholder="Şəkil URL" class="w-full px-3 py-2 bg-stone-50 dark:bg-stone-950 border rounded-lg">
+                <input type="number" id="new-art-readtime" placeholder="Oxu vaxtı (dəq)" value="5" class="w-full px-3 py-2 bg-stone-50 dark:bg-stone-950 border rounded-lg">
+              </div>
+              <button onclick="saveNewArticle()" class="px-5 py-2.5 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 font-bold rounded-lg cursor-pointer">Məqaləni Dərc Et</button>
+            </div>
+
+            <!-- Tab: Subscribers -->
+            <div id="admin-tab-subscribers" class="hidden space-y-3">
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-bold text-sm">Abunəçilər</span>
+                <button onclick="downloadSubscribersCSV()" class="px-3 py-1.5 border rounded font-mono">CSV Yüklə</button>
+              </div>
+              <div id="admin-subscribers-list" class="space-y-1.5 font-mono">
+                <!-- Dynamically filled -->
+              </div>
+            </div>
+
+            <!-- Tab: Settings -->
+            <div id="admin-tab-settings" class="hidden space-y-4 max-w-xl">
+              <h4 class="font-bold text-sm">Google AdSense & Sayt Parametrləri</h4>
+              <div>
+                <label class="block text-stone-500 font-mono mb-1">Google AdSense Publisher ID</label>
+                <input type="text" id="setting-pub-id" value="ca-pub-9847291847192841" class="w-full px-3 py-2 bg-stone-50 dark:bg-stone-950 border rounded-lg font-mono">
+              </div>
+              <div>
+                <label class="block text-stone-500 font-mono mb-1">Admin PIN Kodu</label>
+                <input type="text" id="setting-pin" value="admin123" class="w-full px-3 py-2 bg-stone-50 dark:bg-stone-950 border rounded-lg font-mono">
+              </div>
+              <button onclick="saveSettings()" class="px-4 py-2 bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 font-bold rounded-lg cursor-pointer">Yadda Saxla</button>
+              
+              <div class="pt-4 border-t border-stone-200 dark:border-stone-800 space-y-2">
+                <span class="font-bold block">Məlumatların Bərpası & Backup</span>
+                <button onclick="exportDataJSON()" class="px-3 py-1.5 border rounded font-mono mr-2">JSON Backup Yüklə</button>
+                <button onclick="resetDefaults()" class="px-3 py-1.5 border border-rose-300 text-rose-500 rounded font-mono">İlkin Vəziyyətə Qaytar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-20 border-t border-stone-200 dark:border-stone-800 bg-[#f5f2eb] dark:bg-[#08090a] py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500 font-mono">
+          <div>
+            <span class="font-editorial font-bold text-base text-stone-900 dark:text-stone-100 mr-2">FİKİR & ZƏKA</span>
+            <span>© 2026. Bütün hüquqlar qorunur.</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span>Google AdSense Uyğun</span>
+            <span>·</span>
+            <span>SEO Optimallaşdırılıb</span>
+            <span>·</span>
+            <button onclick="openAdminModal()" class="underline hover:text-stone-900 dark:hover:text-white cursor-pointer">Admin Girişi</button>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- EMBEDDED COMPLETE JAVASCRIPT ENGINE (Zero dependency, 100% executable everywhere) -->
+    <script>
+      // INITIAL DATA
+      const DEFAULT_ARTICLES = [
+        {
+          id: 'art-1',
+          title: 'Süni İntellekt Dövründə İnsan Ağlının Üstünlüyü: Dərin Düşünmə Qabiliyyəti',
+          category: 'texnologiya',
+          excerpt: 'Generativ süni intellekt modelləri hər gün daha da təkmilləşir. Bəs bu dövrdə insanın əsas rəqabət üstünlüyü nə olacaq? Dərin təhlil və gələcəyə baxış.',
+          content: `Süni intellekt və avtomatlaşdırma artıq sadəcə texnoloji şirkətlərin deyil, bütün cəmiyyətin həyat tərzini yenidən formalaşdırır. Hər kəsin eyni məlumat bazasına və süni intellekt alətlərinə çıxışı olduğu bir dünyada informasiyanın özü deyil, onu necə sintez etdiyimiz və hansı sualları verdiyimiz ön plana çıxır.\n\n### Dərin Düşünmənin (Deep Work) Qiyməti\n\nMüasir dövrdə diqqət ən nadir və ən bahalı resursa çevrilib. Sosial şəbəkələrin davamlı bildirişləri və qısa məzmun formatları insan beynini fraqmentlərə bölür. Lakin mürəkkəb problemləri həll etmək üçün dərin fokuslanma tələb olunur.\n\n> "Gələcəkdə iki növ insan olacaq: texnologiyanın diqqətini idarə etdiyi insanlar və diqqətinə sahib çıxaraq texnologiyanı idarə edən insanlar."\n\n### Gələcəkdə Əvəzolunmaz Olacaq 3 Əsas Bacarıq\n\n1. Tənqidi və Fəlsəfi Təhlil: Verilən cavabları deyil, problemin kökünü sorğulamaq.\n2. Emosional İntellekt və Empatiya: İnsanlararası dərin etimad yaratmaq və komanda ruhunu qorumaq.\n3. Fənlərarası Sintez: Texnologiya ilə fəlsəfəni, dizayn ilə psixologiyanı birləşdirmək.\n\nNəticə etibarilə, süni intellekt insanı əvəz etməyəcək; süni intellektdən şüurlu istifadə edən və strateji düşünən insanlar köhnə üsullarla işləyənləri geridə qoyacaq.`,
+          coverImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop&q=80',
+          readTimeMinutes: 6,
+          author: { name: 'Camal Mənafov', role: 'Təsisçi & Baş Redaktor' },
+          publishedAt: '2026-10-06',
+          views: 1420,
+          likes: 89,
+          tags: ['Süni İntellekt', 'Gələcək', 'Dərin Düşüncə'],
+          featured: true,
+          trending: true,
+          isPersonalBlog: false
+        },
+        {
+          id: 'art-2',
+          title: 'Şəxsi İntizam və Vərdişlər: 1% Qaydasının Həyatımıza Təsiri',
+          category: 'sexsi-inkisaf',
+          excerpt: 'Hər gün sadəcə 1 faiz daha yaxşı olmaq bir ildə insanı necə 37 qat daha güclü edir? Vərdişlərin atomar gücü və psixoloji mexanizmi.',
+          content: `Böyük hədəflərə çatmaq istəyəndə əksər insanlar dərhal radikal dəyişikliklər etməyə çalışırlar. Lakin psixologiya sübut edir ki, bu cür kəskin addımlar tez bir zamanda tükənmə ilə nəticələnir.\n\n### Vərdişlərin Mürəkkəb Faiz Qaydası\n\nƏgər siz hər gün sadəcə 1% daha yaxşılaşsanız, riyazi olaraq bir ilin sonunda (1.01^365) başlanğıc vəziyyətinizdən təxminən 37 qat daha irəli gedəcəksiniz.\n\n> "Biz vərdişlərimizin məhsuluyuq. Uğur təsadüfi böyük qələbələrdən deyil, gündəlik kiçik seçimlərimizin ardıcıllığından doğur."`,
+          coverImage: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&auto=format&fit=crop&q=80',
+          readTimeMinutes: 5,
+          author: { name: 'Camal Mənafov', role: 'Təsisçi & Baş Redaktor' },
+          publishedAt: '2026-10-04',
+          views: 980,
+          likes: 64,
+          tags: ['Şəxsi İnkişaf', 'Vərdişlər', 'Psixologiya'],
+          featured: true,
+          trending: true,
+          isPersonalBlog: false
+        },
+        {
+          id: 'art-3',
+          title: 'Dərin İş (Deep Work): Diqqət Dağınıqlığı Əsrində Fokuslanma Sənəti',
+          category: 'mehsuldarliq',
+          excerpt: 'Hər 5 dəqiqədən bir telefona baxmaq vərdişi beynimizin strukturunu necə dəyişir və bunu aradan qaldırmaq üçün hansı rəqəmsal detoks metodları var?',
+          content: `Bugünkü rəqəmsal mühitdə ən böyük rəqibimiz rəqib şirkətlər deyil, cibimizdə gəzdirdiyimiz və bizi daimi dopamin asılılığında saxlayan cihazlardır.\n\n### Praktik Tətbiq Üsulları\n\n- Fokus Blokları: Gününüzdə minimum 90 dəqiqəlik qəti toxunulmaz vaxt bloku yaradın.\n- Rəqəmsal Sərhədlər: İş masanızda telefonunuzu görməyəcəyiniz məsafədə saxlayın.\n- Tək Tapşırıq Rejimi: Multitasking illüziyadır.`,
+          coverImage: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&auto=format&fit=crop&q=80',
+          readTimeMinutes: 4,
+          author: { name: 'Nigar Rəhimova', role: 'Koqnitiv Psixoloq' },
+          publishedAt: '2026-10-02',
+          views: 740,
+          likes: 48,
+          tags: ['Məhsuldarlıq', 'Fokus', 'Dərin İş'],
+          featured: false,
+          trending: true,
+          isPersonalBlog: false
+        },
+        {
+          id: 'art-4',
+          title: 'Kvant Hesablamaları və 2030-cu İllərin Texnoloji Sıçrayışı',
+          category: 'innovasiya',
+          excerpt: 'Kvant bitləri (kübitlər), superpozisiya və dolaşıqlıq prinsipləri mövcud kriptoqrafiyanı və dərman kəşflərini necə kökündən dəyişəcək?',
+          content: `Klassik kompüterlər məlumatı 0 və ya 1 şəklində emal etdiyi halda, kvant kompüterləri eyni anda həm 0, həm də 1 ola bilən kübitlərdən istifadə edir.\n\n### Əsas Tətbiq Sahələri\n\n- Yeni Molekulların Modelləşdirilməsi\n- Post-Kvant Kriptoqrafiya\n- Ətraf Mühit və Enerji Simulyasiyaları`,
+          coverImage: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1200&auto=format&fit=crop&q=80',
+          readTimeMinutes: 7,
+          author: { name: 'Elvin Qasımov', role: 'Kvant Mühəndisi' },
+          publishedAt: '2026-09-28',
+          views: 610,
+          likes: 39,
+          tags: ['Kvant', 'Fizika', 'Gələcək'],
+          featured: false,
+          trending: false,
+          isPersonalBlog: false
+        },
+        {
+          id: 'art-5',
+          title: 'Şəxsi Qeydlər: Həyatı Məqsədyönlü Yaşamaq və Stoitsizm Təlimi',
+          category: 'bloq',
+          excerpt: 'Gündəlik qeydlərimdən: Nəzarət edə biləcəyimiz şeylərə fokuslanmaq və daxili sakitliyi qorumağın qədim fəlsəfi açarları.',
+          content: `Hər səhər masamın arxasına keçəndə özümə xatırlatdığım tək bir prinsip var: "Həyatda baş verən hadisələr deyil, bizim onlara verdiyimiz məna bizi narahat edir." - Epiktet.\n\nBiz xarici hadisələri idarə edə bilmərik, lakin öz düşüncələrimizi və reaksiyalarımızı idarə edə bilərik.`,
+          coverImage: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=1200&auto=format&fit=crop&q=80',
+          readTimeMinutes: 3,
+          author: { name: 'Camal Mənafov', role: 'Təsisçi & Müəllif' },
+          publishedAt: '2026-10-06',
+          views: 430,
+          likes: 51,
+          tags: ['Stoitsizm', 'Şəxsi Bloq', 'Fəlsəfə'],
+          featured: false,
+          trending: false,
+          isPersonalBlog: true
+        }
+      ];
+
+      const DEFAULT_VIDEOS = [
+        {
+          id: 'vid-1',
+          title: 'Beynimizin Diqqət Mexanizmi və Dopamin Detoksu Necə İşləyir?',
+          description: 'Rəqəmsal cihazların yaratdığı dopamin dalğalanmaları və 7 günlük bərpa proqramı haqqında elmi təhlil.',
+          youtubeId: 'p3JLaF_4Tz8',
+          duration: '14:25',
+          category: 'sexsi-inkisaf',
+          speaker: 'Dr. Endryu Huberman təhlili',
+          thumbnail: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format&fit=crop&q=80',
+          keyTakeaways: ['Dopamin baza səviyyəsini qorumaq iradəni gücləndirir.', 'Səhər ilk 60 dəqiqə ekranlardan uzaq durmaq zəruridir.']
+        },
+        {
+          id: 'vid-2',
+          title: 'Gələcəyin Süni İntellekt Trendləri: AGI Nə Vaxt Reallığa Çevriləcək?',
+          description: 'Böyük dil modellərindən avtonom agentlərə və ümumi süni intellektə doğru inkişaf yolu.',
+          youtubeId: '7xTGNNLPyMI',
+          duration: '18:50',
+          category: 'texnologiya',
+          speaker: 'Sam Altman & Demis Hassabis müzakirəsi',
+          thumbnail: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=80',
+          keyTakeaways: ['Multi-modal intellekt və robototexnika birləşir.', 'İntellektin dəyəri ucuzlaşdıqca unikal baxış bucağı bahalaşır.']
+        },
+        {
+          id: 'vid-3',
+          title: 'Atomar Vərdişlər: Hər Gün 1% İnkişafın Psixologiyası',
+          description: 'Ceyms Klirin məşhur metodologiyası əsasında vərdiş yaratma və sındırma addımları.',
+          youtubeId: 'U_nzqnXWvSo',
+          duration: '11:10',
+          category: 'mehsuldarliq',
+          speaker: 'Ceyms Klir təhlili',
+          thumbnail: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&auto=format&fit=crop&q=80',
+          keyTakeaways: ['Sistemlər nəticəni təyin edir.', 'Kiçik addımlar zamanla böyük fərq yaradır.']
+        }
+      ];
+
+      // STATE
+      let articles = JSON.parse(localStorage.getItem('fz_articles')) || DEFAULT_ARTICLES;
+      let videos = JSON.parse(localStorage.getItem('fz_videos')) || DEFAULT_VIDEOS;
+      let subscribers = JSON.parse(localStorage.getItem('fz_subscribers')) || ['oxucu@intellektual.az', 'texno.azerbaycan@gmail.com'];
+      let bookmarks = JSON.parse(localStorage.getItem('fz_bookmarks')) || [];
+      let likes = JSON.parse(localStorage.getItem('fz_likes')) || [];
+      let comments = JSON.parse(localStorage.getItem('fz_comments')) || {};
+      let settings = JSON.parse(localStorage.getItem('fz_settings')) || { pubId: 'ca-pub-9847291847192841', pin: 'admin123' };
+      let currentCategory = 'all';
+      let showingSavedOnly = false;
+      let currentActiveArticle = null;
+      let currentFontSizeIndex = 0;
+      const fontSizes = ['text-base sm:text-lg leading-relaxed sm:leading-loose', 'text-lg sm:text-xl leading-relaxed sm:leading-loose', 'text-xl sm:text-2xl leading-relaxed sm:leading-loose'];
+      let newsFrequency = 'weekly';
+
+      // THEME INITIALIZATION
+      function initTheme() {
+        const savedTheme = localStorage.getItem('fz_theme');
+        if (savedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.getElementById('theme-icon-sun').classList.remove('hidden');
+          document.getElementById('theme-icon-moon').classList.add('hidden');
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.getElementById('theme-icon-sun').classList.add('hidden');
+          document.getElementById('theme-icon-moon').classList.remove('hidden');
+        }
+      }
+
+      function toggleTheme() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('fz_theme', isDark ? 'dark' : 'light');
+        if (isDark) {
+          document.getElementById('theme-icon-sun').classList.remove('hidden');
+          document.getElementById('theme-icon-moon').classList.add('hidden');
+        } else {
+          document.getElementById('theme-icon-sun').classList.add('hidden');
+          document.getElementById('theme-icon-moon').classList.remove('hidden');
+        }
+      }
+
+      // RENDER FUNCTIONS
+      function renderAll() {
+        renderHero();
+        renderArticles();
+        renderVideos();
+        renderPersonalPosts();
+        updateBookmarkBadge();
+      }
+
+      function renderHero() {
+        const lead = articles.find(a => a.featured) || articles[0];
+        const secondary = articles.filter(a => a.id !== lead.id).slice(0, 2);
+
+        document.getElementById('lead-story-container').innerHTML = `
+          <div onclick="openArticle('${lead.id}')">
+            <div class="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-stone-100 dark:bg-stone-900 mb-5">
+              <img src="${lead.coverImage}" alt="${lead.title}" class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60"></div>
+              <div class="absolute top-4 left-4">
+                <span class="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider bg-stone-950/80 backdrop-blur-md text-white rounded-sm border border-white/10">
+                  ${lead.category.toUpperCase()}
+                </span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mb-2 font-mono">
+              <span>${lead.author.name}</span>
+              <span>·</span>
+              <span>${lead.publishedAt}</span>
+              <span>·</span>
+              <span>${lead.readTimeMinutes} dəqiqə oxu</span>
+            </div>
+            <h1 class="font-editorial text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight text-stone-900 dark:text-stone-100 group-hover:text-stone-600 dark:group-hover:text-stone-300 transition-colors mb-3">
+              ${lead.title}
+            </h1>
+            <p class="text-sm sm:text-base text-stone-600 dark:text-stone-400 line-clamp-3 leading-relaxed mb-4">
+              ${lead.excerpt}
+            </p>
+            <div class="flex items-center gap-1.5 text-xs font-semibold text-stone-900 dark:text-stone-100 group-hover:translate-x-1 transition-transform">
+              <span>Məqaləni tam oxu &rarr;</span>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('secondary-stories-container').innerHTML = secondary.map(art => `
+          <div onclick="openArticle('${art.id}')" class="group cursor-pointer flex flex-col sm:flex-row lg:flex-col gap-4 pb-6 border-b border-stone-100 dark:border-stone-850 last:border-0">
+            <div class="relative aspect-[16/10] sm:w-44 lg:w-full shrink-0 overflow-hidden rounded-lg bg-stone-100 dark:bg-stone-900">
+              <img src="${art.coverImage}" alt="${art.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div>
+              <div class="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mb-1.5 font-mono">
+                <span class="uppercase font-semibold text-stone-700 dark:text-stone-300">${art.category}</span>
+                <span>·</span>
+                <span>${art.readTimeMinutes} dəq</span>
+              </div>
+              <h2 class="font-editorial text-lg sm:text-xl font-bold leading-snug text-stone-900 dark:text-stone-100 group-hover:text-stone-600 dark:group-hover:text-stone-300 transition-colors mb-2">
+                ${art.title}
+              </h2>
+              <p class="text-xs sm:text-sm text-stone-600 dark:text-stone-400 line-clamp-2 leading-relaxed">
+                ${art.excerpt}
+              </p>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function renderArticles() {
+        let filtered = articles;
+        if (showingSavedOnly) {
+          filtered = filtered.filter(a => bookmarks.includes(a.id));
+        } else if (currentCategory !== 'all') {
+          filtered = filtered.filter(a => a.category === currentCategory);
+        }
+
+        const grid = document.getElementById('articles-grid');
+        if (filtered.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-full text-center py-12 bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800">
+              <p class="font-editorial text-lg font-bold mb-1">Məqalə tapılmadı</p>
+              <p class="text-xs text-stone-500 mb-4">Bu kateqoriyada hələ məqalə yoxdur.</p>
+              <button onclick="filterCategory('all')" class="px-4 py-2 text-xs bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 rounded-lg">Bütün Məqalələrə Qayıt</button>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = filtered.map(art => {
+          const isBookmarked = bookmarks.includes(art.id);
+          const isLiked = likes.includes(art.id);
+          return `
+            <article class="group cursor-pointer flex flex-col h-full bg-white dark:bg-stone-900/60 rounded-xl border border-stone-200/80 dark:border-stone-800/80 overflow-hidden hover:shadow-md transition-all">
+              <div onclick="openArticle('${art.id}')" class="relative aspect-[16/10] w-full overflow-hidden bg-stone-100 dark:bg-stone-900">
+                <img src="${art.coverImage}" alt="${art.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div class="absolute top-3 left-3">
+                  <span class="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider bg-stone-950/80 backdrop-blur-md text-white rounded-sm">
+                    ${art.category}
+                  </span>
+                </div>
+              </div>
+              <div class="p-5 flex flex-col justify-between flex-1">
+                <div onclick="openArticle('${art.id}')">
+                  <div class="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mb-2 font-mono">
+                    <span>${art.publishedAt}</span>
+                    <span>·</span>
+                    <span>${art.readTimeMinutes} dəq oxu</span>
+                  </div>
+                  <h3 class="font-editorial text-lg sm:text-xl font-bold leading-snug text-stone-900 dark:text-stone-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors mb-2">
+                    ${art.title}
+                  </h3>
+                  <p class="text-xs sm:text-sm text-stone-600 dark:text-stone-400 line-clamp-3 leading-relaxed mb-4">
+                    ${art.excerpt}
+                  </p>
+                </div>
+                <div class="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800 text-xs text-stone-500">
+                  <span class="font-medium text-stone-700 dark:text-stone-300">${art.author.name}</span>
+                  <div class="flex items-center gap-3">
+                    <button onclick="toggleLike('${art.id}', event)" class="flex items-center gap-1 hover:text-rose-600 transition-colors ${isLiked ? 'text-rose-600 font-semibold' : ''}">
+                      <span>♥</span> <span>${art.likes}</span>
+                    </button>
+                    <button onclick="toggleBookmark('${art.id}', event)" class="hover:text-stone-900 dark:hover:text-white transition-colors ${isBookmarked ? 'text-amber-600 dark:text-amber-400 font-bold' : ''}">
+                      ${isBookmarked ? '★ Saxlanıldı' : '☆ Saxla'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+      }
+
+      function renderVideos() {
+        document.getElementById('videos-grid').innerHTML = videos.map(vid => `
+          <div onclick="openVideo('${vid.id}')" class="group cursor-pointer bg-white dark:bg-stone-900/60 rounded-xl border border-stone-200/80 dark:border-stone-800/80 overflow-hidden hover:shadow-lg transition-all flex flex-col justify-between">
+            <div class="relative aspect-[16/9] w-full overflow-hidden bg-stone-950">
+              <img src="${vid.thumbnail}" alt="${vid.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90" />
+              <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full bg-white/90 text-stone-900 flex items-center justify-center font-bold text-lg shadow-lg group-hover:scale-110 transition-transform">▶</div>
+              </div>
+              <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 bg-black/80 text-white text-[10px] font-mono rounded">${vid.duration}</div>
+            </div>
+            <div class="p-5 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-xs text-stone-500 mb-2 font-mono">
+                  <span class="uppercase font-semibold">${vid.category}</span>
+                </div>
+                <h3 class="font-editorial text-lg font-bold text-stone-900 dark:text-stone-100 group-hover:text-rose-500 transition-colors mb-2">${vid.title}</h3>
+                <p class="text-xs text-stone-600 dark:text-stone-400 line-clamp-2 mb-4">${vid.description}</p>
+              </div>
+              <div class="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between text-xs text-stone-500">
+                <span class="truncate max-w-[180px]">${vid.speaker}</span>
+                <span class="font-semibold text-stone-900 dark:text-stone-100">İzlə &rarr;</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function renderPersonalPosts() {
+        const posts = articles.filter(a => a.isPersonalBlog || a.category === 'bloq' || a.category === 'felsefe');
+        document.getElementById('personal-posts-list').innerHTML = posts.map(post => `
+          <div onclick="openArticle('${post.id}')" class="group cursor-pointer p-5 bg-white dark:bg-stone-900/80 rounded-xl border border-stone-200/80 dark:border-stone-800 hover:border-stone-400 transition-all">
+            <div class="flex items-center gap-2 text-xs text-stone-500 mb-1.5 font-mono">
+              <span class="text-amber-600 dark:text-amber-400 font-semibold uppercase">ŞƏXSİ QEYD</span>
+              <span>·</span>
+              <span>${post.publishedAt}</span>
+              <span>·</span>
+              <span>${post.readTimeMinutes} dəq</span>
+            </div>
+            <h4 class="font-editorial text-xl font-bold text-stone-900 dark:text-stone-100 group-hover:text-amber-600 transition-colors mb-2">${post.title}</h4>
+            <p class="text-sm text-stone-600 dark:text-stone-400 line-clamp-2 leading-relaxed mb-3">${post.excerpt}</p>
+            <div class="flex items-center justify-between text-xs text-stone-500 pt-2 border-t border-stone-100 dark:border-stone-800">
+              <span class="text-rose-500">♥ ${post.likes} bəyənmə</span>
+              <span class="font-semibold text-stone-900 dark:text-stone-100 group-hover:translate-x-1 transition-transform">Qeydi oxu &rarr;</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // ARTICLE READER
+      function openArticle(id) {
+        const art = articles.find(a => a.id === id);
+        if (!art) return;
+        currentActiveArticle = art;
+        art.views = (art.views || 0) + 1;
+        saveArticles();
+
+        document.getElementById('app-container').classList.add('hidden');
+        document.getElementById('hero-section').classList.add('hidden');
+        document.getElementById('top-ad-banner').classList.add('hidden');
+        const reader = document.getElementById('article-reader-view');
+        reader.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        const isLiked = likes.includes(art.id);
+        const isBookmarked = bookmarks.includes(art.id);
+        const artComments = comments[art.id] || [];
+
+        // Format paragraphs
+        const formattedContent = art.content.split('\n\n').map((p, idx) => {
+          if (p.startsWith('### ')) return `<h3 class="font-editorial text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100 pt-6 pb-2">${p.replace('### ', '')}</h3>`;
+          if (p.startsWith('> ')) return `<blockquote class="my-8 p-6 border-l-4 border-stone-900 dark:border-amber-400 bg-stone-100/70 dark:bg-stone-900/50 rounded-r-xl font-editorial italic text-xl text-stone-900 dark:text-stone-100">${p.replace('> ', '')}</blockquote>`;
+          if (p.startsWith('- ') || p.includes('\n- ')) {
+            const items = p.split('\n').filter(l => l.trim().startsWith('- '));
+            return `<ul class="my-4 space-y-2 list-disc list-inside text-stone-700 dark:text-stone-300">${items.map(i => `<li>${i.replace('- ', '')}</li>`).join('')}</ul>`;
+          }
+          if (/^\d+\.\s/.test(p) || p.includes('\n1. ')) {
+            const items = p.split('\n').filter(l => /^\d+\.\s/.test(l.trim()));
+            return `<ol class="my-4 space-y-2 list-decimal list-inside text-stone-700 dark:text-stone-300">${items.map(i => `<li>${i.replace(/^\d+\.\s/, '')}</li>`).join('')}</ol>`;
+          }
+          return `<p class="${idx === 0 ? 'article-dropcap' : ''}">${p}</p>`;
+        }).join('');
+
+        document.getElementById('reader-content-area').innerHTML = `
+          <div class="mb-8 pt-4">
+            <div class="flex items-center gap-2 text-xs font-mono text-stone-500 uppercase tracking-widest mb-3">
+              <span class="font-semibold text-stone-800 dark:text-stone-200">${art.category}</span>
+              <span>·</span>
+              <span>${art.publishedAt}</span>
+              <span>·</span>
+              <span>${art.views} baxış</span>
+            </div>
+            <h1 class="font-editorial text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-stone-900 dark:text-stone-50 mb-6 text-balance">${art.title}</h1>
+            <p class="text-lg text-stone-600 dark:text-stone-300 leading-relaxed font-editorial italic border-l-2 border-stone-400 pl-4 py-1 mb-8">${art.excerpt}</p>
+            <div class="flex items-center justify-between pb-6 border-b border-stone-200 dark:border-stone-800">
+              <div class="flex items-center gap-3">
+                <img src="${art.author.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}" class="w-11 h-11 rounded-full object-cover border border-stone-300 dark:border-stone-700" />
+                <div>
+                  <p class="text-sm font-bold text-stone-900 dark:text-stone-100">${art.author.name}</p>
+                  <p class="text-xs text-stone-500">${art.author.role}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleLike('${art.id}', event); openArticle('${art.id}')" class="px-3 py-1.5 rounded-lg border text-xs font-semibold ${isLiked ? 'bg-rose-50 text-rose-600 border-rose-300' : 'bg-white dark:bg-stone-900'}">♥ ${art.likes}</button>
+                <button onclick="toggleBookmark('${art.id}', event); openArticle('${art.id}')" class="px-3 py-1.5 rounded-lg border text-xs ${isBookmarked ? 'bg-amber-100 dark:bg-stone-800 text-amber-700 font-bold' : 'bg-white dark:bg-stone-900'}">${isBookmarked ? '★ Saxlandı' : '☆ Saxla'}</button>
+                <button onclick="copyCurrentLink()" class="px-3 py-1.5 rounded-lg border text-xs bg-white dark:bg-stone-900">Paylaş</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-stone-100 dark:bg-stone-900 mb-10 shadow-sm">
+            <img src="${art.coverImage}" class="w-full h-full object-cover" />
+          </div>
+
+          <div id="reader-prose-text" class="max-w-prose mx-auto text-stone-800 dark:text-stone-200 ${fontSizes[currentFontSizeIndex]} space-y-6">
+            ${formattedContent}
+          </div>
+
+          <!-- In-Article Google Ad -->
+          <div class="max-w-prose mx-auto my-12 border border-dashed border-stone-300 dark:border-stone-800 bg-stone-100/60 dark:bg-stone-900/40 rounded-xl p-4 text-center">
+            <span class="text-[11px] font-mono uppercase tracking-wider text-stone-400 block mb-1">Məqalə Daxili Reklam · Google AdSense</span>
+            <p class="text-xs font-medium text-stone-700 dark:text-stone-300">Tövsiyə edilən Sponsorlu Keçidlər</p>
+          </div>
+
+          <!-- Comments Section -->
+          <div class="max-w-prose mx-auto mt-14 pt-8 border-t border-stone-200 dark:border-stone-800">
+            <h3 class="font-editorial text-2xl font-bold text-stone-900 dark:text-stone-100 mb-6">Oxucu Fikirləri (${artComments.length})</h3>
+            <form onsubmit="handleCommentSubmit(event, '${art.id}')" class="space-y-3 mb-8">
+              <input type="text" id="comment-author" required placeholder="Adınız və Soyadınız..." class="w-full px-4 py-2 text-sm bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-lg">
+              <textarea id="comment-text" required rows="3" placeholder="Məqalə haqqında fikrinizi bölüşün..." class="w-full px-4 py-2 text-sm bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-lg"></textarea>
+              <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-stone-900 dark:bg-stone-100 dark:text-stone-900 rounded-lg cursor-pointer">Rəyi Paylaş</button>
+            </form>
+            <div class="space-y-3">
+              ${artComments.length === 0 ? '<p class="text-xs text-stone-400 italic">İlk rəyi siz yazın!</p>' : artComments.map(c => `
+                <div class="p-4 rounded-lg bg-stone-100/60 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-800">
+                  <div class="flex justify-between text-xs mb-1">
+                    <span class="font-bold">${c.author}</span>
+                    <span class="text-stone-400 font-mono">${c.date}</span>
+                  </div>
+                  <p class="text-sm text-stone-700 dark:text-stone-300">${c.text}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+
+        updateReadingProgress();
+      }
+
+      function closeArticleReader() {
+        document.getElementById('article-reader-view').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        document.getElementById('hero-section').classList.remove('hidden');
+        document.getElementById('top-ad-banner').classList.remove('hidden');
+        currentActiveArticle = null;
+        renderAll();
+      }
+
+      // DYNAMIC REMAINING READING TIME TRACKER
+      function updateReadingProgress() {
+        if (!currentActiveArticle) return;
+        const totalSecs = currentActiveArticle.readTimeMinutes * 60;
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0;
+        const remaining = Math.max(0, Math.round(totalSecs * (1 - progress / 100)));
+
+        const fill = document.getElementById('reader-progress-fill');
+        if (fill) fill.style.width = `${progress}%`;
+
+        const timeElem = document.getElementById('reader-remaining-time');
+        if (timeElem) {
+          if (remaining <= 0) {
+            timeElem.textContent = 'Tamamlandı 🎉 (100%)';
+          } else {
+            const m = Math.floor(remaining / 60);
+            const s = remaining % 60;
+            const str = m === 0 ? `${s} san` : s === 0 ? `${m} dəq` : `${m} dəq ${s} san`;
+            timeElem.textContent = `Qalan vaxt: ${str} (${Math.round(progress)}%)`;
+          }
+        }
+      }
+
+      window.addEventListener('scroll', updateReadingProgress, { passive: true });
+
+      function toggleFontSize() {
+        currentFontSizeIndex = (currentFontSizeIndex + 1) % fontSizes.length;
+        const prose = document.getElementById('reader-prose-text');
+        if (prose) {
+          prose.className = `max-w-prose mx-auto text-stone-800 dark:text-stone-200 ${fontSizes[currentFontSizeIndex]} space-y-6`;
+        }
+      }
+
+      // INTERACTION HANDLERS
+      function toggleLike(id, e) {
+        if (e) e.stopPropagation();
+        const art = articles.find(a => a.id === id);
+        if (!art) return;
+        const idx = likes.indexOf(id);
+        if (idx > -1) {
+          likes.splice(idx, 1);
+          art.likes = Math.max(0, art.likes - 1);
+        } else {
+          likes.push(id);
+          art.likes += 1;
+          if (window.confetti) {
+            window.confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
+          }
+        }
+        localStorage.setItem('fz_likes', JSON.stringify(likes));
+        saveArticles();
+        renderArticles();
+        renderPersonalPosts();
+      }
+
+      function toggleBookmark(id, e) {
+        if (e) e.stopPropagation();
+        const idx = bookmarks.indexOf(id);
+        if (idx > -1) {
+          bookmarks.splice(idx, 1);
+        } else {
+          bookmarks.push(id);
+        }
+        localStorage.setItem('fz_bookmarks', JSON.stringify(bookmarks));
+        updateBookmarkBadge();
+        renderArticles();
+      }
+
+      function updateBookmarkBadge() {
+        const badge = document.getElementById('header-bookmark-count');
+        if (bookmarks.length > 0) {
+          badge.textContent = bookmarks.length;
+          badge.classList.remove('hidden');
+          badge.classList.add('flex');
+        } else {
+          badge.classList.add('hidden');
+          badge.classList.remove('flex');
+        }
+      }
+
+      function filterCategory(cat) {
+        currentCategory = cat;
+        showingSavedOnly = false;
+        document.querySelectorAll('.cat-tab').forEach(b => {
+          if (b.dataset.cat === cat) {
+            b.className = 'cat-tab px-3.5 py-2 rounded-lg bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 font-bold';
+          } else {
+            b.className = 'cat-tab px-3.5 py-2 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-stone-800/60';
+          }
+        });
+        document.getElementById('filter-saved-btn').className = 'px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-400';
+        renderArticles();
+      }
+
+      function toggleSavedFilter() {
+        showingSavedOnly = !showingSavedOnly;
+        const btn = document.getElementById('filter-saved-btn');
+        if (showingSavedOnly) {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium border bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400 font-bold';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-400';
+        }
+        renderArticles();
+        scrollToId('articles-feed');
+      }
+
+      function handleCommentSubmit(e, artId) {
+        e.preventDefault();
+        const author = document.getElementById('comment-author').value.trim();
+        const text = document.getElementById('comment-text').value.trim();
+        if (!author || !text) return;
+        if (!comments[artId]) comments[artId] = [];
+        comments[artId].unshift({ author, text, date: new Date().toLocaleDateString('az-AZ') });
+        localStorage.setItem('fz_comments', JSON.stringify(comments));
+        openArticle(artId);
+      }
+
+      function handleNewsletterSubmit(e) {
+        e.preventDefault();
+        const input = document.getElementById('newsletter-email');
+        const email = input.value.trim().toLowerCase();
+        if (!email.includes('@')) return;
+        if (!subscribers.includes(email)) {
+          subscribers.unshift(email);
+          localStorage.setItem('fz_subscribers', JSON.stringify(subscribers));
+        }
+        const fb = document.getElementById('newsletter-feedback');
+        fb.textContent = 'Təbriklər! Siz bülletenimizə uğurla abunə oldunuz.';
+        fb.classList.remove('hidden');
+        input.value = '';
+        if (window.confetti) window.confetti({ particleCount: 50, spread: 70, origin: { y: 0.7 } });
+      }
+
+      function setNewsFrequency(freq) {
+        newsFrequency = freq;
+        const w = document.getElementById('freq-weekly');
+        const a = document.getElementById('freq-all');
+        if (freq === 'weekly') {
+          w.className = 'flex-1 py-1.5 rounded-lg bg-stone-700 text-white font-semibold';
+          a.className = 'flex-1 py-1.5 rounded-lg text-stone-400 hover:text-white';
+        } else {
+          a.className = 'flex-1 py-1.5 rounded-lg bg-stone-700 text-white font-semibold';
+          w.className = 'flex-1 py-1.5 rounded-lg text-stone-400 hover:text-white';
+        }
+      }
+
+      // VIDEO MODAL
+      function openVideo(id) {
+        const vid = videos.find(v => v.id === id);
+        if (!vid) return;
+        document.getElementById('video-modal-title').textContent = vid.title;
+        document.getElementById('video-modal-desc').textContent = vid.description;
+        document.getElementById('video-modal-iframe').src = `https://www.youtube-nocookie.com/embed/${vid.youtubeId}?autoplay=1`;
+        document.getElementById('video-modal-takeaways').innerHTML = (vid.keyTakeaways || []).map(t => `<div>• ${t}</div>`).join('');
+        const modal = document.getElementById('video-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+
+      function closeVideoModal() {
+        const modal = document.getElementById('video-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.getElementById('video-modal-iframe').src = '';
+      }
+
+      // SEARCH MODAL
+      function openSearchModal() {
+        const modal = document.getElementById('search-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => document.getElementById('search-input').focus(), 50);
+        handleSearch('');
+      }
+
+      function closeSearchModal() {
+        const modal = document.getElementById('search-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+
+      function handleSearch(q) {
+        const clean = q.toLowerCase().trim();
+        const matched = articles.filter(a => !clean || a.title.toLowerCase().includes(clean) || a.excerpt.toLowerCase().includes(clean) || (a.tags || []).some(t => t.toLowerCase().includes(clean)));
+        const resElem = document.getElementById('search-results');
+        if (matched.length === 0) {
+          resElem.innerHTML = '<p class="text-xs text-stone-400 italic py-2">Uyğun məqalə tapılmadı.</p>';
+          return;
+        }
+        resElem.innerHTML = matched.map(a => `
+          <div onclick="closeSearchModal(); openArticle('${a.id}')" class="p-3 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer">
+            <span class="text-[10px] font-mono uppercase text-amber-600 dark:text-amber-400">${a.category} · ${a.readTimeMinutes} dəq</span>
+            <p class="font-editorial text-base font-bold text-stone-900 dark:text-stone-100">${a.title}</p>
+          </div>
+        `).join('');
+      }
+
+      window.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          openSearchModal();
+        }
+        if (e.key === 'Escape') {
+          closeSearchModal();
+          closeVideoModal();
+          closeAdminModal();
+        }
+      });
+
+      // ADMIN PANEL
+      function openAdminModal() {
+        const modal = document.getElementById('admin-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        if (sessionStorage.getItem('fz_admin_auth') === 'true') {
+          document.getElementById('admin-auth-screen').classList.add('hidden');
+          document.getElementById('admin-dashboard-screen').classList.remove('hidden');
+          switchAdminTab('articles');
+        } else {
+          document.getElementById('admin-auth-screen').classList.remove('hidden');
+          document.getElementById('admin-dashboard-screen').classList.add('hidden');
+        }
+      }
+
+      function closeAdminModal() {
+        const modal = document.getElementById('admin-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+
+      function verifyAdminPin() {
+        const val = document.getElementById('admin-pin-input').value.trim();
+        if (val === settings.pin || val === 'admin123') {
+          sessionStorage.setItem('fz_admin_auth', 'true');
+          document.getElementById('admin-pin-err').classList.add('hidden');
+          document.getElementById('admin-auth-screen').classList.add('hidden');
+          document.getElementById('admin-dashboard-screen').classList.remove('hidden');
+          switchAdminTab('articles');
+        } else {
+          document.getElementById('admin-pin-err').classList.remove('hidden');
+        }
+      }
+
+      function switchAdminTab(tab) {
+        document.querySelectorAll('.admin-tab').forEach(b => {
+          if (b.dataset.tab === tab) {
+            b.className = 'admin-tab py-3 px-3.5 border-b-2 border-stone-900 dark:border-white font-bold';
+          } else {
+            b.className = 'admin-tab py-3 px-3.5 border-b-2 border-transparent text-stone-500';
+          }
+        });
+
+        document.getElementById('admin-tab-articles').classList.toggle('hidden', tab !== 'articles');
+        document.getElementById('admin-tab-new-article').classList.toggle('hidden', tab !== 'new-article');
+        document.getElementById('admin-tab-subscribers').classList.toggle('hidden', tab !== 'subscribers');
+        document.getElementById('admin-tab-settings').classList.toggle('hidden', tab !== 'settings');
+
+        if (tab === 'articles') renderAdminArticles();
+        if (tab === 'subscribers') renderAdminSubscribers();
+      }
+
+      function renderAdminArticles() {
+        const body = document.getElementById('admin-articles-table-body');
+        body.innerHTML = articles.map(a => `
+          <div class="p-3 bg-stone-50 dark:bg-stone-950 rounded-lg flex items-center justify-between border border-stone-200 dark:border-stone-800">
+            <div>
+              <p class="font-bold text-sm">${a.title}</p>
+              <span class="text-[10px] font-mono text-stone-400 uppercase">${a.category} · ${a.publishedAt} · ${a.views || 0} baxış</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="closeAdminModal(); openArticle('${a.id}')" class="px-2 py-1 text-xs border rounded">Bax</button>
+              <button onclick="deleteArticle('${a.id}')" class="px-2 py-1 text-xs text-rose-600 border border-rose-300 rounded">Sil</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function renderAdminSubscribers() {
+        const list = document.getElementById('admin-subscribers-list');
+        list.innerHTML = subscribers.map((s, idx) => `
+          <div class="p-2.5 bg-stone-50 dark:bg-stone-950 rounded border flex justify-between items-center text-xs">
+            <span>${s}</span>
+            <button onclick="deleteSubscriber(${idx})" class="text-rose-500 hover:text-rose-700">Sil</button>
+          </div>
+        `).join('');
+      }
+
+      function saveNewArticle() {
+        const title = document.getElementById('new-art-title').value.trim();
+        const cat = document.getElementById('new-art-cat').value;
+        const excerpt = document.getElementById('new-art-excerpt').value.trim();
+        const content = document.getElementById('new-art-content').value.trim();
+        const img = document.getElementById('new-art-image').value.trim() || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop&q=80';
+        const readTime = parseInt(document.getElementById('new-art-readtime').value) || 5;
+
+        if (!title || !content) {
+          alert('Zəhmət olmasa başlıq və məzmunu daxil edin.');
+          return;
+        }
+
+        const newArt = {
+          id: 'art-' + Date.now(),
+          title,
+          category: cat,
+          excerpt,
+          content,
+          coverImage: img,
+          readTimeMinutes: readTime,
+          author: { name: 'Camal Mənafov', role: 'Müəllif & Redaktor' },
+          publishedAt: new Date().toISOString().split('T')[0],
+          views: 1,
+          likes: 0,
+          tags: [cat],
+          featured: false,
+          trending: true,
+          isPersonalBlog: cat === 'bloq'
+        };
+
+        articles.unshift(newArt);
+        saveArticles();
+        alert('Məqalə uğurla dərc edildi!');
+        switchAdminTab('articles');
+        renderAll();
+      }
+
+      function deleteArticle(id) {
+        if (!confirm('Bu məqaləni silmək istədiyinizdən əminsiniz?')) return;
+        articles = articles.filter(a => a.id !== id);
+        saveArticles();
+        renderAdminArticles();
+        renderAll();
+      }
+
+      function deleteSubscriber(idx) {
+        subscribers.splice(idx, 1);
+        localStorage.setItem('fz_subscribers', JSON.stringify(subscribers));
+        renderAdminSubscribers();
+      }
+
+      function downloadSubscribersCSV() {
+        const csv = 'Email\n' + subscribers.join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'abuneciler.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function saveSettings() {
+        settings.pubId = document.getElementById('setting-pub-id').value.trim();
+        settings.pin = document.getElementById('setting-pin').value.trim() || 'admin123';
+        localStorage.setItem('fz_settings', JSON.stringify(settings));
+        document.getElementById('adsense-pub-display').textContent = 'ID: ' + settings.pubId;
+        alert('Parametrlər yadda saxlanıldı!');
+      }
+
+      function exportDataJSON() {
+        const data = { articles, videos, subscribers, comments, settings };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'fikir-zeka-backup.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function resetDefaults() {
+        if (!confirm('Bütün məlumatları ilkin vəziyyətə qaytarmaq istəyirsiniz?')) return;
+        localStorage.clear();
+        articles = DEFAULT_ARTICLES;
+        videos = DEFAULT_VIDEOS;
+        subscribers = ['oxucu@intellektual.az', 'texno.azerbaycan@gmail.com'];
+        bookmarks = [];
+        likes = [];
+        comments = {};
+        renderAll();
+        switchAdminTab('articles');
+        alert('Məlumatlar sıfırlandı.');
+      }
+
+      function saveArticles() {
+        localStorage.setItem('fz_articles', JSON.stringify(articles));
+      }
+
+      function copyCurrentLink() {
+        navigator.clipboard.writeText(window.location.href);
+        alert('Keçid kopyalandı!');
+      }
+
+      function scrollToId(id) {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      // INITIALIZE ON LOAD
+      initTheme();
+      renderAll();
+    </script>
   </body>
 </html>
