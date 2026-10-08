@@ -280,19 +280,96 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const activeArticle = articles.find((a) => a.id === activeArticleId) || null;
   const activeVideo = videos.find((v) => v.id === activeVideoId) || null;
 
-  const openArticle = (item: Article | string) => {
+  const openArticle = (item: Article | string, updateUrl = true) => {
     const id = typeof item === 'string' ? item : item.id;
-    setActiveArticleId(id);
-    // Increment view count optimistically
+    const found = articles.find((a) => a.id === id || (a.slug && a.slug.toLowerCase() === ('' + id).toLowerCase()));
+    const targetId = found ? found.id : id;
+    setActiveArticleId(targetId);
     setArticles((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, views: a.views + 1 } : a))
+      prev.map((a) => (a.id === targetId ? { ...a, views: a.views + 1 } : a))
     );
+    if (updateUrl && found) {
+      const slugOrId = found.slug || found.id;
+      const targetHash = `#/xeber/${encodeURIComponent(slugOrId)}`;
+      if (window.location.hash !== targetHash) {
+        history.pushState({ articleId: found.id }, '', targetHash);
+      }
+      document.title = `${found.title} — Fikir & Zəka`;
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const closeArticle = () => {
+  const closeArticle = (updateUrl = true) => {
     setActiveArticleId(null);
+    if (updateUrl) {
+      const targetHash = selectedCategory !== 'all' ? `#/bolme/${encodeURIComponent(selectedCategory)}` : '#/';
+      if (window.location.hash !== targetHash) {
+        history.pushState(null, '', targetHash);
+      }
+    }
   };
+
+  const selectCategory = (cat: CategoryType | 'all', updateUrl = true) => {
+    setSelectedCategory(cat);
+    setActiveArticleId(null);
+    if (updateUrl) {
+      const targetHash = cat === 'all' ? '#/' : `#/bolme/${encodeURIComponent(cat)}`;
+      if (window.location.hash !== targetHash) {
+        history.pushState({ category: cat }, '', targetHash);
+      }
+    }
+  };
+
+  // URL Deep Link Listener
+  useEffect(() => {
+    const handleRoute = () => {
+      let hash = window.location.hash || '';
+      if (!hash || hash === '#' || hash === '#/') {
+        const params = new URLSearchParams(window.location.search);
+        const qXeber = params.get('xeber') || params.get('article');
+        const qBolme = params.get('bolme') || params.get('category');
+        if (qXeber) hash = `#/xeber/${encodeURIComponent(qXeber)}`;
+        else if (qBolme) hash = `#/bolme/${encodeURIComponent(qBolme)}`;
+      }
+
+      if (!hash || hash === '#' || hash === '#/' || hash === '#top') {
+        setActiveArticleId(null);
+        setActiveVideoId(null);
+        setIsAdminOpen(false);
+        return;
+      }
+
+      const artMatch = hash.match(/^#\/?(?:xeber|article|post)\/([^/?#]+)/i);
+      if (artMatch) {
+        const slugOrId = decodeURIComponent(artMatch[1]);
+        const found = articles.find((a) => (a.slug && a.slug.toLowerCase() === slugOrId.toLowerCase()) || a.id === slugOrId);
+        if (found) {
+          openArticle(found.id, false);
+          return;
+        }
+      }
+
+      const catMatch = hash.match(/^#\/?(?:bolme|kateqoriya|category)\/([^/?#]+)/i);
+      if (catMatch) {
+        const cat = decodeURIComponent(catMatch[1]) as CategoryType;
+        selectCategory(cat, false);
+        return;
+      }
+
+      if (/^#\/?admin/i.test(hash)) {
+        setIsAdminOpen(true);
+        return;
+      }
+    };
+
+    handleRoute();
+    window.addEventListener('hashchange', handleRoute);
+    window.addEventListener('popstate', handleRoute);
+    return () => {
+      window.removeEventListener('hashchange', handleRoute);
+      window.removeEventListener('popstate', handleRoute);
+    };
+  }, [articles]);
 
   const openVideo = (item: VideoItem | string) => {
     const id = typeof item === 'string' ? item : item.id;
@@ -676,7 +753,7 @@ export const INITIAL_SITE_SETTINGS: SiteSettings = ${JSON.stringify(siteSettings
         setTheme,
         toggleTheme,
         setSearchQuery,
-        setSelectedCategory,
+        setSelectedCategory: selectCategory,
         setIsSearchOpen,
         setIsAdminOpen,
         openArticle,

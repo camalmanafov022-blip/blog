@@ -87,9 +87,16 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
     return `${m} dəq ${s} san qaldı`;
   };
 
+  const getDirectArticleUrl = () => {
+    const slugOrId = article.slug || article.id;
+    const base = window.location.origin + window.location.pathname.replace(/\/index\.html$/i, '/');
+    return `${base}#/xeber/${encodeURIComponent(slugOrId)}`;
+  };
+
   const handleCopyLink = () => {
     try {
-      navigator.clipboard.writeText(window.location.href);
+      const url = getDirectArticleUrl();
+      navigator.clipboard.writeText(url);
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2500);
     } catch {
@@ -98,13 +105,14 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
   };
 
   const handleShareTelegram = () => {
-    const url = encodeURIComponent(window.location.href);
+    const url = encodeURIComponent(getDirectArticleUrl());
     const text = encodeURIComponent(`Oxumağı tövsiyə edirəm: ${article.title}`);
     window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
   };
 
   const handleShareWhatsApp = () => {
-    const text = encodeURIComponent(`${article.title} - ${window.location.href}`);
+    const url = getDirectArticleUrl();
+    const text = encodeURIComponent(`${article.title} - ${url}`);
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
 
@@ -254,12 +262,32 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
 
               <button
                 onClick={handleCopyLink}
-                className="p-2 rounded-lg bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+                className="p-2 rounded-lg bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
                 title="Linki kopyala"
               >
                 {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
               </button>
             </div>
+          </div>
+
+          {/* Direct Article Share URL Box */}
+          <div className="mt-4 p-3.5 rounded-xl bg-amber-500/10 dark:bg-amber-400/10 border border-amber-500/20 dark:border-amber-400/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 overflow-hidden min-w-0 flex-1">
+              <span className="text-xs font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1 shrink-0">
+                <span>🔗</span>
+                <span>Birbaşa Link:</span>
+              </span>
+              <span className="text-[11px] font-mono text-stone-700 dark:text-stone-300 bg-white/80 dark:bg-stone-900/80 px-2.5 py-1 rounded-md border border-stone-200 dark:border-stone-800 truncate select-all">
+                {window.location.origin + window.location.pathname.replace(/\/index\.html$/i, '/') + '#/xeber/' + (article.slug || article.id)}
+              </span>
+            </div>
+            <button
+              onClick={handleCopyLink}
+              className="px-3 py-1.5 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:hover:bg-white text-white dark:text-stone-900 text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 shrink-0 self-end sm:self-auto cursor-pointer shadow-xs"
+            >
+              {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600" /> : <Share2 className="w-3.5 h-3.5" />}
+              <span>{copiedLink ? 'Kopyalandı!' : 'Linki Kopyala'}</span>
+            </button>
           </div>
         </div>
 
