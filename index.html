@@ -10,14 +10,71 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     
-    <!-- Editorial & Modern Fonts -->
+    <!-- Google Fonts: Newsreader, Plus Jakarta Sans, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (Direct CDN support for raw static hosting) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['Newsreader', 'Georgia', 'serif'],
+              sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'monospace'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #faf8f5;
+        color: #1a1c1e;
+      }
+      .dark body, body.dark {
+        background-color: #0c0d0e;
+        color: #e4e6eb;
+      }
+      .font-editorial {
+        font-family: 'Newsreader', serif;
+      }
+      .article-dropcap::first-letter {
+        font-family: 'Newsreader', serif;
+        font-size: 3.5rem;
+        line-height: 0.85;
+        float: left;
+        margin-right: 0.75rem;
+        margin-top: 0.25rem;
+        font-weight: 600;
+        color: #1a1c1e;
+      }
+      .dark .article-dropcap::first-letter {
+        color: #f3f4f6;
+      }
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(140, 140, 140, 0.25);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(140, 140, 140, 0.45);
+      }
+    </style>
   </head>
   <body class="bg-[#faf8f5] dark:bg-[#0c0d0e] text-[#1a1c1e] dark:text-[#e4e6eb] font-sans antialiased transition-colors duration-200">
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>
-

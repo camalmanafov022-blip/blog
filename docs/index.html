@@ -10,15 +10,32 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     
-    <!-- Editorial & Modern Fonts -->
+    <!-- Google Fonts: Newsreader, Plus Jakarta Sans, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="./assets/index-CRQYRvte.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Cd7MkjVu.css">
+    
+    <!-- Tailwind CSS (Direct CDN support for raw static hosting) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['Newsreader', 'Georgia', 'serif'],
+              sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'monospace'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>body{color:#1a1c1e;background-color:#faf8f5;font-family:Plus Jakarta Sans,sans-serif}.dark body,body.dark{color:#e4e6eb;background-color:#0c0d0e}.font-editorial{font-family:Newsreader,serif}.article-dropcap:first-letter{float:left;color:#1a1c1e;margin-top:.25rem;margin-right:.75rem;font-family:Newsreader,serif;font-size:3.5rem;font-weight:600;line-height:.85}.dark .article-dropcap:first-letter{color:#f3f4f6}::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:0 0}::-webkit-scrollbar-thumb{background:#8c8c8c40;border-radius:4px}::-webkit-scrollbar-thumb:hover{background:#8c8c8c73}</style>
+    <script type="module" crossorigin src="./assets/index-DbMp7H2u.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-B7Zsxc27.css">
   </head>
   <body class="bg-[#faf8f5] dark:bg-[#0c0d0e] text-[#1a1c1e] dark:text-[#e4e6eb] font-sans antialiased transition-colors duration-200">
     <div id="root"></div>
   </body>
 </html>
-
