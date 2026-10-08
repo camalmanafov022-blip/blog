@@ -480,61 +480,167 @@
         </div>
 
         <div id="admin-dashboard-screen" class="hidden flex-1 flex flex-col min-h-0">
-          <div class="px-4 bg-gray-100 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2 text-xs font-semibold">
-            <button onclick="switchAdminTab('articles')" class="admin-tab py-3 px-3.5 border-b-2 border-rose-500 text-rose-500 font-bold" data-tab="articles">Məqalələr</button>
-            <button onclick="switchAdminTab('new-article')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500" data-tab="new-article">+ Yeni Məqalə</button>
-            <button onclick="switchAdminTab('subscribers')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500" data-tab="subscribers">Abunəçilər</button>
-            <button onclick="switchAdminTab('settings')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500" data-tab="settings">Google Ads & Parametrlər</button>
+          <div class="px-4 bg-gray-100 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 flex items-center gap-1.5 overflow-x-auto text-xs font-semibold">
+            <button onclick="switchAdminTab('articles')" class="admin-tab py-3 px-3.5 border-b-2 border-rose-500 text-rose-500 font-bold whitespace-nowrap" data-tab="articles">Məqalələr (<span id="admin-tab-art-count">0</span>)</button>
+            <button onclick="switchAdminTab('new-article')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white whitespace-nowrap" data-tab="new-article" id="tab-btn-new-art">+ Yeni Məqalə</button>
+            <button onclick="switchAdminTab('backup')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white whitespace-nowrap flex items-center gap-1 text-emerald-600 dark:text-emerald-400" data-tab="backup">
+              <span>💾 Backup & Bərpa</span>
+            </button>
+            <button onclick="switchAdminTab('subscribers')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white whitespace-nowrap" data-tab="subscribers">Abunəçilər</button>
+            <button onclick="switchAdminTab('settings')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white whitespace-nowrap" data-tab="settings">Google Ads & Ayarlar</button>
           </div>
 
-          <div class="p-6 overflow-y-auto flex-1 text-xs space-y-4">
-            <!-- Articles List -->
+          <div class="p-5 sm:p-6 overflow-y-auto flex-1 text-xs space-y-4">
+            <!-- Tab: Articles List -->
             <div id="admin-tab-articles" class="space-y-3">
-              <div class="flex justify-between items-center mb-2">
-                <span class="font-bold text-sm">Bütün Məqalələr</span>
-                <button onclick="switchAdminTab('new-article')" class="px-3 py-1.5 bg-rose-500 text-white rounded-lg font-bold">+ Yeni Əlavə Et</button>
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+                <div>
+                  <span class="font-bold text-sm text-gray-900 dark:text-white">Bütün Məqalələr</span>
+                  <p class="text-[11px] text-gray-400">Məqalələri redaktə edin, silin və ya ehtiyat nüsxəsini çıxarın.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button onclick="downloadFullBackup()" class="px-3 py-1.5 border border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg font-bold flex items-center gap-1 cursor-pointer">
+                    <span>💾 Tez Backup</span>
+                  </button>
+                  <button onclick="switchAdminTab('new-article')" class="px-3 py-1.5 bg-rose-500 text-white rounded-lg font-bold cursor-pointer">+ Yeni Məqalə</button>
+                </div>
               </div>
               <div id="admin-articles-table-body" class="space-y-2"></div>
             </div>
 
-            <!-- Create Article -->
-            <div id="admin-tab-new-article" class="hidden space-y-3 max-w-xl">
-              <h4 class="font-bold text-sm">Yeni Məqalə Yaz</h4>
-              <input type="text" id="new-art-title" placeholder="Məqalə Başlığı *" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border rounded-xl" />
-              <select id="new-art-cat" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border rounded-xl">
+            <!-- Tab: Create or Edit Article -->
+            <div id="admin-tab-new-article" class="hidden space-y-3 max-w-2xl">
+              <div class="flex items-center justify-between">
+                <h4 id="art-form-title" class="font-bold text-sm text-gray-900 dark:text-white">Yeni Məqalə Yaz</h4>
+                <button type="button" id="btn-cancel-edit" onclick="resetArticleForm()" class="text-rose-500 font-bold hidden cursor-pointer">Ləğv Et</button>
+              </div>
+              <input type="text" id="new-art-title" placeholder="Məqalə Başlığı *" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white" />
+              <select id="new-art-cat" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white">
                 <option value="texnologiya">Texnologiya & AI</option>
                 <option value="sexsi-inkisaf">Şəxsi İnkişaf</option>
                 <option value="mehsuldarliq">Məhsuldarlıq</option>
                 <option value="innovasiya">İnnovasiya</option>
                 <option value="bloq">Şəxsi Bloq</option>
               </select>
-              <textarea id="new-art-excerpt" placeholder="Qısa xülasə *" rows="2" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border rounded-xl"></textarea>
-              <textarea id="new-art-content" placeholder="Məqalə mətni (Abzaslar, ### Başlıqlar, > Sitatlar) *" rows="7" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border rounded-xl"></textarea>
-              <input type="text" id="new-art-image" placeholder="Şəkil URL" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border rounded-xl" />
-              <button onclick="saveNewArticle()" class="px-5 py-2.5 bg-rose-500 text-white font-bold rounded-xl cursor-pointer">Dərc Et</button>
+              <textarea id="new-art-excerpt" placeholder="Qısa xülasə *" rows="2" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white"></textarea>
+              <textarea id="new-art-content" placeholder="Məqalə mətni (Abzaslar, ### Başlıqlar, > Sitatlar) *" rows="7" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white font-sans"></textarea>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input type="text" id="new-art-image" placeholder="Şəkil URL (Unsplash və ya birbaşa keçid)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white" />
+                <input type="number" id="new-art-readtime" placeholder="Oxu vaxtı (dəq)" value="5" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white" />
+              </div>
+              <div class="flex items-center justify-end gap-2 pt-2">
+                <button onclick="saveNewArticle()" id="btn-save-article" class="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl cursor-pointer">Dərc Et</button>
+              </div>
             </div>
 
-            <!-- Subscribers -->
+            <!-- Tab: DEDICATED BACKUP & RESTORE HUB (User-requested feature) -->
+            <div id="admin-tab-backup" class="hidden space-y-6 max-w-2xl">
+              <!-- Header info card -->
+              <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200">
+                <div class="flex items-center gap-2 font-bold text-sm mb-1">
+                  <span>💾</span>
+                  <span>Məlumatların Təhlükəsizlik və Ehtiyat Nüsxə Sistemi</span>
+                </div>
+                <p class="text-xs leading-relaxed text-emerald-800 dark:text-emerald-300">
+                  Saytınızı başqa hostinqə köçürəndə, yenidən yükləyəndə və ya hər hansı xəta olduqda, bütün əlavə etdiyiniz xəbərləri, videoları və abunəçiləri tək kliklə fayl olaraq yükləyib kompüterinizdə saxlaya və istədiyiniz vaxt yenidən bərpa edə bilərsiniz.
+                </p>
+                <div class="mt-3 pt-2 border-t border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-[11px] font-mono">
+                  <span>Hazırkı Baza: <b id="backup-stat-articles">0</b> məqalə, <b id="backup-stat-videos">0</b> video, <b id="backup-stat-subs">0</b> abunəçi</span>
+                </div>
+              </div>
+
+              <!-- Action 1: Download Full Backup -->
+              <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 space-y-2">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h5 class="font-bold text-xs text-gray-900 dark:text-white">1. Ən Güncəl Backup Faylını Yüklə</h5>
+                    <p class="text-[11px] text-gray-400">Bütün xəbərləri, videoları və parametrləri <code class="font-mono text-rose-500">.json</code> faylı olaraq saxlayın.</p>
+                  </div>
+                  <button onclick="downloadFullBackup()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold flex items-center gap-1.5 cursor-pointer shrink-0">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.5V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                    <span>Backup Yüklə (JSON)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Action 2: Restore from Backup File -->
+              <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 space-y-3">
+                <div>
+                  <h5 class="font-bold text-xs text-gray-900 dark:text-white">2. Ehtiyat Nüsxədən (Backup Faylından) Geri Yüklə</h5>
+                  <p class="text-[11px] text-gray-400">Daha əvvəl kompüterinizə yüklədiyiniz <code class="font-mono">.json</code> backup faylını seçin:</p>
+                </div>
+
+                <div class="border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-emerald-500 dark:hover:border-emerald-500 rounded-xl p-4 text-center cursor-pointer relative bg-gray-50/50 dark:bg-gray-950/40 transition-colors">
+                  <input type="file" id="backup-file-input" accept=".json" onchange="handleBackupFileSelect(event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                  <div class="flex flex-col items-center gap-1 pointer-events-none">
+                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.5V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/></svg>
+                    <span class="font-bold text-xs text-gray-800 dark:text-gray-200">Faylı bura sürükləyin və ya klikləyib seçin</span>
+                    <span class="text-[10px] text-gray-400 font-mono">Dəstəklənən format: .json</span>
+                  </div>
+                </div>
+
+                <!-- Preview of selected file before applying -->
+                <div id="backup-file-preview" class="hidden p-3 bg-gray-50 dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 space-y-2">
+                  <div class="flex items-center justify-between text-xs font-bold text-gray-900 dark:text-white">
+                    <span id="backup-file-name" class="font-mono text-emerald-500"></span>
+                    <span id="backup-file-date" class="text-gray-400 text-[10px]"></span>
+                  </div>
+                  <p id="backup-file-summary" class="text-xs text-gray-600 dark:text-gray-300"></p>
+                  
+                  <div class="flex items-center gap-2 pt-2 border-t border-gray-200 dark:border-gray-800">
+                    <button onclick="applyRestore('replace')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg cursor-pointer">
+                      Tam Bərpa Et (Əvəzlə)
+                    </button>
+                    <button onclick="applyRestore('merge')" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-lg cursor-pointer">
+                      Mövcud Xəbərlərlə Birləşdir
+                    </button>
+                    <button onclick="cancelRestore()" class="px-3 py-2 text-gray-400 hover:text-gray-200 cursor-pointer">
+                      Ləğv Et
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action 3: Local Auto-Snapshots in Browser -->
+              <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 space-y-2">
+                <div class="flex items-center justify-between">
+                  <h5 class="font-bold text-xs text-gray-900 dark:text-white">3. Brauzer Daxili Avtomatik Ehtiyat Nüsxələr</h5>
+                  <button onclick="takeManualSnapshot()" class="text-[11px] font-bold text-rose-500 hover:underline cursor-pointer">+ İndi Nüsxə Yarat</button>
+                </div>
+                <p class="text-[11px] text-gray-400">Sayt hər yeni xəbər əlavə edildikdə avtomatik lokal nüsxə saxlayır.</p>
+                <div id="local-snapshots-list" class="space-y-1.5 font-mono text-[11px]"></div>
+              </div>
+            </div>
+
+            <!-- Tab: Subscribers -->
             <div id="admin-tab-subscribers" class="hidden space-y-3">
               <div class="flex justify-between items-center mb-2">
-                <span class="font-bold text-sm">Abunəçilər</span>
-                <button onclick="downloadSubscribersCSV()" class="px-3 py-1.5 border rounded-lg font-mono">CSV Yüklə</button>
+                <div>
+                  <span class="font-bold text-sm text-gray-900 dark:text-white">Abunəçilər Siyahısı</span>
+                  <p class="text-[11px] text-gray-400">Saytın bülleteninə üzv olan oxucuların e-poçt ünvanları.</p>
+                </div>
+                <button onclick="downloadSubscribersCSV()" class="px-3 py-1.5 border border-gray-200 dark:border-gray-800 rounded-lg font-mono hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">CSV Yüklə</button>
               </div>
               <div id="admin-subscribers-list" class="space-y-1.5 font-mono"></div>
             </div>
 
-            <!-- Settings -->
+            <!-- Tab: Settings -->
             <div id="admin-tab-settings" class="hidden space-y-4 max-w-lg">
-              <h4 class="font-bold text-sm">Google Ads Publisher Parametrləri</h4>
+              <h4 class="font-bold text-sm text-gray-900 dark:text-white">Google Ads Publisher & Sayt Parametrləri</h4>
               <div>
                 <label class="block text-gray-500 font-mono mb-1">Google AdSense Publisher ID</label>
-                <input type="text" id="setting-pub-id" value="ca-pub-9847291847192841" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border rounded-xl font-mono" />
+                <input type="text" id="setting-pub-id" value="ca-pub-9847291847192841" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl font-mono text-gray-900 dark:text-white" />
               </div>
               <div>
-                <label class="block text-gray-500 font-mono mb-1">Admin PIN</label>
-                <input type="text" id="setting-pin" value="admin123" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border rounded-xl font-mono" />
+                <label class="block text-gray-500 font-mono mb-1">Admin Giriş PIN Kodu</label>
+                <input type="text" id="setting-pin" value="admin123" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl font-mono text-gray-900 dark:text-white" />
               </div>
-              <button onclick="saveSettings()" class="px-4 py-2 bg-rose-500 text-white font-bold rounded-xl cursor-pointer">Yadda Saxla</button>
+              <button onclick="saveSettings()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl cursor-pointer">Yadda Saxla</button>
+
+              <div class="pt-4 border-t border-gray-200 dark:border-gray-800">
+                <span class="font-bold text-rose-500 block mb-1">Təhlükəli Zona</span>
+                <button onclick="resetDefaults()" class="px-3 py-1.5 border border-rose-300 dark:border-rose-900 text-rose-500 rounded-lg text-xs cursor-pointer hover:bg-rose-50 dark:hover:bg-rose-950/40">Bütün Məlumatları Sıfırla (İlkin Vəziyyətə Qaytar)</button>
+              </div>
             </div>
           </div>
         </div>
@@ -1069,47 +1175,104 @@
         }
       }
 
+      let editingArticleId = null;
+      let selectedBackupData = null;
+      let localSnapshots = JSON.parse(localStorage.getItem('newsfy_snapshots')) || [];
+
       function switchAdminTab(tab) {
         document.querySelectorAll('.admin-tab').forEach(b => {
           if (b.dataset.tab === tab) {
-            b.className = 'admin-tab py-3 px-3.5 border-b-2 border-rose-500 text-rose-500 font-bold';
+            b.className = 'admin-tab py-3 px-3.5 border-b-2 border-rose-500 text-rose-500 font-bold whitespace-nowrap';
           } else {
-            b.className = 'admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500';
+            b.className = 'admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white whitespace-nowrap';
           }
         });
 
         document.getElementById('admin-tab-articles').classList.toggle('hidden', tab !== 'articles');
         document.getElementById('admin-tab-new-article').classList.toggle('hidden', tab !== 'new-article');
+        document.getElementById('admin-tab-backup').classList.toggle('hidden', tab !== 'backup');
         document.getElementById('admin-tab-subscribers').classList.toggle('hidden', tab !== 'subscribers');
         document.getElementById('admin-tab-settings').classList.toggle('hidden', tab !== 'settings');
 
+        updateAdminCounts();
         if (tab === 'articles') renderAdminArticles();
+        if (tab === 'backup') renderBackupHub();
         if (tab === 'subscribers') renderAdminSubscribers();
+      }
+
+      function updateAdminCounts() {
+        const countBadge = document.getElementById('admin-tab-art-count');
+        if (countBadge) countBadge.textContent = articles.length;
+        const bArt = document.getElementById('backup-stat-articles');
+        if (bArt) bArt.textContent = articles.length;
+        const bVid = document.getElementById('backup-stat-videos');
+        if (bVid) bVid.textContent = videos.length;
+        const bSub = document.getElementById('backup-stat-subs');
+        if (bSub) bSub.textContent = subscribers.length;
       }
 
       function renderAdminArticles() {
         const body = document.getElementById('admin-articles-table-body');
+        updateAdminCounts();
+        if (articles.length === 0) {
+          body.innerHTML = '<div class="p-4 text-center text-gray-400 bg-gray-50 dark:bg-gray-950 rounded-xl">Hələ məqalə yoxdur. Yeni məqalə əlavə edin və ya backup faylını bərpa edin.</div>';
+          return;
+        }
         body.innerHTML = articles.map(a => `
-          <div class="p-3 bg-gray-50 dark:bg-gray-950 rounded-xl flex items-center justify-between border border-gray-100 dark:border-gray-800">
-            <div>
-              <p class="font-bold text-xs">${a.title}</p>
-              <span class="text-[10px] text-gray-400 uppercase font-mono">${a.category} · ${a.publishedAt}</span>
+          <div class="p-3 bg-gray-50 dark:bg-gray-950 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors">
+            <div class="min-w-0 pr-2">
+              <p class="font-bold text-xs text-gray-900 dark:text-white truncate">${a.title}</p>
+              <div class="flex items-center gap-2 text-[10px] text-gray-400 uppercase font-mono mt-0.5">
+                <span class="text-rose-500 font-bold">${a.category}</span>
+                <span>·</span>
+                <span>${a.publishedAt}</span>
+                <span>·</span>
+                <span>${a.views || 0} baxış</span>
+                <span>·</span>
+                <span>${a.likes || 0} like</span>
+              </div>
             </div>
-            <div class="flex items-center gap-2">
-              <button onclick="closeAdminModal(); openArticle('${a.id}')" class="px-2 py-1 text-xs border rounded-lg">Bax</button>
-              <button onclick="deleteArticle('${a.id}')" class="px-2 py-1 text-xs text-rose-600 border border-rose-300 rounded-lg">Sil</button>
+            <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+              <button onclick="closeAdminModal(); openArticle('${a.id}')" class="px-2 py-1 text-[11px] border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer">Bax</button>
+              <button onclick="editArticle('${a.id}')" class="px-2 py-1 text-[11px] bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg font-bold hover:bg-blue-100 cursor-pointer">Redaktə</button>
+              <button onclick="exportSingleArticle('${a.id}')" class="px-2 py-1 text-[11px] border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg font-mono cursor-pointer" title="JSON Yüklə">💾</button>
+              <button onclick="deleteArticle('${a.id}')" class="px-2 py-1 text-[11px] text-rose-600 border border-rose-200 dark:border-rose-900 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer">Sil</button>
             </div>
           </div>
         `).join('');
       }
 
-      function renderAdminSubscribers() {
-        document.getElementById('admin-subscribers-list').innerHTML = subscribers.map((s, idx) => `
-          <div class="p-2 bg-gray-50 dark:bg-gray-950 rounded-lg border flex justify-between items-center text-xs">
-            <span>${s}</span>
-            <button onclick="deleteSubscriber(${idx})" class="text-rose-500">Sil</button>
-          </div>
-        `).join('');
+      function editArticle(id) {
+        const art = articles.find(a => a.id === id);
+        if (!art) return;
+        editingArticleId = id;
+
+        document.getElementById('new-art-title').value = art.title || '';
+        document.getElementById('new-art-cat').value = art.category || 'texnologiya';
+        document.getElementById('new-art-excerpt').value = art.excerpt || '';
+        document.getElementById('new-art-content').value = art.content || '';
+        document.getElementById('new-art-image').value = art.coverImage || '';
+        document.getElementById('new-art-readtime').value = art.readTimeMinutes || 5;
+
+        document.getElementById('art-form-title').textContent = 'Məqaləni Redaktə Et: ' + art.title;
+        document.getElementById('btn-save-article').textContent = 'Yenilə və Yadda Saxla';
+        document.getElementById('btn-cancel-edit').classList.remove('hidden');
+
+        switchAdminTab('new-article');
+      }
+
+      function resetArticleForm() {
+        editingArticleId = null;
+        document.getElementById('new-art-title').value = '';
+        document.getElementById('new-art-cat').value = 'texnologiya';
+        document.getElementById('new-art-excerpt').value = '';
+        document.getElementById('new-art-content').value = '';
+        document.getElementById('new-art-image').value = '';
+        document.getElementById('new-art-readtime').value = '5';
+
+        document.getElementById('art-form-title').textContent = 'Yeni Məqalə Yaz';
+        document.getElementById('btn-save-article').textContent = 'Dərc Et';
+        document.getElementById('btn-cancel-edit').classList.add('hidden');
       }
 
       function saveNewArticle() {
@@ -1118,38 +1281,287 @@
         const excerpt = document.getElementById('new-art-excerpt').value.trim();
         const content = document.getElementById('new-art-content').value.trim();
         const img = document.getElementById('new-art-image').value.trim() || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80';
+        const readTime = parseInt(document.getElementById('new-art-readtime').value) || 5;
 
         if (!title || !content) {
-          alert('Başlıq və məzmun mütləqdir.');
+          alert('Başlıq və məzmun mütləq daxil edilməlidir.');
           return;
         }
 
-        articles.unshift({
-          id: 'art-' + Date.now(),
-          title,
-          category: cat,
-          excerpt,
-          content,
-          coverImage: img,
-          readTimeMinutes: 5,
-          author: { name: 'Camal Mənafov', role: 'Baş Redaktor' },
-          publishedAt: 'İyun 30, 2026',
-          views: 1,
-          likes: 0
-        });
+        if (editingArticleId) {
+          // Update existing
+          const art = articles.find(a => a.id === editingArticleId);
+          if (art) {
+            art.title = title;
+            art.category = cat;
+            art.excerpt = excerpt;
+            art.content = content;
+            art.coverImage = img;
+            art.readTimeMinutes = readTime;
+          }
+          createAutoSnapshot('Məqalə yeniləndi: ' + title);
+          alert('Məqalə uğurla yeniləndi!');
+        } else {
+          // Create new
+          const newArt = {
+            id: 'art-' + Date.now(),
+            title,
+            category: cat,
+            excerpt,
+            content,
+            coverImage: img,
+            readTimeMinutes: readTime,
+            author: { name: 'Camal Mənafov', role: 'Baş Redaktor' },
+            publishedAt: new Date().toLocaleDateString('az-AZ', { day: 'numeric', month: 'long', year: 'numeric' }),
+            views: 1,
+            likes: 0,
+            tags: [cat]
+          };
+          articles.unshift(newArt);
+          createAutoSnapshot('Yeni məqalə əlavə edildi: ' + title);
+          alert('Yeni məqalə uğurla dərc edildi!');
+        }
 
         saveArticles();
-        alert('Məqalə dərc edildi!');
+        resetArticleForm();
         switchAdminTab('articles');
         renderAll();
       }
 
       function deleteArticle(id) {
-        if (!confirm('Silinsin?')) return;
+        const art = articles.find(a => a.id === id);
+        if (!confirm(`"${art ? art.title : 'Bu məqalə'}" silinsin?`)) return;
+        createAutoSnapshot('Məqalə silindi: ' + (art ? art.title : id));
         articles = articles.filter(a => a.id !== id);
         saveArticles();
         renderAdminArticles();
         renderAll();
+      }
+
+      // ================= BACKUP & RESTORE SYSTEM =================
+      function renderBackupHub() {
+        updateAdminCounts();
+        renderLocalSnapshots();
+      }
+
+      function downloadFullBackup() {
+        const now = new Date();
+        const timestamp = now.toISOString().replace(/[:.]/g, '-');
+        const formattedDate = now.toLocaleDateString('az-AZ') + ' ' + now.toLocaleTimeString('az-AZ');
+
+        const backupData = {
+          meta: {
+            title: "Newsfy Fikir & Zəka Portalı Tam Ehtiyat Nüsxəsi",
+            version: "2.0",
+            exportDate: formattedDate,
+            timestamp: now.toISOString(),
+            totalArticles: articles.length,
+            totalVideos: videos.length,
+            totalSubscribers: subscribers.length
+          },
+          articles: articles,
+          videos: videos,
+          subscribers: subscribers,
+          likes: likes,
+          bookmarks: bookmarks,
+          settings: settings
+        };
+
+        const jsonStr = JSON.stringify(backupData, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const filename = `newsfy_tam_backup_${now.toISOString().split('T')[0]}_${now.getHours()}-${now.getMinutes()}.json`;
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        if (window.confetti) window.confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+        alert(`Bütün məlumatlar (${articles.length} məqalə, ${videos.length} video, ${subscribers.length} abunəçi) "${filename}" adlı fayla uğurla yazıldı və kompüterinizə yükləndi!`);
+      }
+
+      function exportSingleArticle(id) {
+        const art = articles.find(a => a.id === id);
+        if (!art) return;
+        const blob = new Blob([JSON.stringify(art, null, 2)], { type: 'application/json;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `meqale_${art.id}.json`;
+        a.click();
+      }
+
+      function handleBackupFileSelect(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const data = JSON.parse(e.target.result);
+            // Verify structure
+            let arts = [];
+            let vids = [];
+            let subs = [];
+
+            if (Array.isArray(data)) {
+              arts = data;
+            } else if (data.articles && Array.isArray(data.articles)) {
+              arts = data.articles;
+              vids = data.videos || [];
+              subs = data.subscribers || [];
+            } else {
+              alert('Xəta: Seçilən JSON faylında məqalə strukturu tapılmadı.');
+              return;
+            }
+
+            selectedBackupData = {
+              articles: arts,
+              videos: vids,
+              subscribers: subs,
+              settings: data.settings || settings,
+              metaDate: (data.meta && data.meta.exportDate) || file.lastModifiedDate || 'Tarix qeyd edilməyib'
+            };
+
+            // Show preview box
+            document.getElementById('backup-file-name').textContent = '📄 ' + file.name;
+            document.getElementById('backup-file-date').textContent = 'Yaradılma: ' + selectedBackupData.metaDate;
+            document.getElementById('backup-file-summary').innerHTML = `
+              Fayl uğurla oxundu! Aşkar olunan məlumatlar:<br>
+              • <b>${arts.length}</b> ədəd məqalə<br>
+              • <b>${vids.length}</b> ədəd video təhlil<br>
+              • <b>${subs.length}</b> ədəd e-poçt abunəçisi
+            `;
+            document.getElementById('backup-file-preview').classList.remove('hidden');
+
+          } catch (err) {
+            alert('Fayl oxunarkən xəta baş verdi: JSON formatı zədələnib və ya düzgün deyil.');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      function applyRestore(mode) {
+        if (!selectedBackupData || !selectedBackupData.articles) {
+          alert('Bərpa ediləcək fayl tapılmadı.');
+          return;
+        }
+
+        // Create safety snapshot before altering
+        createAutoSnapshot('Bərpadan əvvəlki son vəziyyət');
+
+        if (mode === 'replace') {
+          // Clean replace
+          articles = selectedBackupData.articles;
+          if (selectedBackupData.videos && selectedBackupData.videos.length > 0) {
+            videos = selectedBackupData.videos;
+          }
+          if (selectedBackupData.subscribers && selectedBackupData.subscribers.length > 0) {
+            subscribers = selectedBackupData.subscribers;
+          }
+          if (selectedBackupData.settings) {
+            settings = selectedBackupData.settings;
+          }
+          alert(`Tam bərpa uğurla başa çatdı! Bütün sayt bazası yeniləndi (${articles.length} məqalə bərpa olundu).`);
+        } else if (mode === 'merge') {
+          // Merge avoiding duplicates by id or title
+          let addedCount = 0;
+          selectedBackupData.articles.forEach(incomingArt => {
+            const exists = articles.some(existing => existing.id === incomingArt.id || existing.title.toLowerCase().trim() === incomingArt.title.toLowerCase().trim());
+            if (!exists) {
+              articles.push(incomingArt);
+              addedCount++;
+            }
+          });
+
+          if (selectedBackupData.subscribers) {
+            selectedBackupData.subscribers.forEach(s => {
+              if (!subscribers.includes(s)) subscribers.push(s);
+            });
+          }
+
+          alert(`Birləşdirmə uğurla başa çatdı! Bazaya ${addedCount} yeni məqalə əlavə edildi (Cəmi məqalə: ${articles.length}).`);
+        }
+
+        saveArticles();
+        localStorage.setItem('newsfy_videos', JSON.stringify(videos));
+        localStorage.setItem('newsfy_subscribers', JSON.stringify(subscribers));
+        localStorage.setItem('newsfy_settings', JSON.stringify(settings));
+
+        cancelRestore();
+        renderBackupHub();
+        renderAll();
+        if (window.confetti) window.confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
+      }
+
+      function cancelRestore() {
+        selectedBackupData = null;
+        document.getElementById('backup-file-preview').classList.add('hidden');
+        document.getElementById('backup-file-input').value = '';
+      }
+
+      // LOCAL AUTO-SNAPSHOTS
+      function createAutoSnapshot(reason) {
+        const snap = {
+          id: 'snap-' + Date.now(),
+          time: new Date().toLocaleDateString('az-AZ') + ' ' + new Date().toLocaleTimeString('az-AZ'),
+          reason: reason || 'Avtomatik Nüsxə',
+          artCount: articles.length,
+          data: JSON.parse(JSON.stringify(articles))
+        };
+        localSnapshots.unshift(snap);
+        if (localSnapshots.length > 5) localSnapshots = localSnapshots.slice(0, 5);
+        localStorage.setItem('newsfy_snapshots', JSON.stringify(localSnapshots));
+      }
+
+      function takeManualSnapshot() {
+        createAutoSnapshot('Müəllifin manual nüsxəsi');
+        renderLocalSnapshots();
+        alert('Yeni lokal ehtiyat nüsxə brauzer yaddaşına yazıldı!');
+      }
+
+      function renderLocalSnapshots() {
+        const list = document.getElementById('local-snapshots-list');
+        if (!list) return;
+        if (localSnapshots.length === 0) {
+          list.innerHTML = '<div class="text-gray-400 py-1 italic">Hələlik lokal nüsxə saxlanmayıb.</div>';
+          return;
+        }
+        list.innerHTML = localSnapshots.map((s, idx) => `
+          <div class="p-2 bg-gray-50 dark:bg-gray-950 rounded-lg border border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <div>
+              <span class="text-gray-900 dark:text-white font-bold">${s.reason}</span>
+              <span class="text-gray-400 block text-[10px]">${s.time} · ${s.artCount} məqalə</span>
+            </div>
+            <button onclick="restoreLocalSnapshot('${s.id}')" class="px-2 py-1 bg-gray-200 dark:bg-gray-800 hover:bg-emerald-600 hover:text-white rounded text-[10px] font-bold transition-colors cursor-pointer">
+              Geri Qaytar
+            </button>
+          </div>
+        `).join('');
+      }
+
+      function restoreLocalSnapshot(id) {
+        const snap = localSnapshots.find(s => s.id === id);
+        if (!snap) return;
+        if (!confirm(`"${snap.reason}" tarixli nüsxəyə qayıtmaq istəyirsiniz? Hazırkı məqalələr ${snap.artCount} ədəd olacaq.`)) return;
+
+        createAutoSnapshot('Bərpadan əvvəlki son vəziyyət');
+        articles = JSON.parse(JSON.stringify(snap.data));
+        saveArticles();
+        renderAll();
+        renderBackupHub();
+        alert('Lokal ehtiyat nüsxə uğurla bərpa edildi!');
+      }
+
+      function renderAdminSubscribers() {
+        document.getElementById('admin-subscribers-list').innerHTML = subscribers.map((s, idx) => `
+          <div class="p-2 bg-gray-50 dark:bg-gray-950 rounded-lg border flex justify-between items-center text-xs">
+            <span>${s}</span>
+            <button onclick="deleteSubscriber(${idx})" class="text-rose-500 hover:text-rose-700">Sil</button>
+          </div>
+        `).join('');
       }
 
       function deleteSubscriber(idx) {
@@ -1172,7 +1584,22 @@
         settings.pin = document.getElementById('setting-pin').value.trim() || 'admin123';
         localStorage.setItem('newsfy_settings', JSON.stringify(settings));
         document.getElementById('adsense-pub-display').textContent = 'ID: ' + settings.pubId;
-        alert('Yadda saxlandı!');
+        alert('Parametrlər yadda saxlandı!');
+      }
+
+      function resetDefaults() {
+        if (!confirm('Bütün məlumatları ilkin vəziyyətə qaytarmaq istəyirsiniz? Əgər backup faylınız varsa, istənilən vaxt geri yükləyə bilərsiniz.')) return;
+        createAutoSnapshot('Sıfırlamadan əvvəlki ehtiyat nüsxə');
+        localStorage.clear();
+        articles = DEFAULT_ARTICLES;
+        videos = DEFAULT_VIDEOS;
+        subscribers = ['camal@intellektual.az', 'oxucu@newsfy.az'];
+        bookmarks = [];
+        likes = [];
+        settings = { pubId: 'ca-pub-9847291847192841', pin: 'admin123' };
+        renderAll();
+        switchAdminTab('articles');
+        alert('Məlumatlar sıfırlandı.');
       }
 
       function saveArticles() {

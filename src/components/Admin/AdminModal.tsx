@@ -4,6 +4,7 @@ import { Article, VideoItem } from '../../types';
 import { ArticleEditor } from './ArticleEditor';
 import { VideoEditor } from './VideoEditor';
 import { GitHubDeployGuide } from './GitHubDeployGuide';
+import { BackupManager } from './BackupManager';
 import {
   Shield,
   X,
@@ -24,6 +25,7 @@ import {
   Search,
   CheckCircle,
   Eye,
+  Database,
 } from 'lucide-react';
 
 export const AdminModal: React.FC = () => {
@@ -53,7 +55,7 @@ export const AdminModal: React.FC = () => {
     openArticle,
   } = useBlog();
 
-  const [activeTab, setActiveTab] = useState<'articles' | 'videos' | 'subscribers' | 'ads' | 'settings' | 'github'>('articles');
+  const [activeTab, setActiveTab] = useState<'articles' | 'videos' | 'subscribers' | 'ads' | 'backup' | 'settings' | 'github'>('articles');
   const [pinInput, setPinInput] = useState('');
   const [pinError, setPinError] = useState(false);
 
@@ -160,14 +162,24 @@ export const AdminModal: React.FC = () => {
 
           <div className="flex items-center gap-2">
             {isAdminAuthenticated && (
-              <button
-                onClick={logoutAdmin}
-                className="px-3 py-1.5 text-xs font-mono bg-stone-800 hover:bg-stone-700 text-stone-300 rounded-lg transition-colors flex items-center gap-1.5"
-                title="Çıxış"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Çıxış</span>
-              </button>
+              <>
+                <button
+                  onClick={exportDataJSON}
+                  className="px-3 py-1.5 text-xs font-mono bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  title="Bütün məlumatların ən güncəl JSON backup-unu kompüterə yüklə"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline font-semibold">Backup Yüklə</span>
+                </button>
+                <button
+                  onClick={logoutAdmin}
+                  className="px-3 py-1.5 text-xs font-mono bg-stone-800 hover:bg-stone-700 text-stone-300 rounded-lg transition-colors flex items-center gap-1.5"
+                  title="Çıxış"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Çıxış</span>
+                </button>
+              </>
             )}
             <button
               onClick={() => setIsAdminOpen(false)}
@@ -281,6 +293,18 @@ export const AdminModal: React.FC = () => {
               </button>
 
               <button
+                onClick={() => setActiveTab('backup')}
+                className={`py-3 px-3.5 border-b-2 transition-colors flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                  activeTab === 'backup'
+                    ? 'border-amber-500 text-amber-600 dark:text-amber-400 font-bold'
+                    : 'border-transparent text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                }`}
+              >
+                <Database className="w-4 h-4 text-amber-500" />
+                <span>Backup & Bərpa</span>
+              </button>
+
+              <button
                 onClick={() => setActiveTab('settings')}
                 className={`py-3 px-3.5 border-b-2 transition-colors flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                   activeTab === 'settings'
@@ -289,7 +313,7 @@ export const AdminModal: React.FC = () => {
                 }`}
               >
                 <Settings className="w-4 h-4" />
-                <span>Ayarlar & Bərpa</span>
+                <span>Ayarlar</span>
               </button>
 
               <button
@@ -311,20 +335,30 @@ export const AdminModal: React.FC = () => {
               {/* TAB 1: ARTICLES */}
               {activeTab === 'articles' && (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                       <h3 className="font-editorial text-xl font-bold text-stone-900 dark:text-stone-100">
                         Bütün Məqalələrin İdarə Edilməsi
                       </h3>
                       <p className="text-xs text-stone-500">Məqalə əlavə edin, redaktə edin və ya silin.</p>
                     </div>
-                    <button
-                      onClick={() => setEditingArticle('new')}
-                      className="px-4 py-2 bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 text-xs font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <Plus className="w-4 h-4" />
-                      <span>Yeni Məqalə Əlavə Et</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={exportDataJSON}
+                        className="px-3 py-2 bg-stone-100 hover:bg-stone-200 dark:bg-stone-850 dark:hover:bg-stone-800 text-stone-800 dark:text-stone-200 text-xs font-mono font-medium rounded-lg border border-stone-300 dark:border-stone-700 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                        title="Ən son əlavə etdiyiniz xəbərlərlə birgə dərhal backup faylını endirin"
+                      >
+                        <Download className="w-3.5 h-3.5 text-amber-500" />
+                        <span className="hidden sm:inline">Backup Yüklə</span>
+                      </button>
+                      <button
+                        onClick={() => setEditingArticle('new')}
+                        className="px-4 py-2 bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 text-xs font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center gap-1.5 cursor-pointer shadow-xs"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Yeni Məqalə Əlavə Et</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="border border-stone-200 dark:border-stone-800 rounded-xl overflow-hidden">
@@ -592,14 +626,17 @@ export const AdminModal: React.FC = () => {
                 </div>
               )}
 
-              {/* TAB 5: SETTINGS & BACKUP */}
+              {/* TAB 5: BACKUP & RESTORE */}
+              {activeTab === 'backup' && <BackupManager />}
+
+              {/* TAB 6: SETTINGS */}
               {activeTab === 'settings' && (
                 <div className="space-y-6 max-w-2xl">
                   <div>
                     <h3 className="font-editorial text-xl font-bold text-stone-900 dark:text-stone-100">
-                      Sayt Başlığı, Təhlükəsizlik və Məlumatların İxracı/İdxalı
+                      Sayt Başlığı, Təhlükəsizlik və Parametrlər
                     </h3>
-                    <p className="text-xs text-stone-500">Məlumat bazasını qoruyun və tənzimləyin.</p>
+                    <p className="text-xs text-stone-500">Saytın adını, şüarını və admin PIN kodunu tənzimləyin.</p>
                   </div>
 
                   <form onSubmit={handleSaveSettings} className="space-y-4">

@@ -1,5 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Article, VideoItem, Subscriber, AdSettings, SiteSettings, CategoryType, Comment } from '../types';
+import {
+  Article,
+  VideoItem,
+  Subscriber,
+  AdSettings,
+  SiteSettings,
+  CategoryType,
+  Comment,
+  BackupSnapshot,
+  BackupPackage,
+} from '../types';
 import {
   INITIAL_ARTICLES,
   INITIAL_VIDEOS,
@@ -46,7 +56,7 @@ interface BlogContextType {
   subscribeNewsletter: (email: string, frequency?: 'weekly' | 'breaking' | 'all') => { success: boolean; message: string };
   deleteSubscriber: (id: string) => void;
   
-  // Admin CMS
+  // Admin CMS & Data Backup
   authenticateAdmin: (pin: string) => boolean;
   logoutAdmin: () => void;
   addArticle: (article: Omit<Article, 'id' | 'views' | 'likes' | 'publishedAt'>) => void;
@@ -58,8 +68,17 @@ interface BlogContextType {
   updateAdSettings: (updates: Partial<AdSettings>) => void;
   updateSiteSettings: (updates: Partial<SiteSettings>) => void;
   resetToDefaults: () => void;
+  
+  // Enhanced Backup & Restore
   exportDataJSON: () => void;
-  importDataJSON: (jsonStr: string) => boolean;
+  exportArticlesOnlyJSON: () => void;
+  exportInitialDataTsCode: () => string;
+  exportArticlesCSV: () => void;
+  importDataJSON: (jsonStr: string, mode?: 'replace' | 'merge') => { success: boolean; message: string; count?: number };
+  snapshots: BackupSnapshot[];
+  createSnapshot: (note?: string) => void;
+  restoreSnapshot: (id: string) => boolean;
+  deleteSnapshot: (id: string) => void;
 }
 
 const BlogContext = createContext<BlogContextType | undefined>(undefined);
@@ -75,6 +94,7 @@ const STORAGE_KEYS = {
   LIKES: 'intellektual_likes_v1',
   THEME: 'intellektual_theme_v1',
   ADMIN_AUTH: 'intellektual_admin_auth_v1',
+  SNAPSHOTS: 'intellektual_snapshots_v1',
 };
 
 export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -235,6 +255,20 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem(STORAGE_KEYS.LIKES, JSON.stringify(likedArticles));
   }, [likedArticles]);
 
+  // Snapshots state
+  const [snapshots, setSnapshots] = useState<BackupSnapshot[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.SNAPSHOTS);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.SNAPSHOTS, JSON.stringify(snapshots));
+  }, [snapshots]);
+
   const setTheme = (newTheme: 'light' | 'dark') => {
     setThemeState(newTheme);
   };
@@ -366,6 +400,48 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
     sessionStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
   };
 
+  const createSnapshot = (note: string = 'Avtomatik Nüsxə') => {
+    const backupPkg: BackupPackage = {
+      format: 'fikir-zeka-cms-backup',
+      version: '2.0',
+      exportedAt: new Date().toISOString(),
+      siteName: siteSettings.siteName,
+      totalArticles: articles.length,
+      totalVideos: videos.length,
+      totalSubscribers: subscribers.length,
+      articles,
+      videos,
+      subscribers,
+      adSettings,
+      siteSettings,
+      comments,
+    };
+    const now = new Date();
+    const timeFormatted = now.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
+    const dateFormatted = now.toLocaleDateString('az-AZ', { day: 'numeric', month: 'short' });
+    const newSnapshot: BackupSnapshot = {
+      id: 'snap-' + Date.now(),
+      createdAt: `${dateFormatted}, ${timeFormatted}`,
+      note,
+      articlesCount: articles.length,
+      videosCount: videos.length,
+      subscribersCount: subscribers.length,
+      data: JSON.stringify(backupPkg),
+    };
+    setSnapshots((prev) => [newSnapshot, ...prev.slice(0, 9)]);
+  };
+
+  const restoreSnapshot = (id: string): boolean => {
+    const snap = snapshots.find((s) => s.id === id);
+    if (!snap) return false;
+    const res = importDataJSON(snap.data, 'replace');
+    return res.success;
+  };
+
+  const deleteSnapshot = (id: string) => {
+    setSnapshots((prev) => prev.filter((s) => s.id !== id));
+  };
+
   const addArticle = (articleData: Omit<Article, 'id' | 'views' | 'likes' | 'publishedAt'>) => {
     const newArt: Article = {
       ...articleData,
@@ -376,19 +452,24 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
       publishedAt: new Date().toISOString().split('T')[0],
     };
     setArticles((prev) => [newArt, ...prev]);
+    // Create snapshot
+    setTimeout(() => createSnapshot(`Yeni Məqalə: "${newArt.title.slice(0, 25)}..."`), 100);
   };
 
   const updateArticle = (id: string, updates: Partial<Article>) => {
     setArticles((prev) =>
       prev.map((a) => (a.id === id ? { ...a, ...updates } : a))
     );
+    setTimeout(() => createSnapshot(`Redaktə: ${id}`), 100);
   };
 
   const deleteArticle = (id: string) => {
+    const target = articles.find((a) => a.id === id);
     setArticles((prev) => prev.filter((a) => a.id !== id));
     if (activeArticleId === id) {
       setActiveArticleId(null);
     }
+    setTimeout(() => createSnapshot(`Silinən Məqalə: "${target?.title?.slice(0, 20) || id}"`), 100);
   };
 
   const addVideo = (videoData: Omit<VideoItem, 'id' | 'publishedAt'>) => {
@@ -398,6 +479,7 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
       publishedAt: new Date().toISOString().split('T')[0],
     };
     setVideos((prev) => [newVid, ...prev]);
+    setTimeout(() => createSnapshot(`Yeni Video: "${newVid.title.slice(0, 25)}..."`), 100);
   };
 
   const updateVideo = (id: string, updates: Partial<VideoItem>) => {
@@ -422,6 +504,7 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const resetToDefaults = () => {
+    createSnapshot('İlkin Vəziyyətə Qaytarılmazdan Əvvəlki Nüsxə');
     setArticles(INITIAL_ARTICLES);
     setVideos(INITIAL_VIDEOS);
     setSubscribers(INITIAL_SUBSCRIBERS);
@@ -431,35 +514,143 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const exportDataJSON = () => {
-    const data = {
+    const data: BackupPackage = {
+      format: 'fikir-zeka-cms-backup',
+      version: '2.0',
+      exportedAt: new Date().toISOString(),
+      siteName: siteSettings.siteName,
+      totalArticles: articles.length,
+      totalVideos: videos.length,
+      totalSubscribers: subscribers.length,
       articles,
       videos,
       subscribers,
       adSettings,
       siteSettings,
       comments,
-      exportedAt: new Date().toISOString(),
     };
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const timeStr = `${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}`;
+    const filename = `fikir-zeka-backup-${dateStr}-${timeStr}.json`;
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `fikir-zeka-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+    try {
+      confetti({ particleCount: 35, spread: 60, origin: { y: 0.8 } });
+    } catch {
+      // ignore
+    }
+  };
+
+  const exportArticlesOnlyJSON = () => {
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0];
+    const blob = new Blob([JSON.stringify(articles, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `meqaleler-backup-${dateStr}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  const importDataJSON = (jsonStr: string): boolean => {
+  const exportInitialDataTsCode = (): string => {
+    return `// Bu fayl Fikir & Zəka CMS Admin tərəfindən avtomatik generasiya olunub
+// Tarix: ${new Date().toISOString()}
+// Bu faylın məzmununu src/data/initialData.ts içinə kopyalayıb GitHub-a göndərsəniz, sayt yeni ziyarətçilərə də sizin son xəbərlərinizlə açılacaq!
+
+import { Article, VideoItem, Subscriber, AdSettings, SiteSettings } from '../types';
+
+export const INITIAL_ARTICLES: Article[] = ${JSON.stringify(articles, null, 2)};
+
+export const INITIAL_VIDEOS: VideoItem[] = ${JSON.stringify(videos, null, 2)};
+
+export const INITIAL_SUBSCRIBERS: Subscriber[] = ${JSON.stringify(subscribers, null, 2)};
+
+export const INITIAL_AD_SETTINGS: AdSettings = ${JSON.stringify(adSettings, null, 2)};
+
+export const INITIAL_SITE_SETTINGS: SiteSettings = ${JSON.stringify(siteSettings, null, 2)};
+`;
+  };
+
+  const exportArticlesCSV = () => {
+    if (articles.length === 0) return;
+    const header = 'ID,Başlıq,Kateqoriya,Müəllif,Tarix,Oxu Müddəti (dəq),Baxış,Bəyənmə\n';
+    const rows = articles
+      .map((a) => `"${a.id}","${a.title.replace(/"/g, '""')}","${a.category}","${a.author.name}","${a.publishedAt}",${a.readTimeMinutes},${a.views},${a.likes}`)
+      .join('\n');
+    const blob = new Blob(['\uFEFF' + header + rows], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `meqaleler-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importDataJSON = (
+    jsonStr: string,
+    mode: 'replace' | 'merge' = 'replace'
+  ): { success: boolean; message: string; count?: number } => {
     try {
       const parsed = JSON.parse(jsonStr);
-      if (parsed.articles) setArticles(parsed.articles);
-      if (parsed.videos) setVideos(parsed.videos);
-      if (parsed.subscribers) setSubscribers(parsed.subscribers);
-      if (parsed.adSettings) setAdSettings(parsed.adSettings);
-      if (parsed.siteSettings) setSiteSettings(parsed.siteSettings);
-      return true;
+      // Auto-save a snapshot before restoring
+      createSnapshot('Bərpadan Əvvəlki Avtomatik Nüsxə');
+
+      let count = 0;
+
+      // Handle raw array of articles
+      if (Array.isArray(parsed)) {
+        if (mode === 'replace') {
+          setArticles(parsed);
+          count = parsed.length;
+        } else {
+          const existingIds = new Set(articles.map((a) => a.id));
+          const toAdd = parsed.filter((a: Article) => !existingIds.has(a.id));
+          setArticles([...toAdd, ...articles]);
+          count = toAdd.length;
+        }
+        try {
+          confetti({ particleCount: 50, spread: 70, origin: { y: 0.7 } });
+        } catch {}
+        return { success: true, message: `${count} məqalə uğurla tətbiq edildi!`, count };
+      }
+
+      // Handle full BackupPackage or standard backup object
+      if (parsed.articles && Array.isArray(parsed.articles)) {
+        if (mode === 'replace') {
+          setArticles(parsed.articles);
+          count = parsed.articles.length;
+          if (parsed.videos && Array.isArray(parsed.videos)) setVideos(parsed.videos);
+          if (parsed.subscribers && Array.isArray(parsed.subscribers)) setSubscribers(parsed.subscribers);
+          if (parsed.adSettings) setAdSettings(parsed.adSettings);
+          if (parsed.siteSettings) setSiteSettings(parsed.siteSettings);
+          if (parsed.comments && Array.isArray(parsed.comments)) setComments(parsed.comments);
+        } else {
+          const existingIds = new Set(articles.map((a) => a.id));
+          const toAdd = parsed.articles.filter((a: Article) => !existingIds.has(a.id));
+          setArticles([...toAdd, ...articles]);
+          count = toAdd.length;
+          if (parsed.videos && Array.isArray(parsed.videos)) {
+            const existingVidIds = new Set(videos.map((v) => v.id));
+            const newVids = parsed.videos.filter((v: VideoItem) => !existingVidIds.has(v.id));
+            setVideos([...newVids, ...videos]);
+          }
+        }
+        try {
+          confetti({ particleCount: 60, spread: 80, origin: { y: 0.6 } });
+        } catch {}
+        return { success: true, message: `Backup uğurla bərpa edildi! (${count} məqalə)`, count };
+      }
+
+      return { success: false, message: 'Fayl strukturunda uyğun xəbər və ya məqalə məlumatı tapılmadı.' };
     } catch {
-      return false;
+      return { success: false, message: 'Xəta: JSON faylı oxuna bilmədi və ya strukturu yanlışdır.' };
     }
   };
 
@@ -509,7 +700,14 @@ export const BlogProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateSiteSettings,
         resetToDefaults,
         exportDataJSON,
+        exportArticlesOnlyJSON,
+        exportInitialDataTsCode,
+        exportArticlesCSV,
         importDataJSON,
+        snapshots,
+        createSnapshot,
+        restoreSnapshot,
+        deleteSnapshot,
       }}
     >
       {children}

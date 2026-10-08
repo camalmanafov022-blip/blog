@@ -88,3 +88,29 @@ export interface SiteSettings {
     github: string;
   };
 }
+
+export interface BackupSnapshot {
+  id: string;
+  createdAt: string;
+  note: string;
+  articlesCount: number;
+  videosCount: number;
+  subscribersCount: number;
+  data: string;
+}
+
+export interface BackupPackage {
+  format: 'fikir-zeka-cms-backup';
+  version: string;
+  exportedAt: string;
+  siteName: string;
+  totalArticles: number;
+  totalVideos: number;
+  totalSubscribers: number;
+  articles: Article[];
+  videos: VideoItem[];
+  subscribers: Subscriber[];
+  adSettings: AdSettings;
+  siteSettings: SiteSettings;
+  comments: Comment[];
+}
