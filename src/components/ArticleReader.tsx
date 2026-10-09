@@ -150,6 +150,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
 
   return (
     <motion.div
+      id="article-reader-view"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -166,7 +167,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
           />
         </div>
 
-        <div className="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 h-11 flex items-center justify-between text-xs font-mono">
+        <div className="max-w-7xl 2xl:max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 h-11 flex items-center justify-between text-xs font-mono">
           <button
             onClick={onClose}
             className="flex items-center gap-1.5 text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white transition-colors cursor-pointer"
@@ -212,11 +213,11 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
       </div>
 
       {/* Main Reading Container: 2-Column Magazine Layout */}
-      <div className="pt-20 max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="pt-20 max-w-7xl 2xl:max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
           {/* Main Article Content (8 Columns) */}
-          <div className="lg:col-span-8 min-w-0">
+          <article id="reader-content-area" className="lg:col-span-8 min-w-0 max-w-[820px]">
             {/* Editorial Accession / Header */}
             <div className="mb-8 pt-4">
           <div className="flex items-center gap-2 text-xs font-mono text-stone-500 dark:text-stone-400 uppercase tracking-widest mb-3">
@@ -538,7 +539,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
           </div>
         </div>
 
-      </div>
+      </article>
 
       {/* Right Sticky Magazine Sidebar (Matching ThemeBubble MagPlus NewsPro design) */}
       <aside className="lg:col-span-4 lg:sticky lg:top-28 self-start space-y-6 pt-4">
