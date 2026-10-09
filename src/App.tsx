@@ -129,7 +129,7 @@ const MainContent: React.FC = () => {
               onClose={closeArticle}
             />
           ) : (
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8">
               
               {/* Top Leaderboard Google Ad Banner */}
               <div className="pt-3">
@@ -176,10 +176,10 @@ const MainContent: React.FC = () => {
               </div>
 
               {/* DIV 2: 3-Column Magazine Layout matching user's exact CSS selectors */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start my-8 relative">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start my-8 relative">
                 
                 {/* ASIDE 1 (Left Sticky Sidebar): Redaktorun Seçimi & Mövzular */}
-                <aside className="lg:col-span-3 hidden xl:block sticky top-20 self-start space-y-6 max-h-[calc(100vh-5.5rem)] overflow-y-auto no-scrollbar">
+                <aside className="lg:col-span-3 hidden xl:block sticky top-20 self-start space-y-6 max-h-[calc(100vh-5.5rem)] overflow-y-auto no-scrollbar lg:-ml-2 xl:-ml-4">
                   
                   {/* Left Widget 1: Müəllifin Qeydləri / Redaksiya Sütunu */}
                   <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-xs space-y-4">

@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigateSection }) => {
 
   return (
     <header className="sticky top-0 z-40 w-full bg-[#faf8f5]/90 dark:bg-[#0c0d0e]/90 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800/80 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div className="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         {/* Zone 1: Single text element Brand Zone */}
         <button

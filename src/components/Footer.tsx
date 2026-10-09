@@ -15,11 +15,11 @@ export const Footer: React.FC = () => {
     <footer className="mt-20 border-t border-stone-200 dark:border-stone-800 bg-[#f5f2eb] dark:bg-[#08090a] transition-colors">
       
       {/* Optional Footer Google Ad Placement */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <GoogleAdUnit slotType="footer" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
           
           {/* Brand Col (2 cols) */}
