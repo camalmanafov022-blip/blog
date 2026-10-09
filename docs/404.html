@@ -354,7 +354,7 @@
         <div class="w-full bg-gray-200 dark:bg-gray-800 h-1">
           <div id="reader-progress-fill" class="bg-rose-500 h-1 transition-all duration-100" style="width: 0%"></div>
         </div>
-        <div class="max-w-4xl mx-auto px-4 h-12 flex items-center justify-between text-xs font-medium">
+        <div class="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between text-xs font-medium">
           <button onclick="closeArticleReader()" class="flex items-center gap-1.5 text-gray-600 dark:text-gray-300 hover:text-rose-500 font-bold cursor-pointer">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
             <span>Geri Qayıt</span>
@@ -372,9 +372,17 @@
         </div>
       </div>
 
-      <div class="pt-24 max-w-3xl mx-auto px-4 sm:px-6">
-        <div id="reader-content-area">
-          <!-- Dynamically filled -->
+      <div class="pt-24 max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          <!-- MAIN ARTICLE CONTENT (8 COLS) -->
+          <article id="reader-content-area" class="lg:col-span-8 min-w-0">
+            <!-- Dynamically filled -->
+          </article>
+
+          <!-- RIGHT SIDEBAR (4 COLS): TREND & POPULAR WIDGET MATCHING MAGPLUS -->
+          <aside id="reader-right-sidebar" class="lg:col-span-4 lg:sticky lg:top-36 self-start space-y-6">
+            <!-- Dynamically populated by renderReaderSidebar() -->
+          </aside>
         </div>
       </div>
     </div>
@@ -1384,6 +1392,124 @@
         `;
 
         updateReadingProgress();
+        renderReaderSidebar(art.id, currentReaderTab);
+      }
+
+      let currentReaderTab = 'trending';
+
+      function switchReaderTab(tab) {
+        currentReaderTab = tab;
+        if (currentActiveArticle) {
+          renderReaderSidebar(currentActiveArticle.id, tab);
+        }
+      }
+
+      function handleSidebarNewsletter(e) {
+        e.preventDefault();
+        const input = document.getElementById('sidebar-newsletter-email');
+        if (input) {
+          input.value = '';
+          showToast('Təşəkkür edirik! Bülletenimizə uğurla abunə oldunuz.');
+        }
+      }
+
+      function renderReaderSidebar(activeId, activeTab = 'trending') {
+        const sidebar = document.getElementById('reader-right-sidebar');
+        if (!sidebar) return;
+
+        let list = [];
+        if (activeTab === 'trending') {
+          list = [...articles]
+            .filter(a => a.id !== activeId)
+            .sort((a, b) => (b.views || 0) - (a.views || 0))
+            .slice(0, 5);
+        } else {
+          list = [...articles]
+            .filter(a => a.id !== activeId)
+            .sort((a, b) => (b.likes || 0) - (a.likes || 0))
+            .slice(0, 5);
+        }
+
+        // If list has fewer than 5 items, grab more items
+        if (list.length < 5) {
+          const remaining = articles.filter(a => a.id !== activeId && !list.some(item => item.id === a.id));
+          list = list.concat(remaining.slice(0, 5 - list.length));
+        }
+
+        const itemsHtml = list.map((art, index) => {
+          const isVideo = art.category === 'videolar' || (art.tags && art.tags.includes('Video'));
+          return `
+            <a href="#/xeber/${art.slug || art.id}" onclick="event.preventDefault(); openArticle('${art.id}');" class="py-3.5 first:pt-0 last:pb-0 flex items-start gap-3.5 group cursor-pointer block transition-colors">
+              <div class="relative w-20 h-20 sm:w-22 sm:h-22 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 shrink-0 shadow-2xs">
+                <img src="${art.coverImage}" alt="${art.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                ${isVideo ? `
+                  <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <span class="w-5 h-5 rounded-full bg-rose-600/90 text-white flex items-center justify-center text-[10px] pl-0.5 shadow-xs">▶</span>
+                  </div>
+                ` : `
+                  <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-black/70 text-[9px] font-mono font-bold text-white uppercase tracking-wider backdrop-blur-xs">
+                    #${index + 1}
+                  </span>
+                `}
+              </div>
+              <div class="min-w-0 flex-1 flex flex-col justify-between min-h-[76px] py-0.5">
+                <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-gray-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 line-clamp-2 leading-snug transition-colors">
+                  ${art.title}
+                </h4>
+                <div class="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-gray-400 mt-1.5">
+                  <span class="text-rose-500 font-bold">${categoryLabels[art.category] || art.category}</span>
+                  <span>·</span>
+                  <span>${art.readTimeMinutes} dəq</span>
+                </div>
+              </div>
+            </a>
+          `;
+        }).join('');
+
+        sidebar.innerHTML = `
+          <!-- TABBED WIDGET: Trending & Popular (Exact MagPlus NewsPro design) -->
+          <div class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-xs overflow-hidden">
+            <!-- TABS (Matching screenshot: Trending vs Popular with Red active line) -->
+            <div class="grid grid-cols-2 border-b border-gray-100 dark:border-gray-800 text-xs font-bold font-sans">
+              <button onclick="switchReaderTab('trending')" class="py-3.5 px-4 flex items-center justify-center gap-2 transition-all cursor-pointer ${activeTab === 'trending' ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-t-[3px] border-rose-600 font-extrabold shadow-2xs' : 'bg-gray-50/90 dark:bg-gray-800/40 text-gray-500 hover:text-gray-900 dark:hover:text-white border-t-[3px] border-transparent'}">
+                <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941"/></svg>
+                <span>Trending</span>
+              </button>
+              <button onclick="switchReaderTab('popular')" class="py-3.5 px-4 flex items-center justify-center gap-2 transition-all cursor-pointer ${activeTab === 'popular' ? 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-t-[3px] border-rose-600 font-extrabold shadow-2xs' : 'bg-gray-50/90 dark:bg-gray-800/40 text-gray-500 hover:text-gray-900 dark:hover:text-white border-t-[3px] border-transparent'}">
+                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z"/></svg>
+                <span>Popular</span>
+              </button>
+            </div>
+
+            <!-- ARTICLES LIST -->
+            <div class="p-4 sm:p-5 divide-y divide-gray-100 dark:divide-gray-800">
+              ${itemsHtml}
+            </div>
+          </div>
+
+          <!-- SIDEBAR MINI NEWSLETTER WIDGET -->
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent border border-rose-200/60 dark:border-rose-900/40 space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">Bülletenə Qoşulun</span>
+            </div>
+            <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+              Hər həftə ən maraqlı texnoloji və şəxsi inkişaf mövzularını e-poçtunuzda oxuyun.
+            </p>
+            <form onsubmit="handleSidebarNewsletter(event)" class="space-y-2">
+              <input type="email" id="sidebar-newsletter-email" required placeholder="E-poçt ünvanınız..." class="w-full px-3.5 py-2.5 text-xs bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl focus:outline-none focus:border-rose-500 dark:text-white shadow-2xs" />
+              <button type="submit" class="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition-colors shadow-xs cursor-pointer flex items-center justify-center gap-1.5">
+                <span>Abunə Ol</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- EDITORIAL BADGE / SPONSOR BOX -->
+          <div class="p-4 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800 text-center bg-gray-50/60 dark:bg-gray-900/40">
+            <span class="text-[10px] font-mono uppercase text-gray-400 tracking-widest block mb-1">Redaksiya Seçimi</span>
+            <p class="text-xs font-bold text-gray-700 dark:text-gray-300">Fikir & Zəka İntellektual Şəbəkəsi</p>
+          </div>
+        `;
       }
 
       function closeArticleReader(updateUrl = true) {

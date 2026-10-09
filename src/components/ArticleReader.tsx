@@ -17,6 +17,8 @@ import {
   Minimize2,
   ChevronLeft,
   ChevronRight,
+  TrendingUp,
+  Flame,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -44,10 +46,27 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
   const [commentText, setCommentText] = useState('');
   const [commenterName, setCommenterName] = useState('');
   const [focusMode, setFocusMode] = useState(false);
+  const [sidebarTab, setSidebarTab] = useState<'trending' | 'popular'>('trending');
+  const [sidebarEmail, setSidebarEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const isLiked = likedArticles.includes(article.id);
   const isBookmarked = bookmarks.includes(article.id);
+
+  // Trending & Popular articles for the right sidebar widget
+  const trendingArticles = [...articles]
+    .filter((a) => a.id !== article.id)
+    .sort((a, b) => (b.views || 0) - (a.views || 0))
+    .slice(0, 5);
+
+  const popularArticles = [...articles]
+    .filter((a) => a.id !== article.id)
+    .sort((a, b) => (b.likes || 0) - (a.likes || 0))
+    .slice(0, 5);
+
+  const displayedSidebarArticles =
+    sidebarTab === 'trending' ? trendingArticles : popularArticles;
 
   // Article comments
   const articleComments = comments.filter((c) => c.articleId === article.id);
@@ -147,7 +166,7 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
           />
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 h-11 flex items-center justify-between text-xs font-mono">
+        <div className="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 h-11 flex items-center justify-between text-xs font-mono">
           <button
             onClick={onClose}
             className="flex items-center gap-1.5 text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white transition-colors cursor-pointer"
@@ -192,11 +211,14 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
         </div>
       </div>
 
-      {/* Main Reading Container */}
-      <div className="pt-20 max-w-4xl mx-auto px-4 sm:px-6">
-        
-        {/* Editorial Accession / Header */}
-        <div className="mb-8 pt-4">
+      {/* Main Reading Container: 2-Column Magazine Layout */}
+      <div className="pt-20 max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          
+          {/* Main Article Content (8 Columns) */}
+          <div className="lg:col-span-8 min-w-0">
+            {/* Editorial Accession / Header */}
+            <div className="mb-8 pt-4">
           <div className="flex items-center gap-2 text-xs font-mono text-stone-500 dark:text-stone-400 uppercase tracking-widest mb-3">
             <span className="font-semibold text-stone-800 dark:text-stone-200">
               {article.category}
@@ -517,6 +539,127 @@ export const ArticleReader: React.FC<ArticleReaderProps> = ({ article, onClose }
         </div>
 
       </div>
-    </motion.div>
+
+      {/* Right Sticky Magazine Sidebar (Matching ThemeBubble MagPlus NewsPro design) */}
+      <aside className="lg:col-span-4 lg:sticky lg:top-28 self-start space-y-6 pt-4">
+        {/* Tabbed Widget: Trending & Popular */}
+        <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl shadow-xs overflow-hidden">
+          {/* Tab Headers */}
+          <div className="grid grid-cols-2 border-b border-stone-200 dark:border-stone-800 text-xs font-bold">
+            <button
+              onClick={() => setSidebarTab('trending')}
+              className={`py-3.5 px-4 flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                sidebarTab === 'trending'
+                  ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 border-t-[3px] border-rose-600 font-extrabold shadow-2xs'
+                  : 'bg-stone-50/80 dark:bg-stone-800/40 text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 border-t-[3px] border-transparent'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4 text-rose-600" />
+              <span>Trending</span>
+            </button>
+            <button
+              onClick={() => setSidebarTab('popular')}
+              className={`py-3.5 px-4 flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                sidebarTab === 'popular'
+                  ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 border-t-[3px] border-rose-600 font-extrabold shadow-2xs'
+                  : 'bg-stone-50/80 dark:bg-stone-800/40 text-stone-500 hover:text-stone-900 dark:hover:text-stone-100 border-t-[3px] border-transparent'
+              }`}
+            >
+              <Flame className="w-4 h-4 text-amber-500" />
+              <span>Popular</span>
+            </button>
+          </div>
+
+          {/* List of articles */}
+          <div className="p-4 sm:p-5 divide-y divide-stone-100 dark:divide-stone-800">
+            {displayedSidebarArticles.map((art, index) => (
+              <div
+                key={art.id}
+                onClick={() => openArticle(art)}
+                className="py-3.5 first:pt-0 last:pb-0 flex items-start gap-3.5 group cursor-pointer"
+              >
+                <div className="relative w-20 h-20 sm:w-22 sm:h-22 rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-800 shrink-0 shadow-2xs">
+                  <img
+                    src={art.coverImage}
+                    alt={art.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-black/70 text-[9px] font-mono font-bold text-white uppercase tracking-wider backdrop-blur-xs">
+                    #{index + 1}
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1 flex flex-col justify-between min-h-[76px] py-0.5">
+                  <h4 className="text-xs sm:text-sm font-bold text-stone-900 dark:text-stone-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 line-clamp-2 leading-snug transition-colors">
+                    {art.title}
+                  </h4>
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-stone-400 mt-1.5">
+                    <span className="text-rose-600 dark:text-rose-400 font-bold">
+                      {art.category}
+                    </span>
+                    <span>·</span>
+                    <span>{art.readTimeMinutes} dəq</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Newsletter card */}
+        <div className="p-5 rounded-2xl bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent border border-rose-200/60 dark:border-rose-900/40 space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+            <span className="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+              Bülletenə Qoşulun
+            </span>
+          </div>
+          <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
+            Hər həftə ən maraqlı texnoloji və şəxsi inkişaf mövzularını birbaşa e-poçtunuzda oxuyun.
+          </p>
+          {subscribed ? (
+            <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 py-1">
+              ✓ Uğurla abunə oldunuz!
+            </p>
+          ) : (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setSubscribed(true);
+                setSidebarEmail('');
+              }}
+              className="space-y-2"
+            >
+              <input
+                type="email"
+                required
+                placeholder="E-poçt ünvanınız..."
+                value={sidebarEmail}
+                onChange={(e) => setSidebarEmail(e.target.value)}
+                className="w-full px-3.5 py-2.5 text-xs bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl focus:outline-none focus:border-rose-500 dark:text-stone-100 shadow-2xs"
+              />
+              <button
+                type="submit"
+                className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition-colors shadow-xs cursor-pointer"
+              >
+                Abunə Ol
+              </button>
+            </form>
+          )}
+        </div>
+
+        {/* Editorial Badge */}
+        <div className="p-4 rounded-2xl border border-dashed border-stone-200 dark:border-stone-800 text-center bg-stone-50/60 dark:bg-stone-900/40">
+          <span className="text-[10px] font-mono uppercase text-stone-400 tracking-widest block mb-1">
+            Redaksiya Seçimi
+          </span>
+          <p className="text-xs font-bold text-stone-700 dark:text-stone-300">
+            Fikir & Zəka İntellektual Şəbəkəsi
+          </p>
+        </div>
+      </aside>
+
+      </div>
+    </div>
+  </motion.div>
   );
 };
