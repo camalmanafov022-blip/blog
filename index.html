@@ -142,9 +142,10 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
           </button>
 
-          <!-- Admin Panel Icon Button -->
-          <button onclick="openAdminModal()" class="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer" title="Admin CMS Paneli">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+          <!-- Login / Daxil Ol Button -->
+          <button onclick="openAdminModal()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-700 dark:text-gray-200 hover:text-rose-600 dark:hover:text-rose-400 border border-gray-200 dark:border-gray-700 hover:border-rose-500 dark:hover:border-rose-500 rounded-full transition-all cursor-pointer shadow-2xs hover:shadow-xs" title="Daxil ol">
+            <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"/></svg>
+            <span>Daxil ol</span>
           </button>
 
           <!-- Rounded Pill Subscribe Button -->
@@ -476,13 +477,16 @@
             <div class="w-7 h-7 rounded-full bg-rose-500 flex items-center justify-center font-bold text-xs">N</div>
             <h2 class="text-sm font-bold">Newsfy CMS · İdarəetmə Paneli</h2>
           </div>
-          <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white text-xl cursor-pointer">&times;</button>
+          <div class="flex items-center gap-3">
+            <button id="admin-logout-btn" onclick="adminLogout()" class="hidden text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">Çıxış</button>
+            <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white text-xl cursor-pointer">&times;</button>
+          </div>
         </div>
 
         <div id="admin-auth-screen" class="p-8 max-w-sm mx-auto my-auto text-center space-y-4">
           <h3 class="text-lg font-bold">Admin Girişi</h3>
           <p class="text-xs text-gray-500">Məqalə əlavə etmək üçün PIN kod daxil edin (Standart: admin123):</p>
-          <input type="password" id="admin-pin-input" placeholder="admin123" class="w-full px-4 py-2 text-center text-lg font-mono bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-700 rounded-xl" />
+          <input type="password" id="admin-pin-input" onkeydown="if(event.key==='Enter') verifyAdminPin()" placeholder="admin123" class="w-full px-4 py-2 text-center text-lg font-mono bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-700 rounded-xl" />
           <p id="admin-pin-err" class="text-xs text-rose-500 hidden">Yanlış PIN kod.</p>
           <button onclick="verifyAdminPin()" class="w-full py-2.5 bg-rose-500 text-white font-bold text-xs rounded-xl cursor-pointer">Daxil Ol</button>
         </div>
@@ -1638,7 +1642,7 @@
         `).join('');
       }
 
-      // ADMIN MODAL
+      // ADMIN MODAL & LOGIN
       function openAdminModal(updateUrl = true) {
         const modal = document.getElementById('admin-modal');
         modal.classList.remove('hidden');
@@ -1646,13 +1650,23 @@
         if (updateUrl) {
           history.pushState({ admin: true }, '', '#/admin');
         }
+        const logoutBtn = document.getElementById('admin-logout-btn');
         if (sessionStorage.getItem('newsfy_admin') === 'true') {
           document.getElementById('admin-auth-screen').classList.add('hidden');
           document.getElementById('admin-dashboard-screen').classList.remove('hidden');
+          if (logoutBtn) logoutBtn.classList.remove('hidden');
           switchAdminTab('articles');
         } else {
           document.getElementById('admin-auth-screen').classList.remove('hidden');
           document.getElementById('admin-dashboard-screen').classList.add('hidden');
+          if (logoutBtn) logoutBtn.classList.add('hidden');
+          setTimeout(() => {
+            const input = document.getElementById('admin-pin-input');
+            if (input) {
+              input.value = '';
+              input.focus();
+            }
+          }, 100);
         }
       }
 
@@ -1672,10 +1686,27 @@
           document.getElementById('admin-pin-err').classList.add('hidden');
           document.getElementById('admin-auth-screen').classList.add('hidden');
           document.getElementById('admin-dashboard-screen').classList.remove('hidden');
+          const logoutBtn = document.getElementById('admin-logout-btn');
+          if (logoutBtn) logoutBtn.classList.remove('hidden');
           switchAdminTab('articles');
         } else {
           document.getElementById('admin-pin-err').classList.remove('hidden');
         }
+      }
+
+      function adminLogout() {
+        sessionStorage.removeItem('newsfy_admin');
+        document.getElementById('admin-auth-screen').classList.remove('hidden');
+        document.getElementById('admin-dashboard-screen').classList.add('hidden');
+        const logoutBtn = document.getElementById('admin-logout-btn');
+        if (logoutBtn) logoutBtn.classList.add('hidden');
+        setTimeout(() => {
+          const input = document.getElementById('admin-pin-input');
+          if (input) {
+            input.value = '';
+            input.focus();
+          }
+        }, 100);
       }
 
       let editingArticleId = null;

@@ -136,19 +136,19 @@ export const Header: React.FC<HeaderProps> = ({ onNavigateSection }) => {
             )}
           </button>
 
-          {/* Admin CMS Button */}
+          {/* Login / Daxil Ol Button */}
           <button
             onClick={() => setIsAdminOpen(true)}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors flex items-center gap-1.5 whitespace-nowrap ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-colors flex items-center gap-1.5 whitespace-nowrap ${
               isAdminAuthenticated
                 ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                 : 'bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 hover:bg-stone-800 dark:hover:bg-stone-200'
             }`}
-            title="Məzmun İdarəetmə Paneli (Admin)"
+            title="Daxil ol"
           >
             <Shield className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">
-              {isAdminAuthenticated ? 'Admin Panel' : 'İdarəetmə'}
+              {isAdminAuthenticated ? 'Admin Panel' : 'Daxil ol'}
             </span>
           </button>
         </div>
