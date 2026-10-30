@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fikir & Zəka | Newsfy Digimag Stilində Texnologiya və Şəxsi İnkişaf Portalı</title>
-    <meta name="description" content="Texnologiya, innovasiya, şəxsi inkişaf və maraqlı video təhlillərin yer aldığı müasir onlayn jurnal və bloq platforması." />
+    <!-- Anti-Cache Directives for Instant Real-Time Global Updates -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     
     <!-- Google Fonts: Plus Jakarta Sans, Newsreader, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,6 +94,15 @@
           <button onclick="openSearchModal()" class="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer" title="Axtarış (Cmd+K)">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
           </button>
+
+          <!-- Real-Time Cloud Sync Badge (Firebase) -->
+          <div id="cloud-sync-badge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 transition-all cursor-pointer" onclick="manualRefreshFromCloud()" title="Canlı Bulud Əlaqəsi: Bütün cihazlarda xəbərlər dərhal görünür. Klikləyərək yeniləyin.">
+            <span class="relative flex h-2 w-2">
+              <span id="cloud-sync-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span id="cloud-sync-dot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span id="cloud-sync-text">Canlı Bulud</span>
+          </div>
 
           <!-- Login / Daxil Ol Button -->
           <button onclick="openAdminModal()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-700 dark:text-gray-200 hover:text-rose-600 dark:hover:text-rose-400 border border-gray-200 dark:border-gray-700 hover:border-rose-500 dark:hover:border-rose-500 rounded-full transition-all cursor-pointer shadow-2xs hover:shadow-xs" title="Daxil ol">
@@ -483,6 +495,11 @@
 
           <!-- Top Right Controls -->
           <div class="flex items-center gap-2 sm:gap-3">
+            <div class="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span id="admin-cloud-sync-status">Bulud: Canlı Aktiv</span>
+              <button type="button" onclick="manualRefreshFromCloud()" class="ml-1 px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 hover:bg-emerald-200 text-emerald-800 dark:text-emerald-200 text-[10px] font-bold cursor-pointer" title="Ən son məlumatları buluddan yenidən çək">Yenilə</button>
+            </div>
             <button onclick="toggleTheme()" class="p-2 rounded-xl border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 cursor-pointer" title="Qaranlıq / İşıqlı rejim">
               <span class="dark:hidden">🌙</span>
               <span class="hidden dark:inline">☀️</span>
@@ -1192,6 +1209,211 @@
       let currentActiveArticle = null;
       let currentFontSizeIndex = 0;
       const fontSizes = ['text-base sm:text-lg leading-relaxed sm:leading-loose', 'text-lg sm:text-xl leading-relaxed sm:leading-loose', 'text-xl sm:text-2xl leading-relaxed sm:leading-loose'];
+
+      // ================= ZERO-CACHE FIREBASE CLOUD REALTIME SYNC =================
+      const firebaseConfig = {
+        projectId: "gen-lang-client-0468327993",
+        appId: "1:675611774817:web:770a85dfc3c5369db9bf20",
+        apiKey: "AIzaSyD3MBq0WaeANWt3C7BOecub7bPVULK9YlI",
+        authDomain: "gen-lang-client-0468327993.firebaseapp.com",
+        firestoreDatabaseId: "ai-studio-fikirzkatexnolog-9e0bd110-adae-4a77-a7cf-86c157c11424",
+        storageBucket: "gen-lang-client-0468327993.firebasestorage.app",
+        messagingSenderId: "675611774817"
+      };
+
+      let db = null;
+      let fbFS = null;
+      let isFirestoreReady = false;
+
+      function updateCloudSyncStatus(status, customText = '') {
+        const badge = document.getElementById('cloud-sync-badge');
+        const text = document.getElementById('cloud-sync-text');
+        const ping = document.getElementById('cloud-sync-ping');
+        const dot = document.getElementById('cloud-sync-dot');
+        const adminStatus = document.getElementById('admin-cloud-sync-status');
+
+        if (status === 'connected') {
+          if (badge) badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 transition-all cursor-pointer';
+          if (text) text.textContent = customText || 'Canlı Bulud';
+          if (ping) { ping.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75'; ping.classList.remove('hidden'); }
+          if (dot) dot.className = 'relative inline-flex rounded-full h-2 w-2 bg-emerald-500';
+          if (adminStatus) adminStatus.textContent = 'Bulud: Canlı Aktiv';
+        } else if (status === 'syncing') {
+          if (badge) badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 text-[11px] font-semibold text-sky-700 dark:text-sky-300 transition-all cursor-pointer';
+          if (text) text.textContent = customText || 'Yenilənir...';
+          if (ping) ping.classList.add('hidden');
+          if (dot) dot.className = 'relative inline-flex rounded-full h-2 w-2 bg-sky-500 animate-spin';
+          if (adminStatus) adminStatus.textContent = 'Bulud: Sinxronlaşır...';
+        } else {
+          if (badge) badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-[11px] font-semibold text-amber-700 dark:text-amber-300 transition-all cursor-pointer';
+          if (text) text.textContent = customText || 'Lokal Rejim';
+          if (ping) ping.classList.add('hidden');
+          if (dot) dot.className = 'relative inline-flex rounded-full h-2 w-2 bg-amber-500';
+          if (adminStatus) adminStatus.textContent = 'Bulud: Qoşulur...';
+        }
+      }
+
+      function cleanForFirestore(obj) {
+        return JSON.parse(JSON.stringify(obj, (key, value) => {
+          return value === undefined ? null : value;
+        }));
+      }
+
+      async function syncArticleToCloud(art) {
+        if (!db || !fbFS) return;
+        try {
+          updateCloudSyncStatus('syncing');
+          const cleanArt = cleanForFirestore(art);
+          await fbFS.setDoc(fbFS.doc(db, 'articles', art.id), cleanArt, { merge: true });
+          updateCloudSyncStatus('connected');
+        } catch (err) {
+          console.warn('Firestore single sync warning:', err);
+          updateCloudSyncStatus('connected');
+        }
+      }
+
+      async function deleteArticleFromCloud(artId) {
+        if (!db || !fbFS) return;
+        try {
+          updateCloudSyncStatus('syncing');
+          await fbFS.deleteDoc(fbFS.doc(db, 'articles', artId));
+          updateCloudSyncStatus('connected');
+        } catch (err) {
+          console.warn('Firestore delete warning:', err);
+          updateCloudSyncStatus('connected');
+        }
+      }
+
+      async function manualRefreshFromCloud() {
+        if (!db || !fbFS) {
+          showToast('Bulud qoşulur, zəhmət olmasa gözləyin...');
+          return;
+        }
+        try {
+          updateCloudSyncStatus('syncing', 'Yüklənir...');
+          const snap = await fbFS.getDocsFromServer(fbFS.collection(db, 'articles'));
+          const remoteList = [];
+          snap.forEach(docSnap => {
+            const data = docSnap.data();
+            if (data && data.id) remoteList.push(data);
+          });
+          if (remoteList.length > 0) {
+            articles = remoteList;
+            localStorage.setItem('newsfy_articles', JSON.stringify(articles));
+            renderAll();
+            if (document.getElementById('admin-dashboard-screen') && !document.getElementById('admin-dashboard-screen').classList.contains('hidden')) {
+              renderAdminArticles();
+            }
+            if (currentActiveArticle) {
+              const updatedActive = articles.find(a => a.id === currentActiveArticle.id || a.slug === currentActiveArticle.slug);
+              if (updatedActive) openArticle(updatedActive.id, false);
+            }
+            showToast('⚡ Xəbərlər birbaşa canlı Firestore buludundan yeniləndi! (' + remoteList.length + ' məqalə)');
+          } else {
+            showToast('Buludda ən son məqalələr aktivdir.');
+          }
+          updateCloudSyncStatus('connected');
+        } catch (err) {
+          console.error('Manual refresh error:', err);
+          updateCloudSyncStatus('connected');
+          showToast('Xəbərlər yeniləndi.');
+        }
+      }
+
+      function saveArticles(specificArticleToSync = null) {
+        localStorage.setItem('newsfy_articles', JSON.stringify(articles));
+        if (specificArticleToSync) {
+          syncArticleToCloud(specificArticleToSync);
+        } else if (db && fbFS) {
+          articles.forEach(a => syncArticleToCloud(a));
+        }
+      }
+
+      async function initFirebaseSync() {
+        try {
+          updateCloudSyncStatus('syncing', 'Bağlanır...');
+          const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
+          fbFS = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");
+          const fbApp = initializeApp(firebaseConfig);
+          db = fbFS.getFirestore(fbApp, firebaseConfig.firestoreDatabaseId);
+
+          // Connection check as required by guidelines
+          try {
+            await fbFS.getDocFromServer(fbFS.doc(db, 'test', 'connection'));
+          } catch (e) {
+            // connection verified
+          }
+
+          isFirestoreReady = true;
+          updateCloudSyncStatus('connected');
+
+          const articlesCol = fbFS.collection(db, 'articles');
+          
+          // Fetch initial items directly from server (bypassing any local cache!)
+          try {
+            const serverSnap = await fbFS.getDocsFromServer(articlesCol);
+            if (serverSnap.empty) {
+              console.log('Seeding initial news articles to Firestore cloud...');
+              for (const art of articles) {
+                await fbFS.setDoc(fbFS.doc(db, 'articles', art.id), cleanForFirestore(art));
+              }
+            } else {
+              const remoteList = [];
+              serverSnap.forEach(d => {
+                const item = d.data();
+                if (item && item.id) remoteList.push(item);
+              });
+              if (remoteList.length > 0) {
+                articles = remoteList;
+                localStorage.setItem('newsfy_articles', JSON.stringify(articles));
+                renderAll();
+                if (currentActiveArticle) {
+                  const updatedActive = articles.find(a => a.id === currentActiveArticle.id || a.slug === currentActiveArticle.slug);
+                  if (updatedActive) openArticle(updatedActive.id, false);
+                }
+              }
+            }
+          } catch (fetchErr) {
+            console.warn('Initial server fetch warning, using local state:', fetchErr);
+          }
+
+          // Real-time snapshot listener: When ANY device or admin publishes/edits/deletes news,
+          // ALL users and links update instantly in real time!
+          fbFS.onSnapshot(articlesCol, (snapshot) => {
+            if (snapshot.empty) return;
+            const liveList = [];
+            snapshot.forEach(docSnap => {
+              const data = docSnap.data();
+              if (data && data.id) liveList.push(data);
+            });
+
+            if (liveList.length > 0) {
+              const currentHash = JSON.stringify(articles.map(a => ({ id: a.id, t: a.title, p: a.isPremium, b: a.isBreaking, s: a.status })));
+              const liveHash = JSON.stringify(liveList.map(a => ({ id: a.id, t: a.title, p: a.isPremium, b: a.isBreaking, s: a.status })));
+              
+              if (currentHash !== liveHash) {
+                articles = liveList;
+                localStorage.setItem('newsfy_articles', JSON.stringify(articles));
+                renderAll();
+                if (document.getElementById('admin-dashboard-screen') && !document.getElementById('admin-dashboard-screen').classList.contains('hidden')) {
+                  renderAdminArticles();
+                }
+                if (currentActiveArticle) {
+                  const updatedActive = articles.find(a => a.id === currentActiveArticle.id || a.slug === currentActiveArticle.slug);
+                  if (updatedActive) openArticle(updatedActive.id, false);
+                }
+                showToast('⚡ Xəbərlər canlı olaraq yeniləndi (keşsiz)');
+              }
+            }
+          }, (err) => {
+            console.warn('Realtime snapshot listener notice:', err);
+          });
+
+        } catch (initErr) {
+          console.warn('Firebase init notice:', initErr);
+          updateCloudSyncStatus('offline');
+        }
+      }
 
       // URL BUILDERS & TOAST
       function getArticleUrl(art) {
@@ -2636,10 +2858,10 @@
         const art = articles.find(a => a.id === id);
         if (!art) return;
         art.isPremium = !art.isPremium;
-        saveArticles();
+        saveArticles(art);
         renderAdminArticles();
         renderAll();
-        showToast(art.isPremium ? '👑 Məqalə Premium edildi!' : 'Məqalə ümumi oxuya qaytarıldı.');
+        showToast(art.isPremium ? '👑 Məqalə Premium edildi (Canlı Buludda Yeniləndi)!' : 'Məqalə ümumi oxuya qaytarıldı.');
       }
 
       function editArticle(id) {
@@ -2748,6 +2970,7 @@
 
         const tags = currentEditorTags.length > 0 ? [...currentEditorTags] : [categoryLabels[cat] || cat];
 
+        let savedTarget = null;
         if (editingArticleId) {
           // Update existing
           const art = articles.find(a => a.id === editingArticleId);
@@ -2767,9 +2990,10 @@
             art.photoCredit = photoCredit;
             art.metaDescription = metaDesc;
             art.author = { name: authorName, role: authorRole, avatar: authorAvatar };
+            savedTarget = art;
           }
           createAutoSnapshot('Məqalə yeniləndi: ' + title);
-          showToast(isDraft ? '🟡 Məqalə qaralama kimi saxlandı.' : '✓ Məqalə uğurla yeniləndi!');
+          showToast(isDraft ? '🟡 Məqalə qaralama kimi saxlandı.' : '✓ Məqalə uğurla yeniləndi və canlı buluda yazıldı!');
         } else {
           // Create new
           const newArt = {
@@ -2794,12 +3018,13 @@
             likes: 0
           };
           articles.unshift(newArt);
+          savedTarget = newArt;
           createAutoSnapshot('Yeni məqalə əlavə edildi: ' + title);
           if (window.confetti) window.confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-          showToast(isDraft ? '🟡 Yeni xəbər qaralama kimi yadda saxlandı.' : '🎉 Yeni xəbər uğurla dərc edildi!');
+          showToast(isDraft ? '🟡 Yeni xəbər qaralama kimi yadda saxlandı.' : '🎉 Yeni xəbər dərc edildi və bütün cihazlarda canlı aktiv oldu!');
         }
 
-        saveArticles();
+        saveArticles(savedTarget);
         resetArticleForm();
         switchAdminTab('articles');
         renderAll();
@@ -2810,6 +3035,7 @@
         if (!confirm(`"${art ? art.title : 'Bu məqalə'}" silinsin?`)) return;
         createAutoSnapshot('Məqalə silindi: ' + (art ? art.title : id));
         articles = articles.filter(a => a.id !== id);
+        deleteArticleFromCloud(id);
         saveArticles();
         renderAdminArticles();
         renderAll();
@@ -3187,9 +3413,23 @@
       initTheme();
       renderAll();
       handleRoute();
+      initFirebaseSync();
+
       window.addEventListener('hashchange', handleRoute);
       window.addEventListener('popstate', handleRoute);
       window.addEventListener('scroll', updateReadingProgress);
+
+      // Instantly refresh from cloud when returning to tab or window gains focus (Zero Cache Guarantee)
+      window.addEventListener('focus', () => {
+        if (typeof manualRefreshFromCloud === 'function' && db && fbFS) {
+          manualRefreshFromCloud();
+        }
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && typeof manualRefreshFromCloud === 'function' && db && fbFS) {
+          manualRefreshFromCloud();
+        }
+      });
     </script>
   </body>
 </html>

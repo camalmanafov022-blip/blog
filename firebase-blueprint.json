@@ -1,0 +1,81 @@
+{
+  "entities": {
+    "Article": {
+      "title": "Article",
+      "description": "News article or opinion editorial piece",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "slug": { "type": "string" },
+        "category": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "content": { "type": "string" },
+        "coverImage": { "type": "string" },
+        "photoCredit": { "type": "string" },
+        "readTimeMinutes": { "type": "number" },
+        "publishedAt": { "type": "string" },
+        "views": { "type": "number" },
+        "likes": { "type": "number" },
+        "isPremium": { "type": "boolean" },
+        "isBreaking": { "type": "boolean" },
+        "featured": { "type": "boolean" },
+        "status": { "type": "string" }
+      },
+      "required": ["title", "content"]
+    },
+    "Video": {
+      "title": "Video",
+      "description": "Video feature or analysis",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "youtubeId": { "type": "string" },
+        "duration": { "type": "string" },
+        "category": { "type": "string" },
+        "speaker": { "type": "string" },
+        "thumbnail": { "type": "string" }
+      },
+      "required": ["title", "youtubeId"]
+    },
+    "Subscriber": {
+      "title": "Subscriber",
+      "description": "Newsletter subscriber email",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "subscribedAt": { "type": "string" }
+      },
+      "required": ["email"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Global portal settings",
+      "type": "object",
+      "properties": {
+        "pubId": { "type": "string" },
+        "pin": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/articles/{articleId}": {
+      "schema": "Article",
+      "description": "Collection of all news and opinion articles"
+    },
+    "/videos/{videoId}": {
+      "schema": "Video",
+      "description": "Collection of video analysis entries"
+    },
+    "/subscribers/{subscriberId}": {
+      "schema": "Subscriber",
+      "description": "Collection of newsletter subscriber emails"
+    },
+    "/settings/{settingId}": {
+      "schema": "Settings",
+      "description": "Portal configuration documents"
+    }
+  }
+}
