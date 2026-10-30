@@ -27,6 +27,8 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   const [featured, setFeatured] = useState(initialArticle?.featured || false);
   const [trending, setTrending] = useState(initialArticle?.trending || false);
   const [isPersonalBlog, setIsPersonalBlog] = useState(initialArticle?.isPersonalBlog || false);
+  const [isPremium, setIsPremium] = useState(initialArticle?.isPremium || false);
+  const [isBreaking, setIsBreaking] = useState(initialArticle?.isBreaking || false);
   const [previewMode, setPreviewMode] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -55,6 +57,8 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
       featured,
       trending,
       isPersonalBlog,
+      isPremium,
+      isBreaking,
     });
   };
 
@@ -203,6 +207,26 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
               {/* Toggles */}
               <div className="flex flex-wrap items-center gap-6 p-3 bg-stone-100/60 dark:bg-stone-950/60 rounded-xl text-xs font-medium">
+                <label className="flex items-center gap-2 cursor-pointer text-amber-600 dark:text-amber-400 font-bold">
+                  <input
+                    type="checkbox"
+                    checked={isPremium}
+                    onChange={(e) => setIsPremium(e.target.checked)}
+                    className="rounded text-amber-500 focus:ring-0"
+                  />
+                  <span>⭐ Premium Məqalə (VIP Abunəlik)</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer text-rose-600 dark:text-rose-400 font-bold">
+                  <input
+                    type="checkbox"
+                    checked={isBreaking}
+                    onChange={(e) => setIsBreaking(e.target.checked)}
+                    className="rounded text-rose-500 focus:ring-0"
+                  />
+                  <span>🚨 Son Dəqiqə (Breaking News)</span>
+                </label>
+
                 <label className="flex items-center gap-2 cursor-pointer text-stone-800 dark:text-stone-200">
                   <input
                     type="checkbox"

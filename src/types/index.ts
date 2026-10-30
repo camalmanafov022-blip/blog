@@ -41,6 +41,12 @@ export interface Article {
   trending: boolean;
   isPersonalBlog: boolean;
   videoUrl?: string;
+  isPremium?: boolean;
+  isBreaking?: boolean;
+  status?: 'published' | 'draft' | 'scheduled';
+  photoCredit?: string;
+  metaTitle?: string;
+  metaDescription?: string;
 }
 
 export interface VideoItem {

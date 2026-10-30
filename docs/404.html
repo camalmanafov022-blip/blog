@@ -419,81 +419,446 @@
       </div>
     </div>
 
-    <!-- ADMIN MODAL (PIN: admin123) -->
-    <div id="admin-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
-      <div class="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden my-auto">
-        <div class="p-4 bg-gray-950 text-white flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <div class="w-7 h-7 rounded-full bg-rose-500 flex items-center justify-center font-bold text-xs">N</div>
-            <h2 class="text-sm font-bold">Newsfy CMS · İdarəetmə Paneli</h2>
+    <!-- ADMIN CMS STUDIO (Full Dedicated Newsroom Page Experience) -->
+    <div id="admin-modal" class="fixed inset-0 z-50 hidden flex-col bg-slate-50 dark:bg-[#090d16] text-gray-900 dark:text-gray-100 overflow-hidden">
+      
+      <!-- Unauthenticated PIN Screen -->
+      <div id="admin-auth-screen" class="flex-1 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md">
+        <div class="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-md p-8 border border-gray-200 dark:border-gray-800 shadow-2xl text-center space-y-5 my-auto">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-rose-600 to-amber-500 text-white flex items-center justify-center font-black text-2xl shadow-lg">N</div>
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Newsfy Media Studio</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Xəbər və Məqalə İdarəetmə Paneli</p>
           </div>
+          <div class="p-3 bg-gray-50 dark:bg-gray-950 rounded-2xl border border-gray-100 dark:border-gray-800 text-left space-y-1 text-xs">
+            <span class="text-gray-500">Standart Giriş PIN Kodu:</span>
+            <div class="font-mono font-bold text-rose-500">admin123</div>
+          </div>
+          <div class="space-y-2">
+            <input type="password" id="admin-pin-input" onkeydown="if(event.key==='Enter') verifyAdminPin()" placeholder="PIN kod daxil edin..." class="w-full px-4 py-3 text-center text-lg font-mono bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-rose-500" />
+            <p id="admin-pin-err" class="text-xs text-rose-500 hidden font-bold">Yanlış PIN kod daxil edildi.</p>
+          </div>
+          <button onclick="verifyAdminPin()" class="w-full py-3 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-bold text-sm rounded-2xl shadow-md cursor-pointer transition-all">Panellə Daxil Ol</button>
+          <button onclick="closeAdminModal()" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer block mx-auto">← Sayta Qayıt</button>
+        </div>
+      </div>
+
+      <!-- Authenticated Studio Dashboard -->
+      <div id="admin-dashboard-screen" class="hidden flex-1 flex flex-col min-h-0 h-full overflow-hidden">
+        
+        <!-- Top Studio Header Navigation -->
+        <header class="h-16 px-4 sm:px-8 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between shrink-0 z-20 shadow-xs">
           <div class="flex items-center gap-3">
-            <button id="admin-logout-btn" onclick="adminLogout()" class="hidden text-xs text-rose-400 hover:text-rose-300 font-semibold cursor-pointer">Çıxış</button>
-            <button onclick="closeAdminModal()" class="text-gray-400 hover:text-white text-xl cursor-pointer">&times;</button>
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-rose-600 to-amber-500 text-white flex items-center justify-center font-black text-sm shadow-md">N</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-sm font-extrabold text-gray-900 dark:text-white tracking-tight">Newsfy Media Studio</h1>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 font-bold border border-rose-200 dark:border-rose-900">CMS Pro</span>
+              </div>
+              <p class="text-[10px] text-gray-400 hidden sm:block">Xəbər Redaksiyası & Yayım Mərkəzi</p>
+            </div>
+            <button onclick="closeAdminModal()" class="ml-2 sm:ml-4 px-3 py-1.5 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 flex items-center gap-1.5 cursor-pointer transition-colors" title="Saytın ana səhifəsinə bax">
+              <span>← Sayta baxış</span>
+            </button>
           </div>
-        </div>
 
-        <div id="admin-auth-screen" class="p-8 max-w-sm mx-auto my-auto text-center space-y-4">
-          <h3 class="text-lg font-bold">Admin Girişi</h3>
-          <p class="text-xs text-gray-500">Məqalə əlavə etmək üçün PIN kod daxil edin (Standart: admin123):</p>
-          <input type="password" id="admin-pin-input" onkeydown="if(event.key==='Enter') verifyAdminPin()" placeholder="admin123" class="w-full px-4 py-2 text-center text-lg font-mono bg-gray-50 dark:bg-gray-950 border border-gray-300 dark:border-gray-700 rounded-xl" />
-          <p id="admin-pin-err" class="text-xs text-rose-500 hidden">Yanlış PIN kod.</p>
-          <button onclick="verifyAdminPin()" class="w-full py-2.5 bg-rose-500 text-white font-bold text-xs rounded-xl cursor-pointer">Daxil Ol</button>
-        </div>
-
-        <div id="admin-dashboard-screen" class="hidden flex-1 flex flex-col min-h-0">
-          <div class="px-4 bg-gray-100 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 flex items-center gap-1.5 overflow-x-auto text-xs font-semibold">
-            <button onclick="switchAdminTab('articles')" class="admin-tab py-3 px-3.5 border-b-2 border-rose-500 text-rose-500 font-bold whitespace-nowrap" data-tab="articles">Məqalələr (<span id="admin-tab-art-count">0</span>)</button>
-            <button onclick="switchAdminTab('new-article')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white whitespace-nowrap" data-tab="new-article" id="tab-btn-new-art">+ Yeni Məqalə</button>
-            <button onclick="switchAdminTab('backup')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white whitespace-nowrap flex items-center gap-1 text-emerald-600 dark:text-emerald-400" data-tab="backup">
+          <!-- Desktop Navigation Tabs -->
+          <nav class="hidden md:flex items-center gap-1.5 text-xs font-bold">
+            <button onclick="switchAdminTab('articles')" class="admin-tab px-3.5 py-2 rounded-xl text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 transition-colors cursor-pointer" data-tab="articles">
+              <span>📰 Bütün Xəbərlər (<span id="admin-tab-art-count">0</span>)</span>
+            </button>
+            <button onclick="switchAdminTab('new-article')" class="admin-tab px-3.5 py-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer" data-tab="new-article" id="tab-btn-new-art">
+              <span>✍️ + Yeni Xəbər Yaz (Studio)</span>
+            </button>
+            <button onclick="switchAdminTab('backup')" class="admin-tab px-3.5 py-2 rounded-xl text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors cursor-pointer" data-tab="backup">
               <span>💾 Backup & Bərpa</span>
             </button>
-            <button onclick="switchAdminTab('subscribers')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white whitespace-nowrap" data-tab="subscribers">Abunəçilər</button>
-            <button onclick="switchAdminTab('settings')" class="admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white whitespace-nowrap" data-tab="settings">Google Ads & Ayarlar</button>
-          </div>
+            <button onclick="switchAdminTab('subscribers')" class="admin-tab px-3.5 py-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer" data-tab="subscribers">
+              <span>👥 Abunəçilər</span>
+            </button>
+            <button onclick="switchAdminTab('settings')" class="admin-tab px-3.5 py-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer" data-tab="settings">
+              <span>⚙️ Ayarlar & Reklam</span>
+            </button>
+          </nav>
 
-          <div class="p-5 sm:p-6 overflow-y-auto flex-1 text-xs space-y-4">
-            <!-- Tab: Articles List -->
-            <div id="admin-tab-articles" class="space-y-3">
-              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
-                <div>
-                  <span class="font-bold text-sm text-gray-900 dark:text-white">Bütün Məqalələr</span>
-                  <p class="text-[11px] text-gray-400">Məqalələri redaktə edin, silin və ya ehtiyat nüsxəsini çıxarın.</p>
-                </div>
-                <div class="flex items-center gap-2">
-                  <button onclick="downloadFullBackup()" class="px-3 py-1.5 border border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-lg font-bold flex items-center gap-1 cursor-pointer">
-                    <span>💾 Tez Backup</span>
-                  </button>
-                  <button onclick="switchAdminTab('new-article')" class="px-3 py-1.5 bg-rose-500 text-white rounded-lg font-bold cursor-pointer">+ Yeni Məqalə</button>
-                </div>
+          <!-- Top Right Controls -->
+          <div class="flex items-center gap-2 sm:gap-3">
+            <button onclick="toggleTheme()" class="p-2 rounded-xl border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 cursor-pointer" title="Qaranlıq / İşıqlı rejim">
+              <span class="dark:hidden">🌙</span>
+              <span class="hidden dark:inline">☀️</span>
+            </button>
+            <button id="admin-logout-btn" onclick="adminLogout()" class="px-3 py-1.5 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900 font-bold rounded-xl cursor-pointer transition-colors">
+              Çıxış
+            </button>
+            <button onclick="closeAdminModal()" class="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-lg cursor-pointer" title="Studiyanı bağla">
+              &times;
+            </button>
+          </div>
+        </header>
+
+        <!-- Mobile sub-navigation bar -->
+        <div class="md:hidden px-4 py-2 bg-gray-100 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 flex items-center gap-1.5 overflow-x-auto text-xs font-semibold shrink-0">
+          <button onclick="switchAdminTab('articles')" class="admin-tab-mob py-1.5 px-3 rounded-lg text-rose-600 bg-rose-50 dark:bg-rose-950/50 whitespace-nowrap font-bold" data-tab="articles">Məqalələr</button>
+          <button onclick="switchAdminTab('new-article')" class="admin-tab-mob py-1.5 px-3 rounded-lg text-gray-600 dark:text-gray-400 whitespace-nowrap font-bold" data-tab="new-article">+ Yeni Məqalə</button>
+          <button onclick="switchAdminTab('backup')" class="admin-tab-mob py-1.5 px-3 rounded-lg text-emerald-600 whitespace-nowrap font-bold" data-tab="backup">💾 Backup</button>
+          <button onclick="switchAdminTab('subscribers')" class="admin-tab-mob py-1.5 px-3 rounded-lg text-gray-600 dark:text-gray-400 whitespace-nowrap font-bold" data-tab="subscribers">Abunəçilər</button>
+          <button onclick="switchAdminTab('settings')" class="admin-tab-mob py-1.5 px-3 rounded-lg text-gray-600 dark:text-gray-400 whitespace-nowrap font-bold" data-tab="settings">Ayarlar</button>
+        </div>
+
+        <!-- Studio Main Scrollable Viewport -->
+        <div class="flex-1 overflow-y-auto">
+          
+          <!-- Tab: Articles List -->
+          <div id="admin-tab-articles" class="max-w-6xl mx-auto p-4 sm:p-8 space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-2 border-b border-gray-200 dark:border-gray-800">
+              <div>
+                <h2 class="font-extrabold text-base sm:text-lg text-gray-900 dark:text-white flex items-center gap-2">
+                  <span>Bütün Məqalələr və Xəbərlər</span>
+                  <span id="admin-articles-badge-count" class="px-2 py-0.5 rounded-full text-xs font-mono bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 font-bold">0</span>
+                </h2>
+                <p class="text-xs text-gray-400 mt-0.5">Xəbərləri redaktə edin, silin, premium edin və ya ehtiyat nüsxəsini çıxarın.</p>
               </div>
-              <div id="admin-articles-table-body" class="space-y-2"></div>
+              <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button onclick="downloadFullBackup()" class="px-3 py-2 border border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs">
+                  <span>💾 Tez Backup</span>
+                </button>
+                <button onclick="switchAdminTab('new-article')" class="px-4 py-2 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-xl text-xs font-bold shadow-md cursor-pointer flex items-center gap-1.5">
+                  <span>+ Yeni Xəbər Yarat</span>
+                </button>
+              </div>
             </div>
 
-            <!-- Tab: Create or Edit Article -->
-            <div id="admin-tab-new-article" class="hidden space-y-3 max-w-2xl">
-              <div class="flex items-center justify-between">
-                <h4 id="art-form-title" class="font-bold text-sm text-gray-900 dark:text-white">Yeni Məqalə Yaz</h4>
-                <button type="button" id="btn-cancel-edit" onclick="resetArticleForm()" class="text-rose-500 font-bold hidden cursor-pointer">Ləğv Et</button>
-              </div>
-              <input type="text" id="new-art-title" placeholder="Məqalə Başlığı *" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white" />
-              <select id="new-art-cat" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white">
+            <!-- Search and Filter Bar -->
+            <div class="flex flex-col sm:flex-row items-center gap-2">
+              <input type="text" id="admin-art-search" oninput="handleAdminArticleSearch(this.value)" placeholder="Başlığa, müəllifə və ya teqə görə axtarın..." class="w-full sm:flex-1 px-3.5 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 shadow-xs" />
+              <select id="admin-art-filter-cat" onchange="renderAdminArticles()" class="w-full sm:w-auto px-3 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white">
+                <option value="all">Bütün Bölmələr</option>
                 <option value="texnologiya">Texnologiya & AI</option>
                 <option value="sexsi-inkisaf">Şəxsi İnkişaf</option>
                 <option value="mehsuldarliq">Məhsuldarlıq</option>
                 <option value="innovasiya">İnnovasiya</option>
+                <option value="felsefe">Fəlsəfə</option>
                 <option value="bloq">Şəxsi Bloq</option>
               </select>
-              <textarea id="new-art-excerpt" placeholder="Qısa xülasə *" rows="2" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white"></textarea>
-              <textarea id="new-art-content" placeholder="Məqalə mətni (Abzaslar, ### Başlıqlar, > Sitatlar) *" rows="7" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white font-sans"></textarea>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <input type="text" id="new-art-image" placeholder="Şəkil URL (Unsplash və ya birbaşa keçid)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white" />
-                <input type="number" id="new-art-readtime" placeholder="Oxu vaxtı (dəq)" value="5" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white" />
+            </div>
+
+            <div id="admin-articles-table-body" class="space-y-2.5 pt-1"></div>
+          </div>
+
+          <!-- Tab: Create or Edit Article (Full Dedicated Page Experience) -->
+          <div id="admin-tab-new-article" class="hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-6 space-y-6">
+              
+              <!-- Editorial Action Header Bar (Sticky) -->
+              <div class="p-4 bg-white/95 dark:bg-gray-900/95 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sticky top-0 z-10 backdrop-blur-md">
+                <div class="flex items-center gap-3">
+                  <div class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></div>
+                  <div>
+                    <h3 id="art-form-title" class="text-base font-extrabold text-gray-900 dark:text-white">Yeni Məqalə Redaktoru</h3>
+                    <div class="flex items-center gap-2 text-[11px] text-gray-400 mt-0.5">
+                      <span id="art-form-status-badge" class="px-2 py-0.5 rounded-full font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900">🟡 Dərc gözləyir</span>
+                      <span>·</span>
+                      <span class="text-gray-400">Canlı Redaksiya Masası</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Editorial Actions -->
+                <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end flex-wrap">
+                  <button type="button" onclick="openArticleLivePreview()" class="px-3.5 py-2 text-xs font-bold rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 flex items-center gap-1.5 cursor-pointer transition-colors shadow-xs">
+                    <span>👁️ Canlı Önizləmə</span>
+                  </button>
+                  <button type="button" onclick="saveNewArticle(true)" class="px-3.5 py-2 text-xs font-bold rounded-xl border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-800 dark:text-gray-200 flex items-center gap-1.5 cursor-pointer transition-colors shadow-xs">
+                    <span>💾 Qaralama Saxla</span>
+                  </button>
+                  <button type="button" id="btn-cancel-edit" onclick="resetArticleForm()" class="hidden px-3.5 py-2 text-xs font-bold rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer">
+                    Ləğv Et
+                  </button>
+                  <button type="button" onclick="saveNewArticle(false)" id="btn-save-article" class="px-5 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white shadow-md cursor-pointer transition-all flex items-center gap-1.5">
+                    <span>🚀 Dərc Et</span>
+                  </button>
+                </div>
               </div>
-              <div class="flex items-center justify-end gap-2 pt-2">
-                <button onclick="saveNewArticle()" id="btn-save-article" class="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl cursor-pointer">Dərc Et</button>
+
+              <!-- 2-Column Workstation Grid -->
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start pb-16">
+                
+                <!-- Left Main Editorial Column (8 cols) -->
+                <div class="lg:col-span-8 space-y-5">
+                  
+                  <!-- Headline Title Input Card -->
+                  <div class="p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-2">
+                    <div class="flex items-center justify-between">
+                      <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Xəbərin Əsas Başlığı *</label>
+                      <span class="text-[11px] font-mono text-gray-400"><span id="title-char-count">0</span> simvol</span>
+                    </div>
+                    <input type="text" id="new-art-title" oninput="handleTitleChange(this.value)" placeholder="Oxucunu cəlb edən böyük başlıq daxil edin..." class="w-full text-lg sm:text-2xl font-black bg-transparent border-0 border-b-2 border-gray-200 dark:border-gray-800 focus:border-rose-500 dark:focus:border-rose-500 p-2 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none transition-colors" />
+                    <p class="text-[11px] text-gray-400 pt-1">İpucu: Dəqiq və maraqlı başlıqlar oxunma sayını əhəmiyyətli dərəcədə artırır.</p>
+                  </div>
+
+                  <!-- Excerpt / Lead Input Card -->
+                  <div class="p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-2">
+                    <div class="flex items-center justify-between">
+                      <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Xülasə & Lead (Giriş) *</label>
+                      <span class="text-[11px] font-mono text-gray-400"><span id="excerpt-char-count">0</span> simvol</span>
+                    </div>
+                    <textarea id="new-art-excerpt" oninput="handleExcerptChange(this.value)" rows="2" placeholder="Xəbərin 1-2 cümləlik qısa xülasəsi. Saytın kartlarında və axtarışlarda bu görünəcək..." class="w-full text-xs sm:text-sm bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl p-3 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500 transition-colors"></textarea>
+                  </div>
+
+                  <!-- Rich Content Editor Card with Formatting Toolbar -->
+                  <div class="p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-3">
+                    <div class="flex items-center justify-between">
+                      <label class="text-xs font-bold uppercase tracking-wider text-gray-400">Məqalənin Tam Mətni *</label>
+                      <span class="text-[11px] text-rose-500 font-bold">Markdown formatı dəstəklənir</span>
+                    </div>
+
+                    <!-- Editorial Formatting Toolbar -->
+                    <div class="p-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl flex items-center gap-1 flex-wrap text-xs">
+                      <button type="button" onclick="insertFormatting('bold')" class="px-2.5 py-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 font-black text-gray-700 dark:text-gray-300 transition-colors" title="Qalın"><b>B</b></button>
+                      <button type="button" onclick="insertFormatting('italic')" class="px-2.5 py-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 italic font-serif text-gray-700 dark:text-gray-300 transition-colors" title="Kursiv"><i>I</i></button>
+                      <span class="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1"></span>
+                      <button type="button" onclick="insertFormatting('h2')" class="px-2.5 py-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 font-bold text-gray-700 dark:text-gray-300 transition-colors" title="Böyük Alt Başlıq">H2</button>
+                      <button type="button" onclick="insertFormatting('h3')" class="px-2.5 py-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 font-bold text-gray-700 dark:text-gray-300 transition-colors" title="Kiçik Alt Başlıq">H3</button>
+                      <span class="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1"></span>
+                      <button type="button" onclick="insertFormatting('quote')" class="px-2.5 py-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-serif transition-colors" title="Sitat Bloku">" Sitat</button>
+                      <button type="button" onclick="insertFormatting('list')" class="px-2.5 py-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors" title="Maddələr Siyahısı">• Siyahı</button>
+                      <button type="button" onclick="insertFormatting('callout')" class="px-2.5 py-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-amber-600 dark:text-amber-400 font-bold transition-colors" title="Vacib Qeyd">⚠️ Qeyd</button>
+                      <button type="button" onclick="insertFormatting('paywall')" class="px-2.5 py-1.5 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-950/60 text-amber-600 dark:text-amber-400 font-bold border border-amber-300 dark:border-amber-800 transition-colors" title="VIP Oxu Qapısı (Paywall Kəsik Xətti)">👑 VIP Kəsik</button>
+                      <button type="button" onclick="insertFormatting('image')" class="px-2.5 py-1.5 rounded-lg hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors" title="Şəkil Keçidi">🖼️ Şəkil</button>
+                      <button type="button" onclick="insertSampleArticleTemplate()" class="ml-auto px-2.5 py-1.5 rounded-lg text-[11px] bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-bold hover:bg-rose-100 transition-colors cursor-pointer">Şablon Yüklə</button>
+                    </div>
+
+                    <textarea id="new-art-content" oninput="handleContentChange(this.value)" rows="15" placeholder="Məqalənin ətraflı mətnini yazın... Abzaslar üçün Enter basaraq boş sətir buraxın. Alt başlıqlar üçün '###', sitatlar üçün '>' istifadə edin." class="w-full text-xs sm:text-sm font-sans leading-relaxed bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500 font-normal transition-colors"></textarea>
+
+                    <!-- Metrics Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 p-3 bg-gray-50 dark:bg-gray-950 rounded-2xl border border-gray-100 dark:border-gray-800 text-[11px] font-mono text-gray-500">
+                      <div class="flex items-center gap-4">
+                        <span>Söz: <b id="stat-words" class="text-rose-500 font-bold">0</b></span>
+                        <span>Simvol: <b id="stat-chars" class="text-gray-800 dark:text-gray-200 font-bold">0</b></span>
+                        <span>Təxmini oxu: <b id="stat-read" class="text-gray-800 dark:text-gray-200 font-bold">1</b> dəqiqə</span>
+                      </div>
+                      <span class="text-emerald-500 font-bold">Avtomatik yaddaş aktivdir</span>
+                    </div>
+                  </div>
+
+                  <!-- SEO & Google Search Snippet Card -->
+                  <div class="p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-4">
+                    <div class="flex items-center justify-between">
+                      <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
+                        <span>🔍 SEO & Keçid Parametrləri (Google Snippet)</span>
+                      </h4>
+                      <span class="text-[10px] text-gray-400">Axtarış sistemlərində görünüş</span>
+                    </div>
+
+                    <!-- Google Snippet Simulation Card -->
+                    <div class="p-4 bg-gray-50 dark:bg-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-1">
+                      <div class="flex items-center gap-2 text-[11px] text-gray-500 font-mono truncate">
+                        <span>newsfy.az</span>
+                        <span>› xeber ›</span>
+                        <span id="seo-slug-preview" class="text-emerald-600 dark:text-emerald-400 font-bold">yeni-xeber</span>
+                      </div>
+                      <h5 id="seo-title-preview" class="text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer truncate">
+                        Məqalə Başlığı — Fikir & Zəka
+                      </h5>
+                      <p id="seo-desc-preview" class="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
+                        Xəbərin qısa təsviri Google axtarış nəticələrində oxuculara bu şəkildə nümayiş olunacaq.
+                      </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Xüsusi URL Keçidi (Slug)</label>
+                        <div class="flex items-center gap-1.5">
+                          <input type="text" id="new-art-slug" oninput="updateSeoPreview()" placeholder="yeni-xeber-keçidi" class="flex-1 px-3 py-2 text-xs font-mono bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl" />
+                          <button type="button" onclick="autoGenerateSlug()" class="px-2.5 py-2 text-xs bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 rounded-xl font-bold cursor-pointer">Avto</button>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="flex justify-between items-center mb-1">
+                          <label class="text-[11px] font-bold text-gray-500">Meta Açıqlama (Description)</label>
+                          <span class="text-[10px] text-gray-400 font-mono"><span id="meta-char-count">0</span>/160</span>
+                        </div>
+                        <input type="text" id="new-art-metadesc" maxlength="160" oninput="updateSeoPreview()" placeholder="Google axtarışı üçün təsvir..." class="w-full px-3 py-2 text-xs bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl" />
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Right Sidebar Column (4 cols) -->
+                <div class="lg:col-span-4 space-y-5">
+                  
+                  <!-- 1. Special News Badges (User-requested: Premium, Breaking, etc.) -->
+                  <div class="p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Xüsusi Xəbər Nişanları</h4>
+                    
+                    <!-- ⭐ Premium Article Toggle -->
+                    <div class="p-3.5 rounded-2xl border-2 border-amber-300 dark:border-amber-800 bg-amber-50/70 dark:bg-amber-950/30 transition-all">
+                      <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="checkbox" id="new-art-ispremium" onchange="handleSpecialFlagChange()" class="mt-1 w-4 h-4 rounded text-amber-500 focus:ring-0 cursor-pointer accent-amber-500" />
+                        <div class="min-w-0">
+                          <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-extrabold text-amber-700 dark:text-amber-300 flex items-center gap-1">
+                              <span>⭐</span><span>PREMIUM XƏBƏR (VIP)</span>
+                            </span>
+                          </div>
+                          <p class="text-[11px] text-amber-800 dark:text-amber-400 mt-1 leading-snug">
+                            Yalnız abunəçilər üçün nəzərdə tutulur. Saytda qızılı <b class="font-bold">PREMIUM ★</b> nişanı və mətndə şık oxu qapısı (paywall) nümayiş olunacaq.
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- 🚨 Breaking News Toggle -->
+                    <div class="p-3.5 rounded-2xl border-2 border-rose-300 dark:border-rose-900 bg-rose-50/70 dark:bg-rose-950/30 transition-all">
+                      <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="checkbox" id="new-art-isbreaking" onchange="handleSpecialFlagChange()" class="mt-1 w-4 h-4 rounded text-rose-500 focus:ring-0 cursor-pointer accent-rose-500" />
+                        <div class="min-w-0">
+                          <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-extrabold text-rose-700 dark:text-rose-300 flex items-center gap-1">
+                              <span class="inline-block w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                              <span>SON DƏQİQƏ (BREAKING)</span>
+                            </span>
+                          </div>
+                          <p class="text-[11px] text-rose-800 dark:text-rose-400 mt-1 leading-snug">
+                            Saytın yuxarı qaçan lentində və xəbər kartında qırmızı döyünən <b class="font-bold">● SON DƏQİQƏ</b> animasiyası ilə təcili önə çəkilir.
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- 📌 Featured Toggle -->
+                    <div class="p-3.5 rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-950/20 transition-all">
+                      <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="checkbox" id="new-art-isfeatured" onchange="handleSpecialFlagChange()" class="mt-1 w-4 h-4 rounded text-indigo-500 focus:ring-0 cursor-pointer accent-indigo-500" />
+                        <div class="min-w-0">
+                          <span class="text-xs font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1">
+                            <span>📌</span><span>Seçilmiş Məqalə (Vitrin)</span>
+                          </span>
+                          <p class="text-[11px] text-indigo-800 dark:text-indigo-400 mt-1 leading-snug">
+                            Ana səhifənin ən üst vitrin hissəsində (Hero) böyük formatda nümayiş etdirilir.
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- 2. Category & Format -->
+                  <div class="p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Bölmə və Yayım Formatı</h4>
+                    <div>
+                      <label class="block text-[11px] font-bold text-gray-500 mb-1">Kateqoriya *</label>
+                      <select id="new-art-cat" class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs font-semibold text-gray-900 dark:text-white">
+                        <option value="texnologiya">Texnologiya & AI</option>
+                        <option value="sexsi-inkisaf">Şəxsi İnkişaf & Psixologiya</option>
+                        <option value="mehsuldarliq">Məhsuldarlıq & İş Sistemi</option>
+                        <option value="innovasiya">İnnovasiya & Elm</option>
+                        <option value="felsefe">Fəlsəfə & Düşüncə</option>
+                        <option value="bloq">Müəllif Sütunu & Şəxsi Bloq</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-gray-500 mb-1">Yayım Vəziyyəti</label>
+                      <select id="new-art-status" class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs font-semibold text-gray-900 dark:text-white">
+                        <option value="published">🟢 Dərhal Dərc Et (Published)</option>
+                        <option value="draft">🟡 Qaralama Kimi Saxla (Draft)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- 3. Cover Media & Presets -->
+                  <div class="p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Əsas Şəkil (Cover)</h4>
+                      <span class="text-[10px] text-gray-400">16:9 və ya 16:10</span>
+                    </div>
+
+                    <!-- Image Live Preview Box -->
+                    <div class="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-800">
+                      <img id="cover-preview-img" src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80" alt="Cover Preview" class="w-full h-full object-cover" />
+                      <span id="cover-badge-preview" class="absolute top-2 left-2 hidden"></span>
+                    </div>
+
+                    <input type="text" id="new-art-image" oninput="handleCoverImageChange(this.value)" placeholder="Şəkil URL (Unsplash və ya birbaşa keçid)..." class="w-full px-3 py-2 text-xs bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-gray-900 dark:text-white" />
+
+                    <!-- 1-Click Unsplash Theme Presets -->
+                    <div>
+                      <span class="text-[10px] font-bold text-gray-400 uppercase block mb-1.5">Tez Seçilən Mövzular:</span>
+                      <div class="flex flex-wrap gap-1.5 text-[11px]">
+                        <button type="button" onclick="setPresetCover('ai')" class="px-2 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 hover:text-rose-600 rounded-lg font-medium cursor-pointer transition-colors">🤖 AI & Robot</button>
+                        <button type="button" onclick="setPresetCover('growth')" class="px-2 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 hover:text-rose-600 rounded-lg font-medium cursor-pointer transition-colors">🧠 İnkişaf</button>
+                        <button type="button" onclick="setPresetCover('business')" class="px-2 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 hover:text-rose-600 rounded-lg font-medium cursor-pointer transition-colors">💼 Biznes</button>
+                        <button type="button" onclick="setPresetCover('quantum')" class="px-2 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 hover:text-rose-600 rounded-lg font-medium cursor-pointer transition-colors">⚛️ Kvant</button>
+                        <button type="button" onclick="setPresetCover('global')" class="px-2 py-1 bg-gray-100 dark:bg-gray-800 hover:bg-rose-50 hover:text-rose-600 rounded-lg font-medium cursor-pointer transition-colors">🌍 Qlobal</button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label class="block text-[11px] font-bold text-gray-500 mb-1">Şəkil Krediti / Mənbə</label>
+                      <input type="text" id="new-art-photocredit" placeholder="Məs: Foto: Reuters / Unsplash" class="w-full px-3 py-2 text-xs bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl" />
+                    </div>
+                  </div>
+
+                  <!-- 4. Tags / Açar Sözlər -->
+                  <div class="p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Açar Sözlər (Teqlər)</h4>
+                      <span class="text-[10px] text-gray-400">Enter ilə əlavə edin</span>
+                    </div>
+
+                    <div class="flex items-center gap-1.5">
+                      <input type="text" id="new-art-tag-input" onkeydown="if(event.key==='Enter' || event.key===','){event.preventDefault(); addTagChip();}" placeholder="Teq yazıb Enter vurun..." class="flex-1 px-3 py-2 text-xs bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl" />
+                      <button type="button" onclick="addTagChip()" class="px-3 py-2 text-xs bg-gray-100 dark:bg-gray-800 hover:bg-rose-500 hover:text-white font-bold rounded-xl cursor-pointer transition-colors">+ Əlavə</button>
+                    </div>
+
+                    <!-- Interactive Tag Chips Container -->
+                    <div id="art-tags-chips-container" class="flex flex-wrap gap-1.5 min-h-[32px] p-2 bg-gray-50 dark:bg-gray-950 rounded-xl border border-gray-100 dark:border-gray-800">
+                      <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Preset Suggested Tags -->
+                    <div>
+                      <span class="text-[10px] text-gray-400 uppercase block mb-1">Tövsiyə olunanlar:</span>
+                      <div class="flex flex-wrap gap-1 text-[11px]">
+                        <button type="button" onclick="quickAddTag('Süni İntellekt')" class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 hover:text-rose-500 font-mono text-[10px] cursor-pointer">+ Süni İntellekt</button>
+                        <button type="button" onclick="quickAddTag('Texnologiya')" class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 hover:text-rose-500 font-mono text-[10px] cursor-pointer">+ Texnologiya</button>
+                        <button type="button" onclick="quickAddTag('İnkişaf')" class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 hover:text-rose-500 font-mono text-[10px] cursor-pointer">+ İnkişaf</button>
+                        <button type="button" onclick="quickAddTag('Biznes')" class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 hover:text-rose-500 font-mono text-[10px] cursor-pointer">+ Biznes</button>
+                        <button type="button" onclick="quickAddTag('Fəlsəfə')" class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 hover:text-rose-500 font-mono text-[10px] cursor-pointer">+ Fəlsəfə</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 5. Author Information -->
+                  <div class="p-5 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xs space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Müəllif Məlumatı</h4>
+                    <div class="space-y-2">
+                      <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Müəllif Adı</label>
+                        <input type="text" id="new-art-author-name" value="Camal Mənafov" class="w-full px-3 py-2 text-xs bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl font-bold" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Vəzifə / Rol</label>
+                        <input type="text" id="new-art-author-role" value="Təsisçi & Baş Redaktor" class="w-full px-3 py-2 text-xs bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl" />
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-bold text-gray-500 mb-1">Müəllif Şəkli (Avatar URL)</label>
+                        <input type="text" id="new-art-author-avatar" value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-full px-3 py-2 text-xs bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl font-mono text-[11px]" />
+                      </div>
+                      <div>
+                        <div class="flex justify-between items-center mb-1">
+                          <label class="text-[11px] font-bold text-gray-500">Oxu Vaxtı (dəq)</label>
+                          <button type="button" onclick="autoCalcReadTime()" class="text-[10px] text-rose-500 font-bold hover:underline cursor-pointer">Avto-hesabla</button>
+                        </div>
+                        <input type="number" id="new-art-readtime" value="5" min="1" max="60" class="w-full px-3 py-2 text-xs bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl" />
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
               </div>
             </div>
+          </div>
 
             <!-- Tab: DEDICATED BACKUP & RESTORE HUB (User-requested feature) -->
             <div id="admin-tab-backup" class="hidden space-y-6 max-w-2xl">
@@ -609,6 +974,28 @@
       </div>
     </div>
 
+    <!-- ARTICLE LIVE PREVIEW MODAL (Inside CMS) -->
+    <div id="art-live-preview-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
+      <div class="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden my-auto">
+        <div class="p-4 bg-gray-950 text-white flex items-center justify-between border-b border-gray-800">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs font-bold font-mono">XƏBƏRİN CANLI SAYT ÖNİZLƏMƏSİ</span>
+          </div>
+          <button onclick="closeArticleLivePreview()" class="text-gray-400 hover:text-white text-xl font-bold cursor-pointer">&times;</button>
+        </div>
+        <div id="art-live-preview-content" class="p-6 sm:p-8 overflow-y-auto flex-1 space-y-6 text-gray-900 dark:text-gray-100">
+          <!-- Filled dynamically by JS -->
+        </div>
+        <div class="p-3 bg-gray-100 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between">
+          <span class="text-xs text-gray-500 font-mono">Oxucu gözü ilə canlı format sınağı</span>
+          <button onclick="closeArticleLivePreview()" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold rounded-xl cursor-pointer">
+            Redaktora Qayıt
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="mt-20 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 py-12">
       <div class="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -657,12 +1044,17 @@
           excerpt: 'Generativ süni intellekt modelləri hər gün daha da təkmilləşir. Bəs bu dövrdə insanın əsas rəqabət üstünlüyü nə olacaq? Dərin təhlil və gələcəyə baxış.',
           content: `Süni intellekt və avtomatlaşdırma artıq sadəcə texnoloji şirkətlərin deyil, bütün cəmiyyətin həyat tərzini yenidən formalaşdırır. Hər kəsin eyni məlumat bazasına və süni intellekt alətlərinə çıxışı olduğu bir dünyada informasiyanın özü deyil, onu necə sintez etdiyimiz və hansı sualları verdiyimiz ön plana çıxır.\n\n### Dərin Düşünmənin (Deep Work) Qiyməti\n\nMüasir dövrdə diqqət ən nadir və ən bahalı resursa çevrilib. Sosial şəbəkələrin davamlı bildirişləri və qısa məzmun formatları insan beynini fraqmentlərə bölür. Lakin mürəkkəb problemləri həll etmək üçün dərin fokuslanma tələb olunur.\n\n> "Gələcəkdə iki növ insan olacaq: texnologiyanın diqqətini idarə etdiyi insanlar və diqqətinə sahib çıxaraq texnologiyanı idarə edən insanlar."\n\n### Gələcəkdə Əvəzolunmaz Olacaq 3 Əsas Bacarıq\n\n1. Tənqidi və Fəlsəfi Təhlil: Problemin kökünü sorğulamaq.\n2. Emosional İntellekt və Empatiya: İnsanlararası dərin etimad yaratmaq.\n3. Fənlərarası Sintez: Texnologiya ilə fəlsəfəni, dizayn ilə psixologiyanı birləşdirmək.`,
           coverImage: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80',
+          photoCredit: 'Unsplash / DeepMind Research',
           readTimeMinutes: 6,
-          author: { name: 'Martina Richter', role: 'UX/UI Designer' },
+          author: { name: 'Martina Richter', role: 'UX/UI Designer', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80' },
           publishedAt: 'İyun 30, 2026',
           views: 2420,
           likes: 124,
-          tags: ['Süni İntellekt', 'Gələcək', 'Dərin Düşüncə']
+          tags: ['Süni İntellekt', 'Gələcək', 'Dərin Düşüncə', 'VIP Analitika'],
+          isPremium: true,
+          isBreaking: false,
+          featured: true,
+          status: 'published'
         },
         {
           id: 'art-2',
@@ -672,12 +1064,17 @@
           excerpt: 'Hər gün sadəcə 1 faiz daha yaxşı olmaq bir ildə insanı necə 37 qat daha güclü edir? Vərdişlərin atomar gücü və psixoloji mexanizmi.',
           content: `Böyük hədəflərə çatmaq istəyəndə əksər insanlar dərhal radikal dəyişikliklər etməyə çalışırlar. Lakin psixologiya sübut edir ki, bu cür kəskin addımlar tez bir zamanda tükənmə ilə nəticələnir.\n\n### Vərdişlərin Mürəkkəb Faiz Qaydası\n\nƏgər siz hər gün sadəcə 1% daha yaxşılaşsanız, riyazi olaraq bir ilin sonunda (1.01^365) başlanğıc vəziyyətinizdən təxminən 37 qat daha irəli gedəcəksiniz.`,
           coverImage: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&auto=format&fit=crop&q=80',
+          photoCredit: 'Unsplash / Productivity Lab',
           readTimeMinutes: 5,
-          author: { name: 'Hannah Ziegler', role: 'Graphic Designer' },
+          author: { name: 'Hannah Ziegler', role: 'Graphic Designer', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80' },
           publishedAt: 'İyun 28, 2026',
           views: 1880,
           likes: 95,
-          tags: ['Vərdişlər', 'İnkişaf']
+          tags: ['Vərdişlər', 'İnkişaf'],
+          isPremium: false,
+          isBreaking: false,
+          featured: true,
+          status: 'published'
         },
         {
           id: 'art-3',
@@ -687,12 +1084,17 @@
           excerpt: 'Hər 5 dəqiqədən bir telefona baxmaq vərdişi beynimizin strukturunu necə dəyişir və bunu aradan qaldırmaq üçün hansı rəqəmsal detoks metodları var?',
           content: `Bugünkü rəqəmsal mühitdə ən böyük rəqibimiz rəqib şirkətlər deyil, cibimizdə gəzdirdiyimiz və bizi daimi dopamin asılılığında saxlayan cihazlardır.`,
           coverImage: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80',
+          photoCredit: 'Unsplash / Focus Studio',
           readTimeMinutes: 4,
-          author: { name: 'Camal Mənafov', role: 'Baş Redaktor' },
+          author: { name: 'Camal Mənafov', role: 'Baş Redaktor', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80' },
           publishedAt: 'İyun 25, 2026',
           views: 1340,
           likes: 78,
-          tags: ['Fokus', 'Dərin İş']
+          tags: ['Fokus', 'Dərin İş'],
+          isPremium: false,
+          isBreaking: false,
+          featured: false,
+          status: 'published'
         },
         {
           id: 'art-4',
@@ -702,12 +1104,17 @@
           excerpt: 'Kvant bitləri (kübitlər), superpozisiya və dolaşıqlıq prinsipləri mövcud kriptoqrafiyanı və dərman kəşflərini necə kökündən dəyişəcək?',
           content: `Klassik kompüterlər məlumatı 0 və ya 1 şəklində emal etdiyi halda, kvant kompüterləri eyni anda həm 0, həm də 1 ola bilən kübitlərdən istifadə edir.`,
           coverImage: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop&q=80',
+          photoCredit: 'Reuters / Kvant Texnologiyaları Mərkəzi',
           readTimeMinutes: 7,
-          author: { name: 'Elvin Qasımov', role: 'Kvant Mühəndisi' },
+          author: { name: 'Elvin Qasımov', role: 'Kvant Mühəndisi', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80' },
           publishedAt: 'İyun 29, 2026',
           views: 1950,
           likes: 88,
-          tags: ['Kvant', 'İnnovasiya']
+          tags: ['Kvant', 'İnnovasiya', 'Son Dəqiqə'],
+          isPremium: false,
+          isBreaking: true,
+          featured: true,
+          status: 'published'
         },
         {
           id: 'art-5',
@@ -717,12 +1124,17 @@
           excerpt: 'Gündəlik qeydlərimdən: Nəzarət edə biləcəyimiz şeylərə fokuslanmaq və daxili sakitliyi qorumağın qədim fəlsəfi açarları.',
           content: `Hər səhər masamın arxasına keçəndə özümə xatırlatdığım tək bir prinsip var: "Həyatda baş verən hadisələr deyil, bizim onlara verdiyimiz məna bizi narahat edir." - Epiktet.`,
           coverImage: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&auto=format&fit=crop&q=80',
+          photoCredit: 'Unsplash / Stoic Notes',
           readTimeMinutes: 3,
-          author: { name: 'Camal Mənafov', role: 'Müəllif' },
+          author: { name: 'Camal Mənafov', role: 'Müəllif', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80' },
           publishedAt: 'İyun 20, 2026',
           views: 890,
           likes: 62,
-          tags: ['Stoitsizm', 'Şəxsi Bloq']
+          tags: ['Stoitsizm', 'Şəxsi Bloq'],
+          isPremium: false,
+          isBreaking: false,
+          featured: false,
+          status: 'published'
         }
       ];
 
@@ -765,6 +1177,9 @@
       // STATE WITH PERSISTENCE
       let articles = (JSON.parse(localStorage.getItem('newsfy_articles')) || DEFAULT_ARTICLES).map(a => {
         if (!a.slug) a.slug = generateSlug(a.title);
+        if (a.id === 'art-1' && a.isPremium === undefined) a.isPremium = true;
+        if (a.id === 'art-4' && a.isBreaking === undefined) a.isBreaking = true;
+        if (a.featured === undefined && (a.id === 'art-1' || a.id === 'art-2' || a.id === 'art-4')) a.featured = true;
         return a;
       });
       let videos = JSON.parse(localStorage.getItem('newsfy_videos')) || DEFAULT_VIDEOS;
@@ -1089,6 +1504,11 @@
             <div>
               <div class="relative aspect-[16/11] w-full overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-800 mb-4 shadow-xs">
                 <img src="${card1Art.coverImage}" alt="${card1Art.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div class="absolute top-3 left-3 flex flex-col gap-1 z-10 pointer-events-none">
+                  ${card1Art.isPremium ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[9px] font-black bg-gradient-to-r from-amber-400 to-yellow-300 text-gray-950 shadow-md">★ PREMIUM</span>` : ''}
+                  ${card1Art.isBreaking ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[9px] font-black bg-rose-600 text-white shadow-md animate-pulse">● SON DƏQİQƏ</span>` : ''}
+                  ${card1Art.featured ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold bg-indigo-600 text-white shadow-md">SEÇİLMİŞ</span>` : ''}
+                </div>
                 <button onclick="copyArticleUrl('${card1Art.id}', event)" class="absolute top-3 right-3 p-2 bg-black/60 hover:bg-rose-600 text-white rounded-xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all text-xs" title="Linki Kopyala">
                   🔗
                 </button>
@@ -1121,6 +1541,11 @@
             <div>
               <div class="relative aspect-[16/11] w-full overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-800 mb-4 shadow-xs">
                 <img src="${card2Art.coverImage}" alt="${card2Art.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div class="absolute top-3 left-3 flex flex-col gap-1 z-10 pointer-events-none">
+                  ${card2Art.isPremium ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[9px] font-black bg-gradient-to-r from-amber-400 to-yellow-300 text-gray-950 shadow-md">★ PREMIUM</span>` : ''}
+                  ${card2Art.isBreaking ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[9px] font-black bg-rose-600 text-white shadow-md animate-pulse">● SON DƏQİQƏ</span>` : ''}
+                  ${card2Art.featured ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold bg-indigo-600 text-white shadow-md">SEÇİLMİŞ</span>` : ''}
+                </div>
                 <button onclick="copyArticleUrl('${card2Art.id}', event)" class="absolute top-3 right-3 p-2 bg-black/60 hover:bg-rose-600 text-white rounded-xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all text-xs" title="Linki Kopyala">
                   🔗
                 </button>
@@ -1215,15 +1640,40 @@
             <a href="#/xeber/${art.slug || art.id}" onclick="event.preventDefault(); openArticle('${art.id}');" class="cursor-pointer block">
               <div class="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800 mb-3">
                 <img src="${art.coverImage}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                
+                <!-- Card Status Badges -->
+                <div class="absolute top-2 left-2 flex flex-col gap-1 z-10 pointer-events-none">
+                  ${art.isPremium ? `
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black bg-gradient-to-r from-amber-400 to-yellow-300 text-gray-950 shadow-md">
+                      <span>★</span><span>PREMIUM</span>
+                    </span>
+                  ` : ''}
+                  ${art.isBreaking ? `
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-black bg-rose-600 text-white shadow-md animate-pulse">
+                      <span>●</span><span>SON DƏQİQƏ</span>
+                    </span>
+                  ` : ''}
+                  ${art.featured ? `
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[9px] font-bold bg-indigo-600 text-white shadow-md">
+                      <span>SEÇİLMİŞ</span>
+                    </span>
+                  ` : ''}
+                </div>
+
                 <button onclick="copyArticleUrl('${art.id}', event)" class="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-rose-600 text-white rounded-lg text-xs backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity" title="Linki Kopyala">
                   🔗
                 </button>
               </div>
               <span class="text-[10px] font-bold uppercase tracking-wider text-rose-500 mb-1 block">${categoryLabels[art.category] || art.category}</span>
-              <h3 class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-rose-500 leading-snug transition-colors line-clamp-2 mb-2">
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white group-hover:text-rose-500 leading-snug transition-colors line-clamp-2 mb-1.5">
                 ${art.title}
               </h3>
-              <p class="text-xs text-gray-500 line-clamp-2 mb-3">${art.excerpt}</p>
+              <p class="text-xs text-gray-500 line-clamp-2 mb-2.5">${art.excerpt}</p>
+              ${art.tags && art.tags.length > 0 ? `
+                <div class="flex flex-wrap gap-1 mb-2">
+                  ${art.tags.slice(0, 2).map(t => `<span class="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-500 text-[10px] font-mono">#${t}</span>`).join('')}
+                </div>
+              ` : ''}
             </a>
             <div class="pt-2 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-[11px] text-gray-400">
               <span>${art.author?.name || 'Müəllif'}</span>
@@ -1302,7 +1752,11 @@
         const prevArt = currentIdx > 0 ? articles[currentIdx - 1] : null;
         const nextArt = currentIdx < articles.length - 1 ? articles[currentIdx + 1] : null;
 
-        const paragraphs = art.content.split('\n\n').map((p, idx) => {
+        const isPremiumLocked = art.isPremium && !unlockedPremiumArticles.includes(art.id);
+        const rawParagraphs = art.content.split('\n\n');
+        const displayParagraphs = isPremiumLocked ? rawParagraphs.slice(0, 2) : rawParagraphs;
+
+        const paragraphs = displayParagraphs.map((p, idx) => {
           if (p.startsWith('### ')) return `<h3 class="text-2xl font-bold text-gray-900 dark:text-white pt-6 pb-2">${p.replace('### ', '')}</h3>`;
           if (p.startsWith('> ')) return `<blockquote class="my-6 p-5 border-l-4 border-rose-500 bg-rose-50/50 dark:bg-rose-950/20 rounded-r-xl italic text-lg text-gray-800 dark:text-gray-200">${p.replace('> ', '')}</blockquote>`;
           if (p.startsWith('- ') || p.includes('\n- ')) {
@@ -1326,6 +1780,27 @@
             <span class="text-gray-400 truncate max-w-[200px] sm:max-w-md">${art.title}</span>
           </div>
 
+          <!-- Special Status Banners -->
+          ${art.isPremium ? `
+            <div class="mb-5 p-3 rounded-2xl bg-gradient-to-r from-amber-500/15 via-yellow-400/20 to-amber-500/15 border border-amber-300 dark:border-amber-700 flex items-center justify-between text-xs text-amber-800 dark:text-amber-200 shadow-2xs">
+              <div class="flex items-center gap-2 font-bold">
+                <span class="text-base">👑</span>
+                <span>FİKİR & ZƏKA PREMİUM EKSKLÜZİV MƏQALƏ</span>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-400 text-gray-950 font-black text-[10px] tracking-wider uppercase shadow-xs">VIP YAYIM</span>
+            </div>
+          ` : ''}
+
+          ${art.isBreaking ? `
+            <div class="mb-5 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 flex items-center justify-between text-xs text-rose-700 dark:text-rose-300 shadow-2xs">
+              <div class="flex items-center gap-2 font-bold">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                <span>TƏCİLİ XƏBƏR: SON DƏQİQƏ</span>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-rose-600 text-white font-black text-[10px] tracking-wider uppercase animate-pulse">CANLI XƏBƏR</span>
+            </div>
+          ` : ''}
+
           <div class="mb-6">
             <span class="text-xs font-bold uppercase tracking-wider text-rose-500 mb-2 block">${categoryLabels[art.category] || art.category} · ${art.publishedAt}</span>
             <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white leading-tight mb-4 text-balance">${art.title}</h1>
@@ -1347,7 +1822,7 @@
             </div>
           </div>
 
-          <!-- DIRECT SHAREABLE ARTICLE URL BOX (User Request) -->
+          <!-- DIRECT SHAREABLE ARTICLE URL BOX -->
           <div class="my-6 p-4 rounded-2xl bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
             <div class="flex items-center gap-2.5 overflow-hidden min-w-0 flex-1">
               <span class="text-xs font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1.5 shrink-0">
@@ -1371,10 +1846,55 @@
 
           <div class="relative aspect-[16/9] w-full overflow-hidden rounded-2xl mb-8 shadow-sm">
             <img src="${art.coverImage}" class="w-full h-full object-cover" />
+            ${art.photoCredit ? `<span class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/70 text-white font-mono text-[10px]">${art.photoCredit}</span>` : ''}
           </div>
 
           <div id="reader-prose-body" class="text-gray-800 dark:text-gray-200 ${fontSizes[currentFontSizeIndex]} space-y-5">
             ${paragraphs}
+          </div>
+
+          <!-- VIP Paywall Teaser Card (If Premium and not unlocked) -->
+          ${isPremiumLocked ? `
+            <div class="relative my-8 p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-amber-500/10 via-amber-500/20 to-amber-600/30 border-2 border-amber-300 dark:border-amber-700 shadow-xl text-center space-y-4 backdrop-blur-md">
+              <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-amber-400 to-yellow-300 text-gray-950 flex items-center justify-center text-2xl font-black shadow-lg">👑</div>
+              <div class="max-w-md mx-auto space-y-1.5">
+                <h3 class="text-lg sm:text-xl font-black text-gray-900 dark:text-white">Bu Məqalə Yalnız Premium Üzvlər Üçündür</h3>
+                <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                  Dərin analitik rəylər, xüsusi bazar qrafikləri və eksklüziv təhlillər tam olaraq Premium oxucular üçün nəzərdə tutulub.
+                </p>
+              </div>
+              <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <button onclick="unlockPremiumArticle('${art.id}')" class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-500 hover:to-yellow-500 text-gray-950 font-black text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
+                  <span>✨ VIP Oxunu Aç (Pulsuz Demo Sınaq)</span>
+                </button>
+                <button onclick="scrollToNewsletterSection()" class="w-full sm:w-auto px-5 py-3 rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-xs font-bold text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
+                  <span>📧 Bülletenə Abunə Ol</span>
+                </button>
+              </div>
+            </div>
+          ` : (art.isPremium ? `
+            <div class="my-6 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-300 font-bold">
+              <span>👑 VIP Premium Oxu Aktivdir</span>
+              <span>✓ Tam Mətn Açıqdır</span>
+            </div>
+          ` : '')}
+
+          <!-- Tags List -->
+          ${art.tags && art.tags.length > 0 ? `
+            <div class="my-6 pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center gap-2 flex-wrap">
+              <span class="text-xs font-bold text-gray-400">Teqlər:</span>
+              ${art.tags.map(t => `<span class="px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-mono font-medium">#${t}</span>`).join('')}
+            </div>
+          ` : ''}
+
+          <!-- Author Signature Card -->
+          <div class="my-8 p-5 rounded-2xl bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 flex items-center gap-4">
+            <img src="${art.author?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80'}" class="w-14 h-14 rounded-2xl object-cover border border-gray-200 dark:border-gray-800 shrink-0" />
+            <div class="space-y-1">
+              <h4 class="text-sm font-bold text-gray-900 dark:text-white">${art.author?.name || 'Camal Mənafov'}</h4>
+              <p class="text-xs text-rose-500 font-medium">${art.author?.role || 'Baş Redaktor'}</p>
+              <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-snug">Fikir & Zəka portalının redaksiya heyəti və rəqəmsal innovasiyalar üzrə müstəqil analitiki.</p>
+            </div>
           </div>
 
           <!-- Prev & Next Navigation Cards -->
@@ -1662,13 +2182,354 @@
       let editingArticleId = null;
       let selectedBackupData = null;
       let localSnapshots = JSON.parse(localStorage.getItem('newsfy_snapshots')) || [];
+      let currentEditorTags = ['Texnologiya', 'Süni İntellekt'];
+      let unlockedPremiumArticles = JSON.parse(sessionStorage.getItem('newsfy_unlocked_premium') || '[]');
+      let adminArticleFilterSearch = '';
+
+      function unlockPremiumArticle(id) {
+        if (!unlockedPremiumArticles.includes(id)) {
+          unlockedPremiumArticles.push(id);
+          sessionStorage.setItem('newsfy_unlocked_premium', JSON.stringify(unlockedPremiumArticles));
+        }
+        if (window.confetti) {
+          window.confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+        }
+        showToast('✨ Təbriklər! VIP oxu qapısı açıldı.');
+        openArticle(id, false);
+      }
+
+      function scrollToNewsletterSection() {
+        const section = document.getElementById('newsletter-section');
+        if (section) section.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      // TAGS SYSTEM
+      function renderTagChips() {
+        const container = document.getElementById('art-tags-chips-container');
+        if (!container) return;
+        if (currentEditorTags.length === 0) {
+          container.innerHTML = '<span class="text-[11px] text-gray-400 italic">Hələ teq əlavə edilməyib.</span>';
+          return;
+        }
+        container.innerHTML = currentEditorTags.map((tag, idx) => `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-[11px] font-mono text-gray-800 dark:text-gray-200 shadow-2xs">
+            <span>#${tag}</span>
+            <button type="button" onclick="removeTagChip(${idx})" class="text-gray-400 hover:text-rose-500 font-bold ml-1 cursor-pointer">&times;</button>
+          </span>
+        `).join('');
+      }
+
+      function addTagChip() {
+        const input = document.getElementById('new-art-tag-input');
+        if (!input) return;
+        const val = input.value.replace(/^[#,\s]+|[,\s]+$/g, '').trim();
+        if (val && !currentEditorTags.includes(val)) {
+          currentEditorTags.push(val);
+          renderTagChips();
+        }
+        input.value = '';
+      }
+
+      function removeTagChip(idx) {
+        currentEditorTags.splice(idx, 1);
+        renderTagChips();
+      }
+
+      function quickAddTag(tag) {
+        if (!currentEditorTags.includes(tag)) {
+          currentEditorTags.push(tag);
+          renderTagChips();
+        }
+      }
+
+      // EDITORIAL FORMATTING TOOLBAR
+      function insertFormatting(type) {
+        const textarea = document.getElementById('new-art-content');
+        if (!textarea) return;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const sel = textarea.value.substring(start, end);
+
+        let insert = '';
+        let cursorOffset = 0;
+
+        switch (type) {
+          case 'bold':
+            insert = sel ? `**${sel}**` : '**Qalın mətn**';
+            break;
+          case 'italic':
+            insert = sel ? `*${sel}*` : '*Kursiv mətn*';
+            break;
+          case 'h2':
+            insert = `\n\n### ${sel || 'Alt Başlıq Mətni'}\n\n`;
+            break;
+          case 'h3':
+            insert = `\n\n#### ${sel || 'Kiçik Alt Başlıq'}\n\n`;
+            break;
+          case 'quote':
+            insert = `\n\n> "${sel || 'Diqqət çəkən və ya müəllifə aid mühüm sitat mətni...'}"\n\n`;
+            break;
+          case 'list':
+            insert = `\n\n- ${sel || 'Birinci bənd'}\n- İkinci mühüm amil\n- Əsas nəticə\n\n`;
+            break;
+          case 'callout':
+            insert = `\n\n> ⚠️ **Vacib Redaksiya Qeydi:** ${sel || 'Oxucunun xüsusi diqqət yetirməli olduğu əsas məqam.'}\n\n`;
+            break;
+          case 'paywall':
+            insert = `\n\n<!-- paywall -->\n\n`;
+            showToast('👑 VIP Paywall kəsik xətti əlavə olundu.');
+            break;
+          case 'image':
+            insert = `\n\n![Məqalə içi şəkil](https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80)\n\n`;
+            break;
+          default:
+            insert = sel;
+        }
+
+        const before = textarea.value.substring(0, start);
+        const after = textarea.value.substring(end);
+        textarea.value = before + insert + after;
+        textarea.focus();
+        textarea.selectionStart = start + insert.length;
+        textarea.selectionEnd = start + insert.length;
+
+        handleContentChange(textarea.value);
+      }
+
+      function insertSampleArticleTemplate() {
+        if (!confirm('Standart peşəkar məqalə şablonu yüklənsin? Cari yazılan mətn əvəzlənəcək.')) return;
+        const sampleTitle = "Süni İntellekt və İnsan Yaradıcılığı: 2026-cı İlin Əsas Trendləri";
+        const sampleExcerpt = "Yeni nəsil avtomatlaşdırma alətləri geniş vüsət aldıqca, emosional zəka və fərdi baxış bucağı insan üçün əsas fərqləndirici qüvvəyə çevrilir.";
+        const sampleContent = `Müasir dünyada informasiya həddindən artıq çoxalsa da, dərin və mənalı məzmun tapmaq getdikcə çətinləşir. Generativ texnologiyalar məzmun istehsalını asanlaşdırdığı üçün hər gün milyonlarla məqalə dərc olunur.\n\n### Dərin Təhlilin və Strateji Düşüncənin Gücü\n\nSadə cavablar axtarmaq əvəzinə problemin kökünü dərk etmək və fənlərarası əlaqələr qurmaq zəruridir. Məhz buna görə ən uğurlu mütəxəssislər texnologiya ilə yanaşı psixologiya və fəlsəfəni öyrənirlər.\n\n> "Gələcəkdə alqoritmlər cavab verəcək, lakin doğru sualı vermək həmişə insanın səlahiyyətində qalacaq."\n\n### Əsas Nəticələr və Tövsiyələr\n\n- Rəqəmsal detoks: Günün ilk və son saatlarını ekrandan uzaq keçirin.\n- Dərin diqqət (Deep Work): Gündə ən azı 90 dəqiqə fasiləsiz tək bir işə fokuslanın.\n- Daimi qeyd aparmaq: Fikirlərinizi dərhal yazılı formata keçirin.`;
+
+        document.getElementById('new-art-title').value = sampleTitle;
+        document.getElementById('new-art-excerpt').value = sampleExcerpt;
+        document.getElementById('new-art-content').value = sampleContent;
+        document.getElementById('new-art-cat').value = 'texnologiya';
+        document.getElementById('new-art-image').value = 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80';
+        document.getElementById('new-art-photocredit').value = 'Foto: Unsplash / Editorial';
+        document.getElementById('new-art-ispremium').checked = true;
+        document.getElementById('new-art-isbreaking').checked = false;
+        document.getElementById('new-art-isfeatured').checked = true;
+
+        currentEditorTags = ['Texnologiya', 'Süni İntellekt', 'Gələcək', 'Trendlər'];
+        renderTagChips();
+        handleTitleChange(sampleTitle);
+        handleExcerptChange(sampleExcerpt);
+        handleContentChange(sampleContent);
+        handleCoverImageChange('https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80');
+        handleSpecialFlagChange();
+        showToast('✓ Şablon uğurla yükləndi!');
+      }
+
+      function handleTitleChange(val) {
+        const count = val ? val.length : 0;
+        const el = document.getElementById('title-char-count');
+        if (el) el.textContent = count;
+        
+        // Auto-generate slug if not manually customized yet
+        const slugInput = document.getElementById('new-art-slug');
+        if (slugInput && (!slugInput.dataset.manual || slugInput.value === '')) {
+          slugInput.value = generateSlug(val);
+        }
+        updateSeoPreview();
+      }
+
+      function handleExcerptChange(val) {
+        const count = val ? val.length : 0;
+        const el = document.getElementById('excerpt-char-count');
+        if (el) el.textContent = count;
+        updateSeoPreview();
+      }
+
+      function handleContentChange(val) {
+        const words = val.trim() ? val.trim().split(/\s+/).length : 0;
+        const chars = val.length;
+        const readTime = Math.max(1, Math.round(words / 180));
+
+        const statWords = document.getElementById('stat-words');
+        const statChars = document.getElementById('stat-chars');
+        const statRead = document.getElementById('stat-read');
+
+        if (statWords) statWords.textContent = words;
+        if (statChars) statChars.textContent = chars;
+        if (statRead) statRead.textContent = readTime;
+      }
+
+      function handleCoverImageChange(url) {
+        const img = document.getElementById('cover-preview-img');
+        if (img && url) {
+          img.src = url;
+        }
+      }
+
+      function setPresetCover(type) {
+        const presets = {
+          ai: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80',
+          growth: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&auto=format&fit=crop&q=80',
+          business: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&auto=format&fit=crop&q=80',
+          quantum: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop&q=80',
+          global: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80'
+        };
+        const selected = presets[type] || presets.ai;
+        const input = document.getElementById('new-art-image');
+        if (input) input.value = selected;
+        handleCoverImageChange(selected);
+      }
+
+      function autoGenerateSlug() {
+        const title = document.getElementById('new-art-title')?.value || '';
+        const slug = generateSlug(title);
+        const input = document.getElementById('new-art-slug');
+        if (input) {
+          input.value = slug;
+          input.dataset.manual = 'true';
+        }
+        updateSeoPreview();
+      }
+
+      function updateSeoPreview() {
+        const title = (document.getElementById('new-art-title')?.value || 'Məqalə Başlığı').trim();
+        const slug = (document.getElementById('new-art-slug')?.value || 'yeni-xeber').trim();
+        const meta = (document.getElementById('new-art-metadesc')?.value || document.getElementById('new-art-excerpt')?.value || 'Məqalə haqqında axtarış sistemləri üçün qısa xülasə...').trim();
+
+        const sTitle = document.getElementById('seo-title-preview');
+        const sSlug = document.getElementById('seo-slug-preview');
+        const sDesc = document.getElementById('seo-desc-preview');
+        const metaCount = document.getElementById('meta-char-count');
+
+        if (sTitle) sTitle.textContent = `${title} — Fikir & Zəka`;
+        if (sSlug) sSlug.textContent = slug;
+        if (sDesc) sDesc.textContent = meta;
+        if (metaCount) metaCount.textContent = meta.length;
+      }
+
+      function autoCalcReadTime() {
+        const content = document.getElementById('new-art-content')?.value || '';
+        const words = content.trim() ? content.trim().split(/\s+/).length : 0;
+        const mins = Math.max(1, Math.round(words / 180));
+        const input = document.getElementById('new-art-readtime');
+        if (input) input.value = mins;
+        showToast(`Oxu müddəti ${mins} dəqiqə olaraq hesablandı.`);
+      }
+
+      function handleSpecialFlagChange() {
+        const isPrem = document.getElementById('new-art-ispremium')?.checked;
+        const isBrk = document.getElementById('new-art-isbreaking')?.checked;
+        const badgePreview = document.getElementById('cover-badge-preview');
+        if (!badgePreview) return;
+
+        if (isPrem) {
+          badgePreview.innerHTML = '<span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-gradient-to-r from-amber-400 to-yellow-300 text-gray-950 shadow-md">★ PREMIUM</span>';
+          badgePreview.classList.remove('hidden');
+        } else if (isBrk) {
+          badgePreview.innerHTML = '<span class="px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-600 text-white shadow-md animate-pulse">● SON DƏQİQƏ</span>';
+          badgePreview.classList.remove('hidden');
+        } else {
+          badgePreview.classList.add('hidden');
+        }
+      }
+
+      // IN-CMS LIVE PREVIEW
+      function openArticleLivePreview() {
+        const modal = document.getElementById('art-live-preview-modal');
+        const content = document.getElementById('art-live-preview-content');
+        if (!modal || !content) return;
+
+        const title = (document.getElementById('new-art-title')?.value || 'Başlıqsız Məqalə').trim();
+        const cat = document.getElementById('new-art-cat')?.value || 'texnologiya';
+        const excerpt = (document.getElementById('new-art-excerpt')?.value || 'Məqalə xülasəsi...').trim();
+        const bodyText = (document.getElementById('new-art-content')?.value || 'Məzmun mətni daxil edilməyib.').trim();
+        const cover = document.getElementById('new-art-image')?.value || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80';
+        const isPrem = document.getElementById('new-art-ispremium')?.checked || false;
+        const isBrk = document.getElementById('new-art-isbreaking')?.checked || false;
+        const authorName = document.getElementById('new-art-author-name')?.value || 'Camal Mənafov';
+        const authorRole = document.getElementById('new-art-author-role')?.value || 'Baş Redaktor';
+        const authorAvatar = document.getElementById('new-art-author-avatar')?.value || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80';
+        const photoCredit = document.getElementById('new-art-photocredit')?.value || '';
+
+        const paragraphs = bodyText.split('\n\n').map((p, idx) => {
+          if (p.startsWith('### ')) return `<h3 class="text-xl font-bold text-gray-900 dark:text-white pt-4 pb-1">${p.replace('### ', '')}</h3>`;
+          if (p.startsWith('> ')) return `<blockquote class="my-4 p-4 border-l-4 border-rose-500 bg-rose-50/50 dark:bg-rose-950/20 rounded-r-xl italic text-gray-800 dark:text-gray-200">${p.replace('> ', '')}</blockquote>`;
+          if (p.startsWith('- ') || p.includes('\n- ')) {
+            const items = p.split('\n').filter(l => l.trim().startsWith('- '));
+            return `<ul class="my-3 space-y-1 list-disc list-inside text-gray-700 dark:text-gray-300 text-sm">${items.map(i => `<li>${i.replace('- ', '')}</li>`).join('')}</ul>`;
+          }
+          return `<p class="${idx === 0 ? 'article-dropcap text-sm sm:text-base leading-relaxed' : 'text-sm sm:text-base leading-relaxed'}">${p}</p>`;
+        }).join('');
+
+        content.innerHTML = `
+          <!-- Badges -->
+          <div class="flex items-center gap-2 flex-wrap mb-3">
+            ${isPrem ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-gradient-to-r from-amber-400 to-yellow-300 text-gray-950 shadow-xs flex items-center gap-1"><span>👑</span><span>PREMIUM VIP</span></span>` : ''}
+            ${isBrk ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-600 text-white shadow-xs animate-pulse flex items-center gap-1"><span>●</span><span>SON DƏQİQƏ</span></span>` : ''}
+            <span class="text-xs font-bold uppercase tracking-wider text-rose-500">${categoryLabels[cat] || cat}</span>
+          </div>
+
+          <h1 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white leading-tight">${title}</h1>
+          <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 italic border-l-2 border-rose-500 pl-3">${excerpt}</p>
+
+          <!-- Author bar -->
+          <div class="flex items-center gap-3 py-3 border-y border-gray-100 dark:border-gray-800 text-xs">
+            <img src="${authorAvatar}" class="w-9 h-9 rounded-full object-cover" />
+            <div>
+              <div class="font-bold text-gray-900 dark:text-white">${authorName}</div>
+              <div class="text-[11px] text-gray-400">${authorRole}</div>
+            </div>
+          </div>
+
+          <!-- Cover Image -->
+          <div class="aspect-[16/9] w-full rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
+            <img src="${cover}" class="w-full h-full object-cover" />
+          </div>
+          ${photoCredit ? `<p class="text-[10px] text-gray-400 font-mono -mt-3 text-right">${photoCredit}</p>` : ''}
+
+          <!-- Content Prose -->
+          <div class="space-y-4">
+            ${paragraphs}
+          </div>
+
+          <!-- Paywall Teaser Preview if Premium -->
+          ${isPrem ? `
+            <div class="p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/20 to-amber-500/10 border-2 border-amber-300 dark:border-amber-700 text-center space-y-2">
+              <span class="text-2xl">👑</span>
+              <h4 class="font-bold text-sm text-gray-900 dark:text-white">Premium VIP Oxucu Blokunun Canlı Görünüşü</h4>
+              <p class="text-xs text-gray-600 dark:text-gray-300">Oxucular bu mətndən sonrakı hissəni VIP abunəlik və ya simulyasiya ilə aça biləcəklər.</p>
+            </div>
+          ` : ''}
+
+          <!-- Tags Preview -->
+          <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex flex-wrap gap-1.5">
+            ${currentEditorTags.map(t => `<span class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-mono">#${t}</span>`).join('')}
+          </div>
+        `;
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+
+      function closeArticleLivePreview() {
+        const modal = document.getElementById('art-live-preview-modal');
+        if (modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }
+      }
 
       function switchAdminTab(tab) {
         document.querySelectorAll('.admin-tab').forEach(b => {
           if (b.dataset.tab === tab) {
-            b.className = 'admin-tab py-3 px-3.5 border-b-2 border-rose-500 text-rose-500 font-bold whitespace-nowrap';
+            b.className = 'admin-tab px-3.5 py-2 rounded-xl text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 transition-colors cursor-pointer';
           } else {
-            b.className = 'admin-tab py-3 px-3.5 border-b-2 border-transparent text-gray-500 hover:text-gray-900 dark:hover:text-white whitespace-nowrap';
+            b.className = 'admin-tab px-3.5 py-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer';
+          }
+        });
+
+        document.querySelectorAll('.admin-tab-mob').forEach(b => {
+          if (b.dataset.tab === tab) {
+            b.className = 'admin-tab-mob py-1.5 px-3 rounded-lg text-rose-600 bg-rose-50 dark:bg-rose-950/50 whitespace-nowrap font-bold';
+          } else {
+            b.className = 'admin-tab-mob py-1.5 px-3 rounded-lg text-gray-600 dark:text-gray-400 whitespace-nowrap font-bold';
           }
         });
 
@@ -1680,6 +2541,11 @@
 
         updateAdminCounts();
         if (tab === 'articles') renderAdminArticles();
+        if (tab === 'new-article') {
+          renderTagChips();
+          updateSeoPreview();
+          handleSpecialFlagChange();
+        }
         if (tab === 'backup') renderBackupHub();
         if (tab === 'subscribers') renderAdminSubscribers();
       }
@@ -1687,6 +2553,8 @@
       function updateAdminCounts() {
         const countBadge = document.getElementById('admin-tab-art-count');
         if (countBadge) countBadge.textContent = articles.length;
+        const bCount = document.getElementById('admin-articles-badge-count');
+        if (bCount) bCount.textContent = articles.length;
         const bArt = document.getElementById('backup-stat-articles');
         if (bArt) bArt.textContent = articles.length;
         const bVid = document.getElementById('backup-stat-videos');
@@ -1695,35 +2563,83 @@
         if (bSub) bSub.textContent = subscribers.length;
       }
 
+      function handleAdminArticleSearch(query) {
+        adminArticleFilterSearch = (query || '').toLowerCase().trim();
+        renderAdminArticles();
+      }
+
       function renderAdminArticles() {
         const body = document.getElementById('admin-articles-table-body');
+        if (!body) return;
         updateAdminCounts();
-        if (articles.length === 0) {
-          body.innerHTML = '<div class="p-4 text-center text-gray-400 bg-gray-50 dark:bg-gray-950 rounded-xl">Hələ məqalə yoxdur. Yeni məqalə əlavə edin və ya backup faylını bərpa edin.</div>';
+
+        const catFilter = document.getElementById('admin-art-filter-cat')?.value || 'all';
+
+        let list = [...articles];
+        if (catFilter !== 'all') {
+          list = list.filter(a => a.category === catFilter);
+        }
+        if (adminArticleFilterSearch) {
+          list = list.filter(a => 
+            (a.title && a.title.toLowerCase().includes(adminArticleFilterSearch)) ||
+            (a.author?.name && a.author.name.toLowerCase().includes(adminArticleFilterSearch)) ||
+            (a.tags && a.tags.some(t => t.toLowerCase().includes(adminArticleFilterSearch)))
+          );
+        }
+
+        if (list.length === 0) {
+          body.innerHTML = '<div class="p-8 text-center text-gray-400 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 text-xs">Axtarışa uyğun məqalə tapılmadı.</div>';
           return;
         }
-        body.innerHTML = articles.map(a => `
-          <div class="p-3 bg-gray-50 dark:bg-gray-950 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-gray-100 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors">
-            <div class="min-w-0 pr-2">
-              <p class="font-bold text-xs text-gray-900 dark:text-white truncate">${a.title}</p>
-              <div class="flex items-center gap-2 text-[10px] text-gray-400 uppercase font-mono mt-0.5">
-                <span class="text-rose-500 font-bold">${a.category}</span>
-                <span>·</span>
-                <span>${a.publishedAt}</span>
-                <span>·</span>
-                <span>${a.views || 0} baxış</span>
-                <span>·</span>
-                <span>${a.likes || 0} like</span>
+
+        body.innerHTML = list.map(a => `
+          <div class="p-3.5 bg-white dark:bg-gray-900 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors shadow-2xs">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 shrink-0">
+                <img src="${a.coverImage}" class="w-full h-full object-cover" />
+                ${a.isPremium ? `<span class="absolute top-0.5 right-0.5 bg-amber-400 text-gray-950 font-black text-[8px] px-1 rounded shadow-xs">★</span>` : ''}
+              </div>
+              <div class="min-w-0 pr-2">
+                <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                  ${a.isPremium ? `<span class="px-2 py-0.5 rounded-md text-[9px] font-black bg-gradient-to-r from-amber-400 to-yellow-300 text-gray-950 shadow-xs">★ PREMIUM</span>` : ''}
+                  ${a.isBreaking ? `<span class="px-2 py-0.5 rounded-md text-[9px] font-black bg-rose-600 text-white shadow-xs animate-pulse">● SON DƏQİQƏ</span>` : ''}
+                  ${a.featured ? `<span class="px-2 py-0.5 rounded-md text-[9px] font-bold bg-indigo-600 text-white">VİTRİN</span>` : ''}
+                  ${a.status === 'draft' ? `<span class="px-2 py-0.5 rounded-md text-[9px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400">QARALAMA</span>` : ''}
+                  <span class="text-rose-500 font-bold uppercase text-[10px] font-mono">${categoryLabels[a.category] || a.category}</span>
+                </div>
+                <p class="font-bold text-xs text-gray-900 dark:text-white truncate">${a.title}</p>
+                <div class="flex items-center gap-2 text-[10px] text-gray-400 font-mono mt-0.5">
+                  <span>${a.author?.name || 'Müəllif'}</span>
+                  <span>·</span>
+                  <span>${a.publishedAt}</span>
+                  <span>·</span>
+                  <span>${a.views || 0} baxış</span>
+                  <span>·</span>
+                  <span>${a.likes || 0} ♥</span>
+                </div>
               </div>
             </div>
-            <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
-              <button onclick="closeAdminModal(); openArticle('${a.id}')" class="px-2 py-1 text-[11px] border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer">Bax</button>
-              <button onclick="editArticle('${a.id}')" class="px-2 py-1 text-[11px] bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg font-bold hover:bg-blue-100 cursor-pointer">Redaktə</button>
+            <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-auto flex-wrap">
+              <button onclick="toggleArticlePremium('${a.id}')" class="px-2.5 py-1 text-[11px] rounded-lg border ${a.isPremium ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/40 text-amber-600' : 'border-gray-200 dark:border-gray-700 text-gray-500'} font-bold cursor-pointer transition-colors" title="Premium statusunu dəyiş">
+                ${a.isPremium ? '★ VIP' : '☆ Standart'}
+              </button>
+              <button onclick="closeAdminModal(); openArticle('${a.id}')" class="px-2.5 py-1 text-[11px] border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg cursor-pointer">Bax</button>
+              <button onclick="editArticle('${a.id}')" class="px-3 py-1 text-[11px] bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900 rounded-lg font-bold hover:bg-rose-100 cursor-pointer">Redaktə</button>
               <button onclick="exportSingleArticle('${a.id}')" class="px-2 py-1 text-[11px] border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg font-mono cursor-pointer" title="JSON Yüklə">💾</button>
-              <button onclick="deleteArticle('${a.id}')" class="px-2 py-1 text-[11px] text-rose-600 border border-rose-200 dark:border-rose-900 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer">Sil</button>
+              <button onclick="deleteArticle('${a.id}')" class="px-2.5 py-1 text-[11px] text-rose-600 border border-rose-200 dark:border-rose-900 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 cursor-pointer">Sil</button>
             </div>
           </div>
         `).join('');
+      }
+
+      function toggleArticlePremium(id) {
+        const art = articles.find(a => a.id === id);
+        if (!art) return;
+        art.isPremium = !art.isPremium;
+        saveArticles();
+        renderAdminArticles();
+        renderAll();
+        showToast(art.isPremium ? '👑 Məqalə Premium edildi!' : 'Məqalə ümumi oxuya qaytarıldı.');
       }
 
       function editArticle(id) {
@@ -1737,10 +2653,34 @@
         document.getElementById('new-art-content').value = art.content || '';
         document.getElementById('new-art-image').value = art.coverImage || '';
         document.getElementById('new-art-readtime').value = art.readTimeMinutes || 5;
+        document.getElementById('new-art-slug').value = art.slug || generateSlug(art.title);
+        document.getElementById('new-art-photocredit').value = art.photoCredit || '';
+        document.getElementById('new-art-metadesc').value = art.metaDescription || art.excerpt || '';
+        document.getElementById('new-art-status').value = art.status || 'published';
+
+        document.getElementById('new-art-ispremium').checked = !!art.isPremium;
+        document.getElementById('new-art-isbreaking').checked = !!art.isBreaking;
+        document.getElementById('new-art-isfeatured').checked = !!art.featured;
+
+        if (art.author) {
+          document.getElementById('new-art-author-name').value = art.author.name || 'Camal Mənafov';
+          document.getElementById('new-art-author-role').value = art.author.role || 'Baş Redaktor';
+          document.getElementById('new-art-author-avatar').value = art.author.avatar || '';
+        }
+
+        currentEditorTags = art.tags && art.tags.length > 0 ? [...art.tags] : [art.category];
+        renderTagChips();
 
         document.getElementById('art-form-title').textContent = 'Məqaləni Redaktə Et: ' + art.title;
-        document.getElementById('btn-save-article').textContent = 'Yenilə və Yadda Saxla';
+        document.getElementById('art-form-status-badge').textContent = '🟢 Redaktə olunur';
+        document.getElementById('btn-save-article').innerHTML = '<span>Yenilə və Yadda Saxla</span>';
         document.getElementById('btn-cancel-edit').classList.remove('hidden');
+
+        handleTitleChange(art.title || '');
+        handleExcerptChange(art.excerpt || '');
+        handleContentChange(art.content || '');
+        handleCoverImageChange(art.coverImage || '');
+        handleSpecialFlagChange();
 
         switchAdminTab('new-article');
       }
@@ -1751,61 +2691,112 @@
         document.getElementById('new-art-cat').value = 'texnologiya';
         document.getElementById('new-art-excerpt').value = '';
         document.getElementById('new-art-content').value = '';
-        document.getElementById('new-art-image').value = '';
+        document.getElementById('new-art-image').value = 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80';
         document.getElementById('new-art-readtime').value = '5';
+        document.getElementById('new-art-slug').value = '';
+        document.getElementById('new-art-photocredit').value = '';
+        document.getElementById('new-art-metadesc').value = '';
+        document.getElementById('new-art-status').value = 'published';
 
-        document.getElementById('art-form-title').textContent = 'Yeni Məqalə Yaz';
-        document.getElementById('btn-save-article').textContent = 'Dərc Et';
+        document.getElementById('new-art-ispremium').checked = false;
+        document.getElementById('new-art-isbreaking').checked = false;
+        document.getElementById('new-art-isfeatured').checked = false;
+
+        currentEditorTags = ['Texnologiya', 'Süni İntellekt'];
+        renderTagChips();
+
+        document.getElementById('art-form-title').textContent = 'Yeni Məqalə Redaktoru';
+        document.getElementById('art-form-status-badge').textContent = '🟡 Dərc gözləyir';
+        document.getElementById('btn-save-article').innerHTML = '<span>🚀 Dərc Et</span>';
         document.getElementById('btn-cancel-edit').classList.add('hidden');
+
+        handleTitleChange('');
+        handleExcerptChange('');
+        handleContentChange('');
+        handleCoverImageChange('https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80');
+        handleSpecialFlagChange();
       }
 
-      function saveNewArticle() {
-        const title = document.getElementById('new-art-title').value.trim();
-        const cat = document.getElementById('new-art-cat').value;
-        const excerpt = document.getElementById('new-art-excerpt').value.trim();
-        const content = document.getElementById('new-art-content').value.trim();
-        const img = document.getElementById('new-art-image').value.trim() || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80';
-        const readTime = parseInt(document.getElementById('new-art-readtime').value) || 5;
+      function saveNewArticle(isDraft = false) {
+        const title = (document.getElementById('new-art-title')?.value || '').trim();
+        const cat = document.getElementById('new-art-cat')?.value || 'texnologiya';
+        const excerpt = (document.getElementById('new-art-excerpt')?.value || '').trim();
+        const content = (document.getElementById('new-art-content')?.value || '').trim();
+        const img = (document.getElementById('new-art-image')?.value || '').trim() || 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80';
+        const readTime = parseInt(document.getElementById('new-art-readtime')?.value) || 5;
+        const isPremium = document.getElementById('new-art-ispremium')?.checked || false;
+        const isBreaking = document.getElementById('new-art-isbreaking')?.checked || false;
+        const isFeatured = document.getElementById('new-art-isfeatured')?.checked || false;
+        const status = isDraft ? 'draft' : (document.getElementById('new-art-status')?.value || 'published');
+        const customSlug = (document.getElementById('new-art-slug')?.value || '').trim() || generateSlug(title);
+        const photoCredit = (document.getElementById('new-art-photocredit')?.value || '').trim();
+        const metaDesc = (document.getElementById('new-art-metadesc')?.value || '').trim();
+        const authorName = (document.getElementById('new-art-author-name')?.value || 'Camal Mənafov').trim();
+        const authorRole = (document.getElementById('new-art-author-role')?.value || 'Baş Redaktor').trim();
+        const authorAvatar = (document.getElementById('new-art-author-avatar')?.value || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80').trim();
 
-        if (!title || !content) {
-          alert('Başlıq və məzmun mütləq daxil edilməlidir.');
+        if (!title) {
+          alert('Məqalənin başlığı mütləq daxil edilməlidir.');
+          document.getElementById('new-art-title')?.focus();
           return;
         }
+        if (!content) {
+          alert('Məqalənin mətni mütləq daxil edilməlidir.');
+          document.getElementById('new-art-content')?.focus();
+          return;
+        }
+
+        const tags = currentEditorTags.length > 0 ? [...currentEditorTags] : [categoryLabels[cat] || cat];
 
         if (editingArticleId) {
           // Update existing
           const art = articles.find(a => a.id === editingArticleId);
           if (art) {
             art.title = title;
-            art.slug = art.slug || generateSlug(title);
+            art.slug = customSlug;
             art.category = cat;
-            art.excerpt = excerpt;
+            art.excerpt = excerpt || (content.slice(0, 150) + '...');
             art.content = content;
             art.coverImage = img;
             art.readTimeMinutes = readTime;
+            art.isPremium = isPremium;
+            art.isBreaking = isBreaking;
+            art.featured = isFeatured;
+            art.status = status;
+            art.tags = tags;
+            art.photoCredit = photoCredit;
+            art.metaDescription = metaDesc;
+            art.author = { name: authorName, role: authorRole, avatar: authorAvatar };
           }
           createAutoSnapshot('Məqalə yeniləndi: ' + title);
-          alert('Məqalə uğurla yeniləndi!');
+          showToast(isDraft ? '🟡 Məqalə qaralama kimi saxlandı.' : '✓ Məqalə uğurla yeniləndi!');
         } else {
           // Create new
           const newArt = {
             id: 'art-' + Date.now(),
             title,
-            slug: generateSlug(title),
+            slug: customSlug,
             category: cat,
-            excerpt,
+            excerpt: excerpt || (content.slice(0, 150) + '...'),
             content,
             coverImage: img,
             readTimeMinutes: readTime,
-            author: { name: 'Camal Mənafov', role: 'Baş Redaktor' },
+            isPremium,
+            isBreaking,
+            featured: isFeatured,
+            status,
+            tags,
+            photoCredit,
+            metaDescription: metaDesc,
+            author: { name: authorName, role: authorRole, avatar: authorAvatar },
             publishedAt: new Date().toLocaleDateString('az-AZ', { day: 'numeric', month: 'long', year: 'numeric' }),
             views: 1,
-            likes: 0,
-            tags: [cat]
+            likes: 0
           };
           articles.unshift(newArt);
           createAutoSnapshot('Yeni məqalə əlavə edildi: ' + title);
-          alert('Yeni məqalə uğurla dərc edildi!');
+          if (window.confetti) window.confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+          showToast(isDraft ? '🟡 Yeni xəbər qaralama kimi yadda saxlandı.' : '🎉 Yeni xəbər uğurla dərc edildi!');
         }
 
         saveArticles();
