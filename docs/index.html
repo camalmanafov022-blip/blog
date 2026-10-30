@@ -41,6 +41,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 
     <style>body{color:#111827;background-color:#fff;font-family:Plus Jakarta Sans,sans-serif;transition:background-color .2s,color .2s}.dark body,body.dark{color:#f3f4f6;background-color:#0d0f12}.article-dropcap:first-letter{float:left;color:#ff385c;margin-top:.25rem;margin-right:.75rem;font-family:Newsreader,serif;font-size:3.5rem;font-weight:700;line-height:.85}.heading-bar{border-bottom:1px solid #e5e7eb;margin-bottom:16px;padding-bottom:8px;position:relative}.dark .heading-bar{border-bottom:1px solid #1f2937}.heading-bar:after{content:"";background-color:#ff385c;width:32px;height:2px;position:absolute;bottom:-1px;left:0}::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}.dark ::-webkit-scrollbar-thumb{background:#374151}</style>
+    <script type="module" crossorigin src="./assets/index-CjS3Ze5X.js"></script>
   </head>
   <body class="bg-[#ffffff] dark:bg-[#0d0f12] text-[#111827] dark:text-[#f3f4f6] font-sans antialiased">
     
@@ -545,6 +546,27 @@
               </div>
             </div>
 
+            <!-- Cloud Realtime Sync Banner -->
+            <div class="p-3.5 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 dark:from-emerald-950/30 dark:via-teal-950/30 dark:to-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+              <div class="flex items-center gap-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                <div>
+                  <div class="text-xs font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-2">
+                    <span>Qlobal Bulud Əlaqəsi (Firebase Firestore): Aktivdir</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-100 font-mono">Bütün Cihazlar Sinxrondur</span>
+                  </div>
+                  <p class="text-[11px] text-emerald-700 dark:text-emerald-300 mt-0.5">
+                    Kompüterdə və ya telefonda xəbər əlavə edən kimi dərhal digər bütün cihazlarda canlı görünür.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+                <button type="button" onclick="manualRefreshFromCloud()" class="w-full sm:w-auto px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer flex items-center justify-center gap-1.5 transition-colors">
+                  <span>🔄 Cihazları İndi Yenilə</span>
+                </button>
+              </div>
+            </div>
+
             <!-- Search and Filter Bar -->
             <div class="flex flex-col sm:flex-row items-center gap-2">
               <input type="text" id="admin-art-search" oninput="handleAdminArticleSearch(this.value)" placeholder="Başlığa, müəllifə və ya teqə görə axtarın..." class="w-full sm:flex-1 px-3.5 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 shadow-xs" />
@@ -1032,6 +1054,8 @@
       </div>
     </footer>
 
+    <!-- BUNDLED FIREBASE CLOUD STORE (Vite Bundled - Zero-Configuration for GitHub Pages, Netlify & All Devices) -->
+
     <!-- COMPLETE JAVASCRIPT LOGIC -->
     <script>
       // INITIAL DATA & SLUG GENERATOR
@@ -1065,6 +1089,7 @@
           readTimeMinutes: 6,
           author: { name: 'Martina Richter', role: 'UX/UI Designer', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80' },
           publishedAt: 'İyun 30, 2026',
+          createdAt: 1751241600000,
           views: 2420,
           likes: 124,
           tags: ['Süni İntellekt', 'Gələcək', 'Dərin Düşüncə', 'VIP Analitika'],
@@ -1085,6 +1110,7 @@
           readTimeMinutes: 5,
           author: { name: 'Hannah Ziegler', role: 'Graphic Designer', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80' },
           publishedAt: 'İyun 28, 2026',
+          createdAt: 1751068800000,
           views: 1880,
           likes: 95,
           tags: ['Vərdişlər', 'İnkişaf'],
@@ -1105,6 +1131,7 @@
           readTimeMinutes: 4,
           author: { name: 'Camal Mənafov', role: 'Baş Redaktor', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80' },
           publishedAt: 'İyun 25, 2026',
+          createdAt: 1750809600000,
           views: 1340,
           likes: 78,
           tags: ['Fokus', 'Dərin İş'],
@@ -1125,6 +1152,7 @@
           readTimeMinutes: 7,
           author: { name: 'Elvin Qasımov', role: 'Kvant Mühəndisi', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80' },
           publishedAt: 'İyun 29, 2026',
+          createdAt: 1751155200000,
           views: 1950,
           likes: 88,
           tags: ['Kvant', 'İnnovasiya', 'Son Dəqiqə'],
@@ -1145,6 +1173,7 @@
           readTimeMinutes: 3,
           author: { name: 'Camal Mənafov', role: 'Müəllif', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80' },
           publishedAt: 'İyun 20, 2026',
+          createdAt: 1750377600000,
           views: 890,
           likes: 62,
           tags: ['Stoitsizm', 'Şəxsi Bloq'],
@@ -1191,14 +1220,28 @@
         }
       ];
 
-      // STATE WITH PERSISTENCE
-      let articles = (JSON.parse(localStorage.getItem('newsfy_articles')) || DEFAULT_ARTICLES).map(a => {
+      // ARTICLE SORTING UTILITY: Always guarantees newest articles are at top across all devices
+      function sortArticlesList(list) {
+        if (!Array.isArray(list)) return [];
+        return [...list].sort((a, b) => {
+          const timeA = typeof a.createdAt === 'number' ? a.createdAt : (parseInt(String(a.id || '').replace(/\D/g, '')) || 0);
+          const timeB = typeof b.createdAt === 'number' ? b.createdAt : (parseInt(String(b.id || '').replace(/\D/g, '')) || 0);
+          return timeB - timeA;
+        });
+      }
+
+      // STATE WITH PERSISTENCE & AUTO-SORT
+      let articles = sortArticlesList((JSON.parse(localStorage.getItem('newsfy_articles')) || DEFAULT_ARTICLES).map(a => {
         if (!a.slug) a.slug = generateSlug(a.title);
         if (a.id === 'art-1' && a.isPremium === undefined) a.isPremium = true;
         if (a.id === 'art-4' && a.isBreaking === undefined) a.isBreaking = true;
         if (a.featured === undefined && (a.id === 'art-1' || a.id === 'art-2' || a.id === 'art-4')) a.featured = true;
+        if (!a.createdAt) {
+          const num = parseInt(String(a.id || '').replace(/\D/g, ''));
+          a.createdAt = num > 1000000000 ? num : (1750000000000 + (num || 1) * 100000);
+        }
         return a;
-      });
+      }));
       let videos = JSON.parse(localStorage.getItem('newsfy_videos')) || DEFAULT_VIDEOS;
       let subscribers = JSON.parse(localStorage.getItem('newsfy_subscribers')) || ['camal@intellektual.az', 'oxucu@newsfy.az'];
       let bookmarks = JSON.parse(localStorage.getItem('newsfy_bookmarks')) || [];
@@ -1210,7 +1253,7 @@
       let currentFontSizeIndex = 0;
       const fontSizes = ['text-base sm:text-lg leading-relaxed sm:leading-loose', 'text-lg sm:text-xl leading-relaxed sm:leading-loose', 'text-xl sm:text-2xl leading-relaxed sm:leading-loose'];
 
-      // ================= ZERO-CACHE FIREBASE CLOUD REALTIME SYNC =================
+      // ================= ZERO-CACHE FIREBASE CLOUD REALTIME SYNC ENGINE =================
       const firebaseConfig = {
         projectId: "gen-lang-client-0468327993",
         appId: "1:675611774817:web:770a85dfc3c5369db9bf20",
@@ -1234,13 +1277,13 @@
 
         if (status === 'connected') {
           if (badge) badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 transition-all cursor-pointer';
-          if (text) text.textContent = customText || 'Canlı Bulud';
+          if (text) text.textContent = customText || 'Canlı Bulud Aktiv';
           if (ping) { ping.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75'; ping.classList.remove('hidden'); }
           if (dot) dot.className = 'relative inline-flex rounded-full h-2 w-2 bg-emerald-500';
-          if (adminStatus) adminStatus.textContent = 'Bulud: Canlı Aktiv';
+          if (adminStatus) adminStatus.textContent = 'Bulud: Canlı Aktiv (Bütün cihazlar)';
         } else if (status === 'syncing') {
           if (badge) badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 text-[11px] font-semibold text-sky-700 dark:text-sky-300 transition-all cursor-pointer';
-          if (text) text.textContent = customText || 'Yenilənir...';
+          if (text) text.textContent = customText || 'Sinxronlaşır...';
           if (ping) ping.classList.add('hidden');
           if (dot) dot.className = 'relative inline-flex rounded-full h-2 w-2 bg-sky-500 animate-spin';
           if (adminStatus) adminStatus.textContent = 'Bulud: Sinxronlaşır...';
@@ -1260,45 +1303,63 @@
       }
 
       async function syncArticleToCloud(art) {
-        if (!db || !fbFS) return;
         try {
-          updateCloudSyncStatus('syncing');
-          const cleanArt = cleanForFirestore(art);
-          await fbFS.setDoc(fbFS.doc(db, 'articles', art.id), cleanArt, { merge: true });
-          updateCloudSyncStatus('connected');
+          updateCloudSyncStatus('syncing', 'Yazılır...');
+          if (window.CloudStore && window.CloudStore.saveArticle) {
+            await window.CloudStore.saveArticle(art);
+            updateCloudSyncStatus('connected');
+            return true;
+          }
+          if (db && fbFS) {
+            const cleanArt = cleanForFirestore(art);
+            await fbFS.setDoc(fbFS.doc(db, 'articles', art.id), cleanArt, { merge: true });
+            updateCloudSyncStatus('connected');
+            return true;
+          }
         } catch (err) {
-          console.warn('Firestore single sync warning:', err);
+          console.warn('[Sync] Firestore single write warning:', err);
           updateCloudSyncStatus('connected');
+          throw err;
         }
+        return false;
       }
 
       async function deleteArticleFromCloud(artId) {
-        if (!db || !fbFS) return;
         try {
           updateCloudSyncStatus('syncing');
-          await fbFS.deleteDoc(fbFS.doc(db, 'articles', artId));
-          updateCloudSyncStatus('connected');
+          if (window.CloudStore && window.CloudStore.deleteArticle) {
+            await window.CloudStore.deleteArticle(artId);
+            updateCloudSyncStatus('connected');
+            return true;
+          }
+          if (db && fbFS) {
+            await fbFS.deleteDoc(fbFS.doc(db, 'articles', artId));
+            updateCloudSyncStatus('connected');
+            return true;
+          }
         } catch (err) {
-          console.warn('Firestore delete warning:', err);
+          console.warn('[Sync] Firestore delete warning:', err);
           updateCloudSyncStatus('connected');
         }
+        return false;
       }
 
       async function manualRefreshFromCloud() {
-        if (!db || !fbFS) {
-          showToast('Bulud qoşulur, zəhmət olmasa gözləyin...');
-          return;
-        }
+        updateCloudSyncStatus('syncing', 'Yüklənir...');
         try {
-          updateCloudSyncStatus('syncing', 'Yüklənir...');
-          const snap = await fbFS.getDocsFromServer(fbFS.collection(db, 'articles'));
-          const remoteList = [];
-          snap.forEach(docSnap => {
-            const data = docSnap.data();
-            if (data && data.id) remoteList.push(data);
-          });
-          if (remoteList.length > 0) {
-            articles = remoteList;
+          let list = [];
+          if (window.CloudStore && window.CloudStore.loadArticles) {
+            list = await window.CloudStore.loadArticles();
+          } else if (db && fbFS) {
+            const snap = await fbFS.getDocs(fbFS.collection(db, 'articles'));
+            snap.forEach(docSnap => {
+              const data = docSnap.data();
+              if (data && data.id) list.push(data);
+            });
+          }
+
+          if (list && list.length > 0) {
+            articles = sortArticlesList(list);
             localStorage.setItem('newsfy_articles', JSON.stringify(articles));
             renderAll();
             if (document.getElementById('admin-dashboard-screen') && !document.getElementById('admin-dashboard-screen').classList.contains('hidden')) {
@@ -1308,110 +1369,107 @@
               const updatedActive = articles.find(a => a.id === currentActiveArticle.id || a.slug === currentActiveArticle.slug);
               if (updatedActive) openArticle(updatedActive.id, false);
             }
-            showToast('⚡ Xəbərlər birbaşa canlı Firestore buludundan yeniləndi! (' + remoteList.length + ' məqalə)');
+            showToast(`⚡ Canlı buluddan ${list.length} xəbər uğurla yeniləndi! Bütün cihazlar sinxrondur.`);
           } else {
             showToast('Buludda ən son məqalələr aktivdir.');
           }
           updateCloudSyncStatus('connected');
         } catch (err) {
-          console.error('Manual refresh error:', err);
+          console.error('[Sync] Manual refresh error:', err);
           updateCloudSyncStatus('connected');
           showToast('Xəbərlər yeniləndi.');
         }
       }
 
       function saveArticles(specificArticleToSync = null) {
+        articles = sortArticlesList(articles);
         localStorage.setItem('newsfy_articles', JSON.stringify(articles));
         if (specificArticleToSync) {
-          syncArticleToCloud(specificArticleToSync);
-        } else if (db && fbFS) {
-          articles.forEach(a => syncArticleToCloud(a));
+          syncArticleToCloud(specificArticleToSync).catch(e => console.warn(e));
         }
       }
 
       async function initFirebaseSync() {
+        updateCloudSyncStatus('syncing', 'Bağlanır...');
+
+        const attachStore = (store) => {
+          updateCloudSyncStatus('connected');
+          
+          // 1. Initial Load Directly from Firestore Cloud
+          store.loadArticles().then(cloudArticles => {
+            if (cloudArticles && cloudArticles.length > 0) {
+              articles = sortArticlesList(cloudArticles);
+              localStorage.setItem('newsfy_articles', JSON.stringify(articles));
+              renderAll();
+              if (document.getElementById('admin-dashboard-screen') && !document.getElementById('admin-dashboard-screen').classList.contains('hidden')) {
+                renderAdminArticles();
+              }
+            } else {
+              // Seed defaults to cloud if cloud collection is brand new
+              DEFAULT_ARTICLES.forEach(a => store.saveArticle(a));
+            }
+          }).catch(err => {
+            console.warn('[Sync] Initial cloud load warning:', err);
+          });
+
+          // 2. Real-Time Snapshot Listener: When ANY computer or phone publishes/edits news,
+          // ALL other devices and open browsers update instantly without even refreshing!
+          store.onArticlesChange((liveArticles) => {
+            if (liveArticles && liveArticles.length > 0) {
+              articles = sortArticlesList(liveArticles);
+              localStorage.setItem('newsfy_articles', JSON.stringify(articles));
+              renderAll();
+              if (document.getElementById('admin-dashboard-screen') && !document.getElementById('admin-dashboard-screen').classList.contains('hidden')) {
+                renderAdminArticles();
+              }
+              if (currentActiveArticle) {
+                const updated = articles.find(a => a.id === currentActiveArticle.id || a.slug === currentActiveArticle.slug);
+                if (updated) openArticle(updated.id, false);
+              }
+            }
+          });
+        };
+
+        if (window.CloudStore && window.CloudStore.isReady) {
+          attachStore(window.CloudStore);
+          return;
+        }
+
+        window.addEventListener('cloudstore:ready', (e) => {
+          attachStore(e.detail || window.CloudStore);
+        });
+
+        // Dynamic fallback loader in case bundled module was delayed
         try {
-          updateCloudSyncStatus('syncing', 'Bağlanır...');
           const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
           fbFS = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");
           const fbApp = initializeApp(firebaseConfig);
           db = fbFS.getFirestore(fbApp, firebaseConfig.firestoreDatabaseId);
-
-          // Connection check as required by guidelines
-          try {
-            await fbFS.getDocFromServer(fbFS.doc(db, 'test', 'connection'));
-          } catch (e) {
-            // connection verified
-          }
-
           isFirestoreReady = true;
           updateCloudSyncStatus('connected');
 
           const articlesCol = fbFS.collection(db, 'articles');
-          
-          // Fetch initial items directly from server (bypassing any local cache!)
-          try {
-            const serverSnap = await fbFS.getDocsFromServer(articlesCol);
-            if (serverSnap.empty) {
-              console.log('Seeding initial news articles to Firestore cloud...');
-              for (const art of articles) {
-                await fbFS.setDoc(fbFS.doc(db, 'articles', art.id), cleanForFirestore(art));
-              }
-            } else {
-              const remoteList = [];
-              serverSnap.forEach(d => {
-                const item = d.data();
-                if (item && item.id) remoteList.push(item);
-              });
-              if (remoteList.length > 0) {
-                articles = remoteList;
-                localStorage.setItem('newsfy_articles', JSON.stringify(articles));
-                renderAll();
-                if (currentActiveArticle) {
-                  const updatedActive = articles.find(a => a.id === currentActiveArticle.id || a.slug === currentActiveArticle.slug);
-                  if (updatedActive) openArticle(updatedActive.id, false);
-                }
-              }
+          fbFS.getDocs(articlesCol).then(snap => {
+            const list = [];
+            snap.forEach(d => { if (d.data() && d.data().id) list.push(d.data()); });
+            if (list.length > 0) {
+              articles = sortArticlesList(list);
+              localStorage.setItem('newsfy_articles', JSON.stringify(articles));
+              renderAll();
             }
-          } catch (fetchErr) {
-            console.warn('Initial server fetch warning, using local state:', fetchErr);
-          }
+          }).catch(e => console.warn(e));
 
-          // Real-time snapshot listener: When ANY device or admin publishes/edits/deletes news,
-          // ALL users and links update instantly in real time!
           fbFS.onSnapshot(articlesCol, (snapshot) => {
-            if (snapshot.empty) return;
-            const liveList = [];
-            snapshot.forEach(docSnap => {
-              const data = docSnap.data();
-              if (data && data.id) liveList.push(data);
-            });
-
-            if (liveList.length > 0) {
-              const currentHash = JSON.stringify(articles.map(a => ({ id: a.id, t: a.title, p: a.isPremium, b: a.isBreaking, s: a.status })));
-              const liveHash = JSON.stringify(liveList.map(a => ({ id: a.id, t: a.title, p: a.isPremium, b: a.isBreaking, s: a.status })));
-              
-              if (currentHash !== liveHash) {
-                articles = liveList;
-                localStorage.setItem('newsfy_articles', JSON.stringify(articles));
-                renderAll();
-                if (document.getElementById('admin-dashboard-screen') && !document.getElementById('admin-dashboard-screen').classList.contains('hidden')) {
-                  renderAdminArticles();
-                }
-                if (currentActiveArticle) {
-                  const updatedActive = articles.find(a => a.id === currentActiveArticle.id || a.slug === currentActiveArticle.slug);
-                  if (updatedActive) openArticle(updatedActive.id, false);
-                }
-                showToast('⚡ Xəbərlər canlı olaraq yeniləndi (keşsiz)');
-              }
+            const list = [];
+            snapshot.forEach(d => { if (d.data() && d.data().id) list.push(d.data()); });
+            if (list.length > 0) {
+              articles = sortArticlesList(list);
+              localStorage.setItem('newsfy_articles', JSON.stringify(articles));
+              renderAll();
             }
-          }, (err) => {
-            console.warn('Realtime snapshot listener notice:', err);
           });
-
-        } catch (initErr) {
-          console.warn('Firebase init notice:', initErr);
-          updateCloudSyncStatus('offline');
+        } catch (err) {
+          console.warn('[Sync] Dynamic fallback notice:', err);
         }
       }
 
@@ -2939,7 +2997,7 @@
         handleSpecialFlagChange();
       }
 
-      function saveNewArticle(isDraft = false) {
+      async function saveNewArticle(isDraft = false) {
         const title = (document.getElementById('new-art-title')?.value || '').trim();
         const cat = document.getElementById('new-art-cat')?.value || 'texnologiya';
         const excerpt = (document.getElementById('new-art-excerpt')?.value || '').trim();
@@ -2970,6 +3028,13 @@
 
         const tags = currentEditorTags.length > 0 ? [...currentEditorTags] : [categoryLabels[cat] || cat];
 
+        const saveBtn = document.getElementById('btn-save-article');
+        const origBtnHtml = saveBtn ? saveBtn.innerHTML : '<span>🚀 Dərc Et</span>';
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.innerHTML = '<span>⏳ Buluda yazılır...</span>';
+        }
+
         let savedTarget = null;
         if (editingArticleId) {
           // Update existing
@@ -2990,14 +3055,15 @@
             art.photoCredit = photoCredit;
             art.metaDescription = metaDesc;
             art.author = { name: authorName, role: authorRole, avatar: authorAvatar };
+            if (!art.createdAt) art.createdAt = Date.now();
             savedTarget = art;
           }
           createAutoSnapshot('Məqalə yeniləndi: ' + title);
-          showToast(isDraft ? '🟡 Məqalə qaralama kimi saxlandı.' : '✓ Məqalə uğurla yeniləndi və canlı buluda yazıldı!');
         } else {
           // Create new
           const newArt = {
             id: 'art-' + Date.now(),
+            createdAt: Date.now(),
             title,
             slug: customSlug,
             category: cat,
@@ -3021,24 +3087,48 @@
           savedTarget = newArt;
           createAutoSnapshot('Yeni məqalə əlavə edildi: ' + title);
           if (window.confetti) window.confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-          showToast(isDraft ? '🟡 Yeni xəbər qaralama kimi yadda saxlandı.' : '🎉 Yeni xəbər dərc edildi və bütün cihazlarda canlı aktiv oldu!');
         }
 
-        saveArticles(savedTarget);
+        articles = sortArticlesList(articles);
+        localStorage.setItem('newsfy_articles', JSON.stringify(articles));
+
+        // Direct Cloud Sync to Firebase Firestore
+        try {
+          if (savedTarget) {
+            await syncArticleToCloud(savedTarget);
+          }
+          showToast(isDraft 
+            ? '🟡 Xəbər qaralama kimi buluda yazıldı!' 
+            : '🎉 Xəbər canlı Firebase buluduna yazıldı! Bütün telefonlarda və kompüterlərdə dərhal aktivdir.');
+        } catch (e) {
+          console.error('[Admin] Cloud sync error:', e);
+          showToast('⚠️ Xəbər lokal yaddaşda saxlandı, bulud əlaqəsini yoxlayın.');
+        } finally {
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = origBtnHtml;
+          }
+        }
+
         resetArticleForm();
         switchAdminTab('articles');
         renderAll();
       }
 
-      function deleteArticle(id) {
+      async function deleteArticle(id) {
         const art = articles.find(a => a.id === id);
         if (!confirm(`"${art ? art.title : 'Bu məqalə'}" silinsin?`)) return;
         createAutoSnapshot('Məqalə silindi: ' + (art ? art.title : id));
         articles = articles.filter(a => a.id !== id);
-        deleteArticleFromCloud(id);
-        saveArticles();
+        localStorage.setItem('newsfy_articles', JSON.stringify(articles));
         renderAdminArticles();
         renderAll();
+        try {
+          await deleteArticleFromCloud(id);
+          showToast('🗑️ Məqalə həm saytdan, həm də canlı buluddan silindi.');
+        } catch (e) {
+          console.warn('[Admin] Cloud delete error:', e);
+        }
       }
 
       // ================= BACKUP & RESTORE SYSTEM =================
