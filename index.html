@@ -99,7 +99,7 @@
       <div class="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
         <!-- Brand Logo Lockup: Red circular icon + wordmark -->
-        <a href="#top" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;" class="flex items-center gap-2.5 group cursor-pointer">
+        <a href="#top" onclick="event.preventDefault(); closeVideosPage(); if (currentActiveArticle) closeArticleReader(); filterCategory('all'); window.scrollTo({top:0, behavior:'smooth'}); history.pushState(null, '', '#/'); return false;" class="flex items-center gap-2.5 group cursor-pointer">
           <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-rose-600 to-red-500 flex items-center justify-center text-white font-extrabold text-xl shadow-md group-hover:scale-105 transition-transform">
             N
           </div>
@@ -110,24 +110,25 @@
 
         <!-- Center Menu with active red underline & deep link URLs -->
         <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-gray-700 dark:text-gray-300">
-          <a href="#/" onclick="event.preventDefault(); filterCategory('all'); if (currentActiveArticle) closeArticleReader(); scrollToId('main-content');" class="relative py-2 text-gray-900 dark:text-white cursor-pointer group" id="nav-item-all">
+          <a href="#/" onclick="event.preventDefault(); closeVideosPage(); filterCategory('all'); if (currentActiveArticle) closeArticleReader(); window.scrollTo({top:0, behavior:'smooth'});" class="relative py-2 text-gray-900 dark:text-white cursor-pointer group" id="nav-item-all">
             <span>Ana Səhifə</span>
             <span class="absolute bottom-0 left-0 w-full h-[2.5px] bg-rose-500 rounded-full" id="nav-underline-all"></span>
           </a>
-          <a href="#/bolme/texnologiya" onclick="event.preventDefault(); filterCategory('texnologiya'); if (currentActiveArticle) closeArticleReader(); scrollToId('main-content');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer" id="nav-item-texnologiya">
+          <a href="#/bolme/texnologiya" onclick="event.preventDefault(); closeVideosPage(); filterCategory('texnologiya'); if (currentActiveArticle) closeArticleReader(); scrollToId('main-content');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer" id="nav-item-texnologiya">
             Texnologiya & AI
           </a>
-          <a href="#/bolme/sexsi-inkisaf" onclick="event.preventDefault(); filterCategory('sexsi-inkisaf'); if (currentActiveArticle) closeArticleReader(); scrollToId('main-content');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer" id="nav-item-sexsi-inkisaf">
+          <a href="#/bolme/sexsi-inkisaf" onclick="event.preventDefault(); closeVideosPage(); filterCategory('sexsi-inkisaf'); if (currentActiveArticle) closeArticleReader(); scrollToId('main-content');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer" id="nav-item-sexsi-inkisaf">
             Şəxsi İnkişaf
           </a>
-          <a href="#/videolar" onclick="event.preventDefault(); scrollToId('video-gallery'); if (currentActiveArticle) closeArticleReader(); history.pushState(null, '', '#/videolar');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer flex items-center gap-1.5 font-bold group" id="nav-item-videolar">
+          <a href="#/videolar" onclick="event.preventDefault(); openVideosPage();" class="relative py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer flex items-center gap-1.5 font-bold group" id="nav-item-videolar">
             <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-rose-600 text-white text-[10px] shadow-xs group-hover:scale-110 transition-transform">
               <svg class="w-3 h-3 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
             </span>
             <span>Videolar</span>
             <span class="px-1.5 py-0.2 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-[10px] font-mono font-black border border-rose-200 dark:border-rose-900">PRO</span>
+            <span class="absolute bottom-0 left-0 w-full h-[2.5px] bg-rose-500 rounded-full hidden" id="nav-underline-videolar"></span>
           </a>
-          <a href="#/bolme/bloq" onclick="event.preventDefault(); filterCategory('bloq'); if (currentActiveArticle) closeArticleReader(); scrollToId('personal-column');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer" id="nav-item-bloq">
+          <a href="#/bolme/bloq" onclick="event.preventDefault(); closeVideosPage(); filterCategory('bloq'); if (currentActiveArticle) closeArticleReader(); scrollToId('personal-column');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer" id="nav-item-bloq">
             Şəxsi Bloq
           </a>
           <a href="#newsletter-box" onclick="scrollToId('newsletter-box');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer">
@@ -329,101 +330,56 @@
             </div>
           </div>
 
-          <!-- YOUTUBE-STYLE VIDEO THEATER & CATEGORY HUB -->
+          <!-- HOMEPAGE VIDEO GALLERY TEASER & FULL-PAGE CTA -->
           <div id="video-gallery" class="pt-8 border-t border-gray-100 dark:border-gray-800">
-            <!-- Header bar with YouTube red branding -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-              <div>
-                <div class="flex items-center gap-2">
-                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-rose-600 text-white shadow-md">
-                    <svg class="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                  </span>
-                  <h3 class="text-lg font-black text-gray-900 dark:text-white tracking-tight">
-                    Fikir & Zəka Video Klubu
-                  </h3>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900">HD MEDIA</span>
-                </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Ekspert mühazirələri, texnoloji icmallar və bəyəndiyiniz videolar</p>
-              </div>
-
-              <!-- Top Quick Action Controls -->
-              <div class="flex items-center gap-2">
-                <button onclick="filterVideoCategory('liked')" class="px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900 bg-rose-50/60 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer" title="Yalnız bəyəndiyiniz videoları göstər">
-                  <span>❤️</span>
-                  <span>Bəyəndiklərim (<span id="user-liked-videos-count">0</span>)</span>
-                </button>
-                <button onclick="openAdminModal(); switchAdminTab('videos');" class="px-3 py-1.5 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90 text-xs font-bold flex items-center gap-1.5 transition-opacity cursor-pointer" title="Admin: Yeni video əlavə et">
-                  <span>+ Video Əlavə Et</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- YouTube Hub Layout: Left Category Rail + Right Video Content -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
-              
-              <!-- LEFT COLUMN: CREATIVE YOUTUBE VIDEO CATEGORIES (slda video kategoriyalari olsun maraqli dizaynda) -->
-              <aside class="md:col-span-4 lg:col-span-4 space-y-3">
-                <div class="p-3.5 rounded-2xl bg-gradient-to-b from-gray-50 to-gray-100/70 dark:from-gray-900 dark:to-gray-950 border border-gray-200 dark:border-gray-800 shadow-2xs">
-                  <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-gray-200 dark:border-gray-800">
-                    <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                      <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                      <span>KATEQORİYALAR</span>
-                    </span>
-                    <span id="video-total-count-badge" class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">0</span>
-                  </div>
-
-                  <!-- Category Items (Styled pills with icons, counters & active states) -->
-                  <div id="video-categories-list" class="space-y-1.5">
-                    <!-- Populated dynamically by renderVideoCategories() -->
-                  </div>
-                </div>
-
-                <!-- Mini Channel / Hub Spotlight Widget -->
-                <div class="p-3.5 rounded-2xl bg-gradient-to-tr from-rose-500/10 via-amber-500/5 to-transparent border border-rose-200/60 dark:border-rose-900/40 text-xs">
-                  <div class="flex items-center gap-2.5 mb-2">
-                    <div class="w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                      ▶
-                    </div>
-                    <div>
-                      <h4 class="font-bold text-gray-900 dark:text-white leading-tight">Newsfy Video Klubu</h4>
-                      <p class="text-[10px] text-gray-500 dark:text-gray-400">Həftəlik yeni video mühazirələr</p>
-                    </div>
-                  </div>
-                  <p class="text-[11px] text-gray-600 dark:text-gray-300 leading-snug mb-2.5">
-                    Seçilmiş mütəfəkkirlərin və alimlərin çıxışlarını bir toxunuşla izləyin və bəyənin.
-                  </p>
-                  <a href="#newsletter-box" class="block text-center py-1.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] transition-colors shadow-xs">
-                    Kanal Bildirişlərinə Abunə Ol
-                  </a>
-                </div>
-              </aside>
-
-              <!-- RIGHT COLUMN: VIDEO FEED & THEATER CARDS -->
-              <div class="md:col-span-8 lg:col-span-8 space-y-4">
-                
-                <!-- Category Status Bar -->
-                <div class="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-gray-800">
+            <!-- Header bar with YouTube red branding & Full-Page Button -->
+            <div class="flex items-center justify-between gap-3 mb-5">
+              <div class="flex items-center gap-2.5">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-tr from-rose-600 to-red-500 text-white shadow-md">
+                  <svg class="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+                <div>
                   <div class="flex items-center gap-2">
-                    <span id="active-video-cat-title" class="text-xs font-bold text-gray-900 dark:text-white">Bütün Videolar</span>
-                    <span id="active-video-count-pill" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold">0 video</span>
+                    <h3 class="text-base font-black text-gray-900 dark:text-white tracking-tight">
+                      Fikir & Zəka Video Klubu
+                    </h3>
+                    <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900">HD MEDIA</span>
                   </div>
-                  <div class="flex items-center gap-1.5 text-[11px]">
-                    <span class="text-gray-400">Sırala:</span>
-                    <select id="video-sort-select" onchange="changeVideoSort(this.value)" class="bg-transparent border border-gray-200 dark:border-gray-800 rounded-lg px-2 py-1 text-gray-700 dark:text-gray-300 text-xs font-medium focus:outline-none">
-                      <option value="latest">Ən Son Əlavə Olunanlar</option>
-                      <option value="popular">Ən Çox Baxılanlar</option>
-                      <option value="liked">Ən Çox Bəyənilənlər</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Videos Grid -->
-                <div id="videos-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <!-- Dynamically populated by renderVideos() -->
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Ekspert mühazirələri, texnoloji icmallar və bəyəndiyiniz videolar</p>
                 </div>
               </div>
 
+              <!-- Open Dedicated Video Page Button -->
+              <button onclick="openVideosPage()" class="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-xs hover:shadow cursor-pointer group">
+                <span>Videolar Səhifəsi</span>
+                <span class="group-hover:translate-x-1 transition-transform">→</span>
+              </button>
             </div>
+
+            <!-- 2 Featured Quick Cards on Homepage -->
+            <div id="home-featured-videos-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <!-- Rendered dynamically by renderVideos() -->
+            </div>
+
+            <!-- Standalone Full-Page Call-To-Action Banner -->
+            <button onclick="openVideosPage()" class="w-full p-4 rounded-2xl bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 hover:from-rose-700 hover:to-red-800 text-white shadow-md hover:shadow-lg transition-all flex items-center justify-between group cursor-pointer border border-rose-500/30">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center text-xl font-black group-hover:scale-110 transition-transform shrink-0 shadow-inner">
+                  🎬
+                </div>
+                <div class="text-left">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-rose-200 bg-white/10 px-2 py-0.5 rounded-md">XÜSUSİ SƏHİFƏ</span>
+                    <span class="text-xs text-rose-100 hidden sm:inline">• Bütün kateqoriyalar və filtrlər</span>
+                  </div>
+                  <h4 class="text-sm sm:text-base font-black text-white mt-0.5">Videolar Bölməsini Ayrı Səhifədə Aç</h4>
+                </div>
+              </div>
+              <span class="px-4 py-2 rounded-xl bg-white text-rose-600 font-black text-xs group-hover:translate-x-1 transition-transform flex items-center gap-1.5 shadow-sm shrink-0">
+                <span>Daxil Ol</span>
+                <span>→</span>
+              </span>
+            </button>
           </div>
 
           <!-- PERSONAL COLUMN & ESSAYS (Inside Center Feed) -->
@@ -495,6 +451,198 @@
       </section>
 
     </main>
+
+    <!-- ================= STANDALONE VIDEOS PAGE VIEW (Ayrı Səhifə Kimi Açılan Video Mərkəzi) ================= -->
+    <div id="videos-page-view" class="hidden min-h-screen pb-24 bg-white dark:bg-[#0d0f12]">
+      
+      <!-- Top Sticky Action Bar (Matches Article Reader Bar Style) -->
+      <div class="sticky top-20 z-30 bg-white/95 dark:bg-[#0d0f12]/95 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 shadow-2xs">
+        <div class="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
+          
+          <!-- Back to Home Button & Breadcrumbs -->
+          <div class="flex items-center gap-3 shrink-0">
+            <button onclick="closeVideosPage()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold text-xs transition-colors cursor-pointer group">
+              <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+              <span>Ana Səhifə</span>
+            </button>
+
+            <div class="hidden sm:flex items-center gap-2 text-xs font-medium text-gray-400">
+              <span>/</span>
+              <span class="flex items-center gap-1.5 font-bold text-rose-600 dark:text-rose-400">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <span>Videolar Səhifəsi</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Live Video Search Bar inside Top Action Bar -->
+          <div class="relative flex-1 max-w-md hidden md:block">
+            <input type="text" id="page-video-search-input" oninput="handleVideoSearch(this.value)" placeholder="Videolar və mövzular üzrə canlı axtarış..." class="w-full pl-9 pr-8 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-xs border border-transparent focus:border-rose-500 focus:outline-none transition-all" />
+            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+            <button onclick="clearVideoSearch()" id="page-video-search-clear" class="hidden absolute right-2.5 top-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs font-bold">&times;</button>
+          </div>
+
+          <!-- Quick Actions: Liked Counter & Add Video -->
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="filterVideoCategory('liked')" class="px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer" title="Bəyəndiyiniz videolar">
+              <span>❤️</span>
+              <span class="hidden sm:inline">Bəyəndiklərim</span>
+              <span class="font-mono text-[11px]">(<span id="page-liked-count-badge">0</span>)</span>
+            </button>
+            <button onclick="filterVideoCategory('saved')" class="px-3 py-1.5 rounded-xl border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-100 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer" title="Sonra izləyəcəyiniz videolar">
+              <span>★</span>
+              <span class="hidden sm:inline">Sonra İzlə</span>
+              <span class="font-mono text-[11px]">(<span id="page-watchlater-count-badge">0</span>)</span>
+            </button>
+            <button onclick="openAdminModal(); switchAdminTab('videos');" class="px-3 py-1.5 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90 text-xs font-bold flex items-center gap-1.5 transition-opacity cursor-pointer">
+              <span>+ Video Əlavə Et</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Main Container of Dedicated Videos Page -->
+      <div class="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-8">
+
+        <!-- Mobile Search Input (Visible only on small screens) -->
+        <div class="relative block md:hidden">
+          <input type="text" id="page-video-search-input-mobile" oninput="handleVideoSearch(this.value)" placeholder="Videolarda axtarış..." class="w-full pl-9 pr-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl text-xs border border-transparent focus:border-rose-500 focus:outline-none" />
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+        </div>
+
+        <!-- Cinematic Hero Spotlight Banner -->
+        <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-gray-950 via-[#141720] to-gray-950 border border-gray-800 text-white p-6 sm:p-8 md:p-10 shadow-xl">
+          <!-- Ambient Glow Background -->
+          <div class="absolute -top-24 -right-24 w-96 h-96 bg-rose-600/20 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="max-w-2xl space-y-3">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-400 text-xs font-mono font-bold uppercase tracking-wider">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                <span>Fikir & Zəka HD Video Mərkəzi</span>
+              </div>
+              <h1 class="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-tight text-white">
+                İntellektual Düşüncə, Süni İntellekt və Şəxsi İnkişaf Videoları
+              </h1>
+              <p class="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-xl">
+                Dünyanın qabaqcıl alimləri, düşünürləri və mühəndislərinin mühazirələri, təhlilləri və eksklüziv video icmalları. Videoları bir toxunuşla izləyin, bəyənin və əsas qeydləri kəşf edin.
+              </p>
+            </div>
+
+            <!-- Live Counter Badges -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3 shrink-0">
+              <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <span class="text-[10px] font-mono text-gray-400 block uppercase">Cəmi Video</span>
+                <span id="hero-stat-videos" class="text-xl sm:text-2xl font-black text-white">0</span>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <span class="text-[10px] font-mono text-gray-400 block uppercase">Ümumi Baxış</span>
+                <span id="hero-stat-views" class="text-xl sm:text-2xl font-black text-rose-400">0</span>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <span class="text-[10px] font-mono text-gray-400 block uppercase">Bəyənmələr</span>
+                <span id="hero-stat-likes" class="text-xl sm:text-2xl font-black text-amber-400">0</span>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <span class="text-[10px] font-mono text-gray-400 block uppercase">Format</span>
+                <span class="text-xl sm:text-2xl font-black text-emerald-400">4K / HD</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-COLUMN HUB LAYOUT: LEFT CATEGORIES (4 COLS) + RIGHT VIDEOS (8 COLS) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          <!-- LEFT SIDEBAR: CREATIVE YOUTUBE-STYLE CATEGORIES & CHANNELS (slda video kategoriyalari maraqli dizaynda) -->
+          <aside class="lg:col-span-4 space-y-6 lg:sticky lg:top-36 self-start">
+            
+            <!-- Category Rail Box -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+              <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                  <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-gray-900 dark:text-white">Video Kateqoriyaları</h3>
+                </div>
+                <span id="page-sidebar-video-count" class="text-[11px] font-mono px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold">0</span>
+              </div>
+
+              <!-- List of Styled Category Pills with Icons -->
+              <div id="page-video-categories-list" class="space-y-1.5">
+                <!-- Rendered by renderPageVideoCategories() -->
+              </div>
+            </div>
+
+            <!-- Featured Speaker Channels Box -->
+            <div class="p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+              <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm">🎙️</span>
+                  <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-gray-900 dark:text-white">Məruzəçilər və Kanallar</h3>
+                </div>
+                <span class="text-[10px] text-gray-400 font-mono">POPULYAR</span>
+              </div>
+
+              <div class="space-y-2.5" id="page-channels-list">
+                <!-- Populated dynamically with subscribe buttons -->
+              </div>
+            </div>
+
+            <!-- Informational Tip Card -->
+            <div class="p-4 rounded-2xl bg-gradient-to-tr from-rose-500/10 via-amber-500/5 to-transparent border border-rose-200/60 dark:border-rose-900/40 text-xs space-y-2">
+              <div class="flex items-center gap-2 font-bold text-rose-600 dark:text-rose-400">
+                <span>💡</span>
+                <span>İzləmə İpucu</span>
+              </div>
+              <p class="text-gray-600 dark:text-gray-300 leading-relaxed text-[11px]">
+                İstənilən videoya toxunaraq teatr rejimində YouTube pleyerini aça, çıxışın əsas tezislərini oxuya və növbəti tövsiyə olunan videolara keçə bilərsiniz.
+              </p>
+            </div>
+
+          </aside>
+
+          <!-- RIGHT MAIN AREA: SPOTLIGHT + SORT + 2-COL VIDEO CARDS (8 COLS) -->
+          <div class="lg:col-span-8 space-y-6">
+            
+            <!-- Category Status & Sorting Bar -->
+            <div class="p-3.5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-2.5">
+                <span id="page-active-cat-icon" class="text-xl">🎬</span>
+                <div>
+                  <h2 id="page-active-cat-title" class="text-sm font-bold text-gray-900 dark:text-white leading-tight">Bütün Videolar</h2>
+                  <span id="page-active-cat-count" class="text-[10px] text-gray-400 font-mono">Videolar yüklənir...</span>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-gray-400 font-medium">Sırala:</span>
+                <select id="page-video-sort-select" onchange="changeVideoSort(this.value)" class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-1.5 text-gray-700 dark:text-gray-200 text-xs font-semibold focus:outline-none">
+                  <option value="latest">Ən Son Əlavə Olunanlar</option>
+                  <option value="popular">Ən Çox Baxılanlar</option>
+                  <option value="liked">Ən Çox Bəyənilənlər</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Dynamic Spotlight Featured Banner for Selected Category -->
+            <div id="page-video-spotlight-card">
+              <!-- Rendered dynamically by renderPageVideoSpotlight() -->
+            </div>
+
+            <!-- Videos Grid -->
+            <div id="page-videos-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <!-- Rendered dynamically by renderPageVideos() -->
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
 
     <!-- ARTICLE READER VIEW (With Dynamic Remaining Time Indicator) -->
     <div id="article-reader-view" class="hidden min-h-screen pb-24">
@@ -2048,11 +2196,16 @@
         renderLatestFeed();
         renderMostViewed();
         renderVideos();
-        renderVideoCategories();
         renderPersonalPosts();
         updateSavedCount();
         updateNavState();
         updateCategoryChips();
+        if (typeof renderPageVideoCategories === 'function') {
+          renderPageVideoCategories();
+          renderPageVideos();
+          renderPageVideoSpotlight();
+          renderPageChannels();
+        }
       }
 
       function updateSavedCount() {
@@ -2216,11 +2369,26 @@
       }
 
       function updateNavState() {
+        const isVideos = !!isVideosPageActive;
+        const videoUnderline = document.getElementById('nav-underline-videolar');
+        const videoItem = document.getElementById('nav-item-videolar');
+        
+        if (videoUnderline) {
+          videoUnderline.classList.toggle('hidden', !isVideos);
+        }
+        if (videoItem) {
+          if (isVideos) {
+            videoItem.classList.add('text-rose-600', 'dark:text-rose-400');
+          } else {
+            videoItem.classList.remove('text-rose-600', 'dark:text-rose-400');
+          }
+        }
+
         ['all', 'texnologiya', 'sexsi-inkisaf', 'bloq'].forEach(cat => {
           const item = document.getElementById('nav-item-' + cat);
           const underline = document.getElementById('nav-underline-' + cat);
           if (item) {
-            const isActive = currentCategory === cat && !showingSavedOnly;
+            const isActive = !isVideos && currentCategory === cat && !showingSavedOnly;
             if (isActive) {
               item.classList.add('text-gray-900', 'dark:text-white');
               item.classList.remove('text-gray-700', 'dark:text-gray-300');
@@ -2230,7 +2398,7 @@
             }
           }
           if (underline) {
-            underline.classList.toggle('hidden', currentCategory !== cat || showingSavedOnly);
+            underline.classList.toggle('hidden', isVideos || currentCategory !== cat || showingSavedOnly);
           }
         });
       }
@@ -2430,76 +2598,141 @@
         `).join('');
       }
 
-      // VIDEO CATEGORIES CONFIGURATION & ICONS
+      // ================= DEDICATED VIDEOS PAGE & HUB CONTROLLER =================
+      let isVideosPageActive = false;
+      let pageVideoSearchQuery = '';
+
       const videoCategoryMeta = [
         { key: 'all', label: 'Bütün Videolar', icon: '🎬', desc: 'Bütün mühazirə və çıxışlar' },
         { key: 'texnologiya', label: 'AI & Texnologiya', icon: '🤖', desc: 'Süni intellekt, robototexnika və kod' },
         { key: 'sexsi-inkisaf', label: 'Şəxsi İnkişaf', icon: '🧠', desc: 'Dopamin, şüur və vərdişlər' },
         { key: 'mehsuldarliq', label: 'Məhsuldarlıq', icon: '⚡', desc: 'Fokus, zaman idarəetməsi və sistemlər' },
         { key: 'innovasiya', label: 'İnnovasiya & Biznes', icon: '💡', desc: 'Startaplar və sıfırdan birə' },
-        { key: 'liked', label: 'Bəyəndiklərim', icon: '❤️', desc: 'Sizin bəyəndiyiniz videolar' }
+        { key: 'liked', label: 'Bəyəndiklərim', icon: '❤️', desc: 'Sizin bəyəndiyiniz videolar' },
+        { key: 'saved', label: 'Sonra İzlə', icon: '★', desc: 'Yadda saxlanılan videolar' }
       ];
 
-      function renderVideoCategories() {
-        const container = document.getElementById('video-categories-list');
-        if (!container) return;
+      function openVideosPage(catKey, updateUrl = true) {
+        // If article reader is open, close it
+        if (currentActiveArticle) {
+          document.getElementById('article-reader-view').classList.add('hidden');
+          currentActiveArticle = null;
+        }
 
-        // Update total video count badge
-        const totalBadge = document.getElementById('video-total-count-badge');
-        if (totalBadge) totalBadge.textContent = videos.length;
+        // Hide homepage main container
+        const mainContent = document.getElementById('main-content');
+        if (mainContent) mainContent.classList.add('hidden');
 
-        // Update user liked videos counter
-        const likedCountBadge = document.getElementById('user-liked-videos-count');
-        if (likedCountBadge) likedCountBadge.textContent = videoLikes.length;
+        // Show standalone videos page
+        const videosPage = document.getElementById('videos-page-view');
+        if (videosPage) videosPage.classList.remove('hidden');
 
-        container.innerHTML = videoCategoryMeta.map(cat => {
-          let count = 0;
-          if (cat.key === 'all') {
-            count = videos.length;
-          } else if (cat.key === 'liked') {
-            count = videos.filter(v => videoLikes.includes(v.id)).length;
-          } else {
-            count = videos.filter(v => v.category === cat.key).length;
+        isVideosPageActive = true;
+
+        if (catKey) {
+          currentVideoCategory = catKey;
+        }
+
+        // Highlight header navigation
+        updateNavState();
+
+        // Update URL hash
+        if (updateUrl) {
+          const targetHash = currentVideoCategory && currentVideoCategory !== 'all'
+            ? '#/videolar/' + encodeURIComponent(currentVideoCategory)
+            : '#/videolar';
+          if (window.location.hash !== targetHash) {
+            history.pushState({ videosPage: true, cat: currentVideoCategory }, '', targetHash);
           }
+        }
 
-          const isActive = currentVideoCategory === cat.key;
-          const activeClasses = isActive
-            ? 'bg-rose-600 text-white shadow-md font-bold scale-[1.02]'
-            : 'bg-white/80 dark:bg-gray-800/60 hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200/60 dark:border-gray-700/60';
+        document.title = 'Videolar & Video Dərslər — Fikir & Zəka HD Video Klubu';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
-          const countBadgeClass = isActive
-            ? 'bg-white/20 text-white font-mono'
-            : 'bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 font-mono';
+        // Render dedicated page components
+        renderPageVideoCategories();
+        renderPageVideos();
+        renderPageVideoSpotlight();
+        renderPageChannels();
+      }
 
-          return `
-            <button onclick="filterVideoCategory('${cat.key}')" class="w-full text-left px-3 py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-between group ${activeClasses}">
-              <div class="flex items-center gap-2.5 min-w-0">
-                <span class="text-base shrink-0 group-hover:scale-110 transition-transform">${cat.icon}</span>
-                <div class="min-w-0">
-                  <span class="text-xs truncate block leading-tight">${cat.label}</span>
-                  <span class="text-[9px] opacity-75 truncate block font-normal hidden sm:block">${cat.desc}</span>
-                </div>
-              </div>
-              <span class="text-[10px] px-2 py-0.5 rounded-md text-xs shrink-0 ${countBadgeClass}">${count}</span>
-            </button>
-          `;
-        }).join('');
+      function closeVideosPage(updateUrl = true) {
+        const videosPage = document.getElementById('videos-page-view');
+        if (videosPage) videosPage.classList.add('hidden');
+
+        const mainContent = document.getElementById('main-content');
+        if (mainContent) mainContent.classList.remove('hidden');
+
+        isVideosPageActive = false;
+        updateNavState();
+
+        if (updateUrl && (window.location.hash.startsWith('#/videolar') || window.location.hash.startsWith('#/video/'))) {
+          const targetHash = currentCategory !== 'all' ? '#/bolme/' + encodeURIComponent(currentCategory) : '#/';
+          history.pushState(null, '', targetHash);
+          document.title = currentCategory !== 'all'
+            ? `${categoryLabels[currentCategory] || currentCategory} — Fikir & Zəka`
+            : 'Fikir & Zəka | Müasir Düşüncə, Texnologiya və Şəxsi İnkişaf Portalı';
+        }
+
+        renderAll();
+      }
+
+      function handleVideoSearch(val) {
+        pageVideoSearchQuery = (val || '').toLowerCase().trim();
+
+        // Sync inputs
+        const desktopInput = document.getElementById('page-video-search-input');
+        const mobileInput = document.getElementById('page-video-search-input-mobile');
+        if (desktopInput && desktopInput.value !== val) desktopInput.value = val;
+        if (mobileInput && mobileInput.value !== val) mobileInput.value = val;
+
+        const clearBtn = document.getElementById('page-video-search-clear');
+        if (clearBtn) clearBtn.classList.toggle('hidden', !pageVideoSearchQuery);
+
+        renderPageVideos();
+        renderPageVideoSpotlight();
+      }
+
+      function clearVideoSearch() {
+        pageVideoSearchQuery = '';
+        const desktopInput = document.getElementById('page-video-search-input');
+        const mobileInput = document.getElementById('page-video-search-input-mobile');
+        if (desktopInput) desktopInput.value = '';
+        if (mobileInput) mobileInput.value = '';
+
+        const clearBtn = document.getElementById('page-video-search-clear');
+        if (clearBtn) clearBtn.classList.add('hidden');
+
+        renderPageVideos();
+        renderPageVideoSpotlight();
       }
 
       function filterVideoCategory(catKey) {
         currentVideoCategory = catKey;
 
-        // Update title and count pill
-        const catObj = videoCategoryMeta.find(c => c.key === catKey) || { label: 'Bütün Videolar' };
-        const titleElem = document.getElementById('active-video-cat-title');
-        if (titleElem) titleElem.textContent = catObj.label;
+        // If on standalone videos page, update hash URL
+        if (isVideosPageActive && window.location.hash.startsWith('#/videolar')) {
+          const targetHash = catKey !== 'all' ? '#/videolar/' + encodeURIComponent(catKey) : '#/videolar';
+          history.pushState({ videosPage: true, cat: catKey }, '', targetHash);
+        }
 
-        renderVideoCategories();
+        // Update dedicated videos page UI
+        renderPageVideoCategories();
+        renderPageVideos();
+        renderPageVideoSpotlight();
+
+        // Also update home preview
         renderVideos();
       }
 
       function changeVideoSort(sortVal) {
         currentVideoSort = sortVal;
+        const sel1 = document.getElementById('video-sort-select');
+        const sel2 = document.getElementById('page-video-sort-select');
+        if (sel1 && sel1.value !== sortVal) sel1.value = sortVal;
+        if (sel2 && sel2.value !== sortVal) sel2.value = sortVal;
+
+        renderPageVideos();
         renderVideos();
       }
 
@@ -2526,7 +2759,7 @@
           delta = 1;
           showToast('❤️ Videonu bəyəndiniz!');
           if (window.confetti) {
-            window.confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 } });
+            window.confetti({ particleCount: 35, spread: 55, origin: { y: 0.7 } });
           }
         }
 
@@ -2534,16 +2767,18 @@
         localStorage.setItem('newsfy_video_likes', JSON.stringify(videoLikes));
         localStorage.setItem('newsfy_videos', JSON.stringify(videos));
 
-        // Update categories counters
-        renderVideoCategories();
+        // Re-render UI everywhere
+        renderPageVideoCategories();
+        renderPageVideos();
+        renderPageVideoSpotlight();
         renderVideos();
 
-        // If video modal is open for this video, update its like button too
+        // If modal open for this video, update its like button too
         if (currentActiveVideo && currentActiveVideo.id === videoId) {
           updateModalLikeButton(vid);
         }
 
-        // Sync like to CloudStore Firestore
+        // Cloud sync with Firestore
         try {
           if (window.CloudStore && window.CloudStore.likeVideo) {
             await window.CloudStore.likeVideo(videoId, delta);
@@ -2555,6 +2790,23 @@
         }
       }
 
+      function toggleVideoWatchLaterFromCard(videoId, event) {
+        if (event) event.stopPropagation();
+        const idx = videoWatchLater.indexOf(videoId);
+        if (idx > -1) {
+          videoWatchLater.splice(idx, 1);
+          showToast('Video "Sonra İzlə" siyahısından çıxarıldı.');
+        } else {
+          videoWatchLater.push(videoId);
+          showToast('★ Video "Sonra İzlə" siyahısına əlavə olundu!');
+          if (window.confetti) window.confetti({ particleCount: 20, spread: 40, origin: { y: 0.7 } });
+        }
+        localStorage.setItem('newsfy_video_watchlater', JSON.stringify(videoWatchLater));
+
+        renderPageVideoCategories();
+        renderPageVideos();
+      }
+
       function shareVideoUrl(videoId, event) {
         if (event) event.stopPropagation();
         const vid = videos.find(v => v.id === videoId);
@@ -2562,23 +2814,221 @@
         const url = window.location.origin + window.location.pathname + '#/video/' + videoId;
         if (navigator.clipboard) {
           navigator.clipboard.writeText(url).then(() => {
-            showToast('🔗 Video linki kopyalandı!');
+            showToast('🔗 Video linki panoya kopyalandı!');
           });
         } else {
           prompt('Video linkini kopyalayın:', url);
         }
       }
 
-      function renderVideos() {
-        const grid = document.getElementById('videos-grid');
-        if (!grid) return;
+      // RENDER STANDALONE PAGE CATEGORIES & HERO STATS
+      function renderPageVideoCategories() {
+        // Compute total views and total likes
+        const totalViews = videos.reduce((acc, v) => acc + (v.views || 0), 0);
+        const totalLikes = videos.reduce((acc, v) => acc + (v.likes || 0), 0);
 
+        // Update Hero Stats
+        const statVids = document.getElementById('hero-stat-videos');
+        if (statVids) statVids.textContent = videos.length;
+
+        const statViews = document.getElementById('hero-stat-views');
+        if (statViews) {
+          statViews.textContent = totalViews >= 1000 ? `${(totalViews / 1000).toFixed(1).replace('.0', '')}K+` : totalViews;
+        }
+
+        const statLikes = document.getElementById('hero-stat-likes');
+        if (statLikes) {
+          statLikes.textContent = totalLikes >= 1000 ? `${(totalLikes / 1000).toFixed(1).replace('.0', '')}K+` : totalLikes;
+        }
+
+        // Quick Bar Badges
+        const likedBadge = document.getElementById('page-liked-count-badge');
+        if (likedBadge) likedBadge.textContent = videoLikes.length;
+
+        const watchBadge = document.getElementById('page-watchlater-count-badge');
+        if (watchBadge) watchBadge.textContent = videoWatchLater.length;
+
+        const sidebarTotal = document.getElementById('page-sidebar-video-count');
+        if (sidebarTotal) sidebarTotal.textContent = `${videos.length} video`;
+
+        // Populate Category List on Left Sidebar
+        const container = document.getElementById('page-video-categories-list');
+        if (!container) return;
+
+        container.innerHTML = videoCategoryMeta.map(cat => {
+          let count = 0;
+          if (cat.key === 'all') {
+            count = videos.length;
+          } else if (cat.key === 'liked') {
+            count = videos.filter(v => videoLikes.includes(v.id)).length;
+          } else if (cat.key === 'saved') {
+            count = videos.filter(v => videoWatchLater.includes(v.id)).length;
+          } else {
+            count = videos.filter(v => v.category === cat.key).length;
+          }
+
+          const isActive = currentVideoCategory === cat.key;
+          const activeClasses = isActive
+            ? 'bg-rose-600 text-white shadow-md font-bold scale-[1.01]'
+            : 'bg-white/80 dark:bg-gray-800/60 hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200/60 dark:border-gray-700/60';
+
+          const countBadgeClass = isActive
+            ? 'bg-white/20 text-white font-mono'
+            : 'bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 font-mono';
+
+          return `
+            <button onclick="filterVideoCategory('${cat.key}')" class="w-full text-left px-3.5 py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-between group ${activeClasses}">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="text-base shrink-0 group-hover:scale-110 transition-transform">${cat.icon}</span>
+                <div class="min-w-0">
+                  <span class="text-xs truncate block leading-tight font-bold">${cat.label}</span>
+                  <span class="text-[9px] opacity-75 truncate block font-normal hidden sm:block">${cat.desc}</span>
+                </div>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-md text-xs shrink-0 font-bold ${countBadgeClass}">${count}</span>
+            </button>
+          `;
+        }).join('');
+      }
+
+      // RENDER SPEAKER CHANNELS ON DEDICATED VIDEOS PAGE
+      function renderPageChannels() {
+        const container = document.getElementById('page-channels-list');
+        if (!container) return;
+
+        // Distinct speakers
+        const speakersMap = new Map();
+        videos.forEach(v => {
+          if (!speakersMap.has(v.speaker)) {
+            speakersMap.set(v.speaker, {
+              speaker: v.speaker,
+              avatar: v.speakerAvatar,
+              category: v.category,
+              count: 0
+            });
+          }
+          speakersMap.get(v.speaker).count++;
+        });
+
+        const speakers = Array.from(speakersMap.values());
+
+        container.innerHTML = speakers.map(sp => {
+          const isSubscribed = subscribedChannels.includes(sp.speaker);
+          return `
+            <div class="p-2.5 rounded-xl bg-gray-50/70 dark:bg-gray-800/40 border border-gray-100 dark:border-gray-800 flex items-center justify-between gap-2.5">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <img src="${sp.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80'}" class="w-8 h-8 rounded-full object-cover shrink-0 border border-gray-200 dark:border-gray-700" />
+                <div class="min-w-0">
+                  <h4 class="text-xs font-bold text-gray-900 dark:text-white truncate">${sp.speaker}</h4>
+                  <span class="text-[10px] text-gray-400 font-mono">${sp.count} video</span>
+                </div>
+              </div>
+              <button onclick="toggleChannelSubscribeByName('${sp.speaker}')" class="px-2.5 py-1 rounded-full text-[10px] font-bold transition-all shrink-0 cursor-pointer ${isSubscribed ? 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300' : 'bg-rose-600 hover:bg-rose-700 text-white shadow-xs'}">
+                ${isSubscribed ? 'Abunə ✓' : '+ Abunə'}
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function toggleChannelSubscribeByName(name) {
+        const idx = subscribedChannels.indexOf(name);
+        if (idx > -1) {
+          subscribedChannels.splice(idx, 1);
+          showToast(`"${name}" kanalından abunəlik ləğv edildi.`);
+        } else {
+          subscribedChannels.push(name);
+          showToast(`🎉 "${name}" kanalına abunə olundu!`);
+          if (window.confetti) window.confetti({ particleCount: 25, spread: 45, origin: { y: 0.7 } });
+        }
+        localStorage.setItem('newsfy_subscribed_channels', JSON.stringify(subscribedChannels));
+        renderPageChannels();
+      }
+
+      // RENDER SPOTLIGHT BANNER ON VIDEOS PAGE
+      function renderPageVideoSpotlight() {
+        const container = document.getElementById('page-video-spotlight-card');
+        if (!container) return;
+
+        let filtered = getFilteredVideosList();
+        if (filtered.length === 0) {
+          container.innerHTML = '';
+          return;
+        }
+
+        // Spotlight video: the most viewed or first video
+        const topVid = [...filtered].sort((a, b) => (b.views || 0) - (a.views || 0))[0] || filtered[0];
+        const isLiked = videoLikes.includes(topVid.id);
+
+        container.innerHTML = `
+          <div onclick="openVideo('${topVid.id}')" class="group relative rounded-3xl overflow-hidden bg-black border border-gray-800 shadow-xl cursor-pointer">
+            <div class="relative aspect-[21/9] sm:aspect-[21/9] w-full min-h-[220px]">
+              <img src="${topVid.thumbnail}" alt="${topVid.title}" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+              
+              <!-- Floating Red Play Button -->
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-xl shadow-2xl group-hover:scale-115 transition-transform">
+                  <span class="ml-1">▶</span>
+                </div>
+              </div>
+
+              <!-- Top Left Badges -->
+              <div class="absolute top-4 left-4 flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-rose-600 text-white font-mono font-black text-[10px] tracking-wider uppercase shadow-md">
+                  ★ HƏFTƏNİN VİDEOSU
+                </span>
+                <span class="px-2 py-0.5 rounded-md bg-black/70 text-gray-200 border border-white/20 text-[10px] font-mono">
+                  ${topVid.duration || '15:00'}
+                </span>
+              </div>
+
+              <!-- Bottom Content Overlay -->
+              <div class="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3 text-white">
+                <div class="max-w-xl">
+                  <span class="text-[10px] font-mono font-bold text-rose-400 uppercase tracking-widest block mb-1">
+                    ${categoryLabels[topVid.category] || topVid.category} · ${topVid.speaker}
+                  </span>
+                  <h3 class="text-base sm:text-xl font-black text-white group-hover:text-rose-400 transition-colors leading-snug line-clamp-2">
+                    ${topVid.title}
+                  </h3>
+                  <p class="text-xs text-gray-300 line-clamp-1 mt-1 hidden sm:block">${topVid.description || ''}</p>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0" onclick="event.stopPropagation();">
+                  <button onclick="toggleVideoLike('${topVid.id}', event)" class="px-3 py-1.5 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${isLiked ? 'bg-rose-600 text-white shadow-xs' : 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-md'}">
+                    <span>${isLiked ? '❤️' : '🤍'}</span>
+                    <span class="font-mono text-[11px]">${topVid.likes || 0}</span>
+                  </button>
+                  <button onclick="openVideo('${topVid.id}')" class="px-3.5 py-1.5 rounded-full bg-white text-gray-900 font-extrabold text-xs hover:bg-gray-100 transition-colors flex items-center gap-1 shadow-md">
+                    <span>İzlə</span>
+                    <span>→</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function getFilteredVideosList() {
         let filtered = [...videos];
 
         if (currentVideoCategory === 'liked') {
           filtered = filtered.filter(v => videoLikes.includes(v.id));
+        } else if (currentVideoCategory === 'saved') {
+          filtered = filtered.filter(v => videoWatchLater.includes(v.id));
         } else if (currentVideoCategory !== 'all') {
           filtered = filtered.filter(v => v.category === currentVideoCategory);
+        }
+
+        if (pageVideoSearchQuery) {
+          filtered = filtered.filter(v => 
+            v.title.toLowerCase().includes(pageVideoSearchQuery) ||
+            (v.description && v.description.toLowerCase().includes(pageVideoSearchQuery)) ||
+            (v.speaker && v.speaker.toLowerCase().includes(pageVideoSearchQuery)) ||
+            (v.keyTakeaways && v.keyTakeaways.some(t => t.toLowerCase().includes(pageVideoSearchQuery)))
+          );
         }
 
         // Apply Sorting
@@ -2587,23 +3037,46 @@
         } else if (currentVideoSort === 'liked') {
           filtered.sort((a, b) => (b.likes || 0) - (a.likes || 0));
         } else {
-          // latest
           filtered.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
         }
 
-        // Update count pill
-        const countPill = document.getElementById('active-video-count-pill');
-        if (countPill) countPill.textContent = `${filtered.length} video`;
+        return filtered;
+      }
+
+      // RENDER STANDALONE VIDEOS GRID (8 COLS)
+      function renderPageVideos() {
+        const grid = document.getElementById('page-videos-grid');
+        if (!grid) return;
+
+        const filtered = getFilteredVideosList();
+
+        // Update status bar text
+        const catObj = videoCategoryMeta.find(c => c.key === currentVideoCategory) || { label: 'Bütün Videolar', icon: '🎬' };
+        const titleElem = document.getElementById('page-active-cat-title');
+        if (titleElem) titleElem.textContent = catObj.label;
+
+        const iconElem = document.getElementById('page-active-cat-icon');
+        if (iconElem) iconElem.textContent = catObj.icon;
+
+        const countElem = document.getElementById('page-active-cat-count');
+        if (countElem) {
+          countElem.textContent = `${filtered.length} video tapıldı` + (pageVideoSearchQuery ? ` ("${pageVideoSearchQuery}" üzrə)` : '');
+        }
 
         if (filtered.length === 0) {
           grid.innerHTML = `
-            <div class="col-span-1 sm:col-span-2 py-12 text-center space-y-3 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800">
-              <span class="text-3xl block">🎬</span>
-              <p class="text-xs text-gray-500 font-medium">Bu kateqoriyada hələlik video yoxdur.</p>
-              ${currentVideoCategory === 'liked' ? '<p class="text-[11px] text-gray-400">Videoların altındakı ❤️ düyməsinə basaraq sevdiyiniz videoları bura toplaya bilərsiniz.</p>' : ''}
-              <button onclick="filterVideoCategory('all')" class="px-4 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 transition-colors cursor-pointer">
-                Bütün Videolara Bax
-              </button>
+            <div class="col-span-1 sm:col-span-2 py-16 text-center space-y-3 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-2xs">
+              <span class="text-4xl block">🎬</span>
+              <h3 class="text-sm font-bold text-gray-900 dark:text-white">Heç bir video tapılmadı</h3>
+              <p class="text-xs text-gray-400 max-w-sm mx-auto">
+                ${pageVideoSearchQuery ? 'Axtarış sorğunuza uyğun video tapılmadı. Fərqli sözlər yoxlayın.' : 'Bu kateqoriyada hələlik video mövcud deyil.'}
+              </p>
+              <div class="pt-2 flex justify-center gap-2">
+                ${pageVideoSearchQuery ? '<button onclick="clearVideoSearch()" class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs font-bold text-gray-700 dark:text-gray-200 cursor-pointer">Axtarışı Təmizlə</button>' : ''}
+                <button onclick="filterVideoCategory('all')" class="px-4 py-2 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 transition-colors cursor-pointer">
+                  Bütün Videolara Bax
+                </button>
+              </div>
             </div>
           `;
           return;
@@ -2611,13 +3084,18 @@
 
         grid.innerHTML = filtered.map(vid => {
           const isLiked = videoLikes.includes(vid.id);
+          const isSaved = videoWatchLater.includes(vid.id);
           const likeCount = vid.likes || 0;
           const viewsFormatted = (vid.views || 1200) >= 1000 
             ? ((vid.views || 1200) / 1000).toFixed(1).replace('.0', '') + 'K' 
             : (vid.views || 1200);
 
+          const takeaways = (vid.keyTakeaways && vid.keyTakeaways.length > 0)
+            ? vid.keyTakeaways.slice(0, 2)
+            : ['Fikir & Zəka ekspert təhlili'];
+
           return `
-            <div onclick="openVideo('${vid.id}')" class="group cursor-pointer rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 hover:shadow-xl hover:border-gray-300 dark:hover:border-gray-700 transition-all flex flex-col justify-between">
+            <div onclick="openVideo('${vid.id}')" class="group cursor-pointer rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:shadow-xl hover:border-gray-300 dark:hover:border-gray-700 transition-all flex flex-col justify-between">
               
               <!-- 16:9 Thumbnail Canvas -->
               <div class="relative aspect-[16/9] w-full overflow-hidden bg-black">
@@ -2626,7 +3104,7 @@
                 <!-- YouTube Dark Gradient & Red Play Overlay -->
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 opacity-60 group-hover:opacity-80 transition-opacity"></div>
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="w-11 h-11 rounded-full bg-rose-600/90 text-white flex items-center justify-center font-bold text-sm shadow-xl group-hover:scale-115 group-hover:bg-rose-600 transition-transform">
+                  <div class="w-12 h-12 rounded-full bg-rose-600/90 text-white flex items-center justify-center font-bold text-base shadow-xl group-hover:scale-115 group-hover:bg-rose-600 transition-transform">
                     <span class="ml-0.5">▶</span>
                   </div>
                 </div>
@@ -2636,6 +3114,11 @@
                   HD
                 </span>
 
+                <!-- Watch Later Star Button -->
+                <button onclick="toggleVideoWatchLaterFromCard('${vid.id}', event)" class="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-black/70 text-white hover:text-amber-400 backdrop-blur-xs text-xs transition-colors" title="${isSaved ? 'Saxlanılanlardan sil' : 'Sonra İzlə'}">
+                  ${isSaved ? '★' : '☆'}
+                </button>
+
                 <!-- Duration Pill -->
                 <span class="absolute bottom-2.5 right-2.5 px-2 py-0.5 bg-black/85 text-white text-[10px] font-mono font-bold rounded-md shadow-xs">
                   ${vid.duration || '12:00'}
@@ -2643,19 +3126,29 @@
               </div>
 
               <!-- Metadata & Channel Info -->
-              <div class="p-4 flex-1 flex flex-col justify-between">
+              <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
                 <div>
-                  <div class="flex items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center justify-between gap-2 mb-1.5">
                     <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider font-mono">${categoryLabels[vid.category] || vid.category}</span>
                     <span class="text-[10px] text-gray-400 font-mono">${viewsFormatted} baxış</span>
                   </div>
                   
-                  <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white group-hover:text-rose-500 leading-snug line-clamp-2 transition-colors mb-3">
+                  <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white group-hover:text-rose-500 leading-snug line-clamp-2 transition-colors">
                     ${vid.title}
                   </h4>
+                  
+                  <!-- Key Takeaways Pills Preview -->
+                  <div class="mt-2 space-y-1">
+                    ${takeaways.map(t => `
+                      <div class="flex items-start gap-1.5 text-[10px] text-gray-500 dark:text-gray-400 line-clamp-1">
+                        <span class="text-emerald-500 font-bold shrink-0">✓</span>
+                        <span class="truncate">${t}</span>
+                      </div>
+                    `).join('')}
+                  </div>
                 </div>
 
-                <!-- Channel / Speaker & User Like Button -->
+                <!-- Speaker Avatar & Like/Share Action Area -->
                 <div class="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-2">
                   <div class="flex items-center gap-2 min-w-0">
                     <img src="${vid.speakerAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80'}" class="w-6 h-6 rounded-full object-cover shrink-0 border border-gray-200 dark:border-gray-800" />
@@ -2674,6 +3167,64 @@
                   </div>
                 </div>
 
+              </div>
+
+            </div>
+          `;
+        }).join('');
+      }
+
+      // RENDER HOMEPAGE FEATURED VIDEOS PREVIEW (2 Cards)
+      function renderVideos() {
+        const homeGrid = document.getElementById('home-featured-videos-grid');
+        if (!homeGrid) return;
+
+        const previewList = videos.slice(0, 2);
+
+        homeGrid.innerHTML = previewList.map(vid => {
+          const isLiked = videoLikes.includes(vid.id);
+          const viewsFormatted = (vid.views || 1200) >= 1000 
+            ? ((vid.views || 1200) / 1000).toFixed(1).replace('.0', '') + 'K' 
+            : (vid.views || 1200);
+
+          return `
+            <div onclick="openVideo('${vid.id}')" class="group cursor-pointer rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-700 transition-all flex flex-col justify-between">
+              
+              <div class="relative aspect-[16/9] w-full overflow-hidden bg-black">
+                <img src="${vid.thumbnail}" alt="${vid.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-95" loading="lazy" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 opacity-60 group-hover:opacity-80 transition-opacity"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="w-10 h-10 rounded-full bg-rose-600/90 text-white flex items-center justify-center font-bold text-xs shadow-xl group-hover:scale-110 group-hover:bg-rose-600 transition-transform">
+                    <span class="ml-0.5">▶</span>
+                  </div>
+                </div>
+                <span class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/70 text-rose-400 border border-rose-500/30 text-[8px] font-mono font-bold rounded">HD</span>
+                <span class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/85 text-white text-[9px] font-mono font-bold rounded">${vid.duration || '12:00'}</span>
+              </div>
+
+              <div class="p-3.5 flex-1 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between gap-1 mb-1">
+                    <span class="text-[9px] font-bold text-rose-500 uppercase tracking-wider font-mono">${categoryLabels[vid.category] || vid.category}</span>
+                    <span class="text-[9px] text-gray-400 font-mono">${viewsFormatted} baxış</span>
+                  </div>
+                  <h4 class="text-xs font-bold text-gray-900 dark:text-white group-hover:text-rose-500 leading-snug line-clamp-2 transition-colors">
+                    ${vid.title}
+                  </h4>
+                </div>
+
+                <div class="pt-2.5 mt-2.5 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-1.5 min-w-0">
+                    <img src="${vid.speakerAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80'}" class="w-5 h-5 rounded-full object-cover shrink-0" />
+                    <span class="text-[10px] text-gray-600 dark:text-gray-300 truncate">${vid.speaker}</span>
+                  </div>
+                  <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
+                    <button onclick="toggleVideoLike('${vid.id}', event)" class="px-2 py-0.5 rounded-full text-[10px] font-bold transition-all ${isLiked ? 'bg-rose-500 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}">
+                      <span>${isLiked ? '❤️' : '🤍'}</span>
+                      <span class="font-mono text-[9px]">${vid.likes || 0}</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
             </div>
@@ -2714,6 +3265,14 @@
 
         // Update Page Title and Meta Description dynamically
         document.title = `${art.title} — Fikir & Zəka`;
+
+        // If videos page is active, hide it
+        if (isVideosPageActive) {
+          const videosPage = document.getElementById('videos-page-view');
+          if (videosPage) videosPage.classList.add('hidden');
+          isVideosPageActive = false;
+          updateNavState();
+        }
 
         document.getElementById('main-content').classList.add('hidden');
         document.getElementById('article-reader-view').classList.remove('hidden');
@@ -3237,8 +3796,16 @@
         currentActiveVideo = null;
 
         if (updateUrl && window.location.hash.startsWith('#/video')) {
-          history.pushState(null, '', currentCategory !== 'all' ? '#/bolme/' + currentCategory : '#/');
-          document.title = 'Fikir & Zəka | Müasir Düşüncə, Texnologiya və Şəxsi İnkişaf Portalı';
+          if (isVideosPageActive) {
+            const backHash = currentVideoCategory && currentVideoCategory !== 'all'
+              ? '#/videolar/' + encodeURIComponent(currentVideoCategory)
+              : '#/videolar';
+            history.pushState(null, '', backHash);
+            document.title = 'Videolar & Video Dərslər — Fikir & Zəka HD Video Klubu';
+          } else {
+            history.pushState(null, '', currentCategory !== 'all' ? '#/bolme/' + currentCategory : '#/');
+            document.title = 'Fikir & Zəka | Müasir Düşüncə, Texnologiya və Şəxsi İnkişaf Portalı';
+          }
         }
       }
 
@@ -4525,6 +5092,7 @@
         // 1. Home / Root (#, #/, #top, empty)
         if (!hash || hash === '#' || hash === '#/' || hash === '#top') {
           if (currentActiveArticle) closeArticleReader(false);
+          if (isVideosPageActive) closeVideosPage(false);
           const adminModal = document.getElementById('admin-modal');
           if (adminModal && !adminModal.classList.contains('hidden')) closeAdminModal(false);
           const videoModal = document.getElementById('video-modal');
@@ -4550,6 +5118,7 @@
           const slugOrId = decodeURIComponent(artMatch[1]);
           const art = articles.find(a => (a.slug && a.slug.toLowerCase() === slugOrId.toLowerCase()) || a.id === slugOrId);
           if (art) {
+            if (isVideosPageActive) closeVideosPage(false);
             openArticle(art.id, false);
             return;
           }
@@ -4559,6 +5128,7 @@
         const catMatch = hash.match(/^#\/?(?:bolme|kateqoriya|category)\/([^/?#]+)/i);
         if (catMatch) {
           const cat = decodeURIComponent(catMatch[1]);
+          if (isVideosPageActive) closeVideosPage(false);
           filterCategory(cat, false);
           if (currentActiveArticle) closeArticleReader(false);
           return;
@@ -4566,6 +5136,7 @@
 
         // 4. Saved Bookmarks: #/saxlananlar, #/bookmarks
         if (/^#\/?(?:saxlananlar|bookmarks)/i.test(hash)) {
+          if (isVideosPageActive) closeVideosPage(false);
           showingSavedOnly = true;
           const btn = document.getElementById('filter-saved-btn');
           if (btn) btn.className = 'w-full py-2.5 px-4 rounded-xl border border-rose-500 bg-rose-50 dark:bg-rose-950/30 text-rose-600 text-xs font-bold';
@@ -4575,16 +5146,17 @@
           return;
         }
 
-        // 5. Video: #/video/:id, #/videolar
+        // 5. Video Player & Dedicated Videos Page: #/video/:id, #/videolar, #/videolar/:cat
         const vidMatch = hash.match(/^#\/?video\/([^/?#]+)/i);
         if (vidMatch) {
           openVideo(vidMatch[1], false);
           return;
         }
-        if (/^#\/?videolar/i.test(hash)) {
+        const vidsPageMatch = hash.match(/^#\/?videolar(?:\/([^/?#]+))?/i);
+        if (vidsPageMatch) {
           if (currentActiveArticle) closeArticleReader(false);
-          scrollToId('video-gallery');
-          document.title = 'Videolar — Fikir & Zəka';
+          const cat = vidsPageMatch[1] ? decodeURIComponent(vidsPageMatch[1]) : 'all';
+          openVideosPage(cat, false);
           return;
         }
 
