@@ -797,6 +797,33 @@
                 10 SAN İRƏLİ ▶▶
               </div>
 
+              <!-- Replay Screen Overlay (When video ends: No ads, No jumping to other videos, Instant Replay) -->
+              <div id="nf-replay-overlay" class="hidden absolute inset-0 z-30 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center space-y-4 transition-all">
+                <div class="space-y-2 max-w-md">
+                  <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/70 text-emerald-400 border border-emerald-800 text-[11px] font-mono font-bold uppercase tracking-wider">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span>VİDEO BAŞA ÇATDI · REKLAMSIZ İZLƏMƏ</span>
+                  </div>
+                  <h3 id="nf-replay-title" class="text-base sm:text-lg font-black text-white leading-snug line-clamp-2"></h3>
+                  <p class="text-xs text-gray-300 leading-relaxed">
+                    Tələbinizə uyğun olaraq kənar videolara avtomatik keçid dayandırıldı. Aşağıdakı düymə ilə bu videonu yenidən izləyə bilərsiniz.
+                  </p>
+                </div>
+
+                <div class="flex items-center gap-3 pt-2">
+                  <!-- Replay CTA Button -->
+                  <button onclick="replayCustomPlayer()" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-red-500 hover:from-rose-500 hover:to-red-600 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-rose-900/40 transition-all flex items-center gap-2.5 cursor-pointer transform hover:scale-105 active:scale-95">
+                    <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+                    <span>Yenidən Oynat</span>
+                  </button>
+
+                  <!-- Comments Link Button -->
+                  <button onclick="scrollToId('watch-comments-section')" class="px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer border border-white/10">
+                    <span>💬 Şərhlərə Bax</span>
+                  </button>
+                </div>
+              </div>
+
               <!-- CUSTOM PLAYER CONTROLS OVERLAY (Mənim Öz Pleyer Çubuğum) -->
               <div id="nf-player-controls" class="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/95 via-black/80 to-transparent pt-8 pb-3 px-3 sm:px-6 transition-opacity duration-300">
                 
@@ -818,13 +845,14 @@
                 <!-- Bottom Control Buttons Row -->
                 <div class="flex items-center justify-between gap-2 text-white">
                   
-                  <!-- Left Group: Play/Pause, -10s, +10s, Volume, Time -->
+                  <!-- Left Group: Play/Pause/Replay, -10s, +10s, Volume, Time -->
                   <div class="flex items-center gap-1.5 sm:gap-2.5">
                     
-                    <!-- Play / Pause Button -->
+                    <!-- Play / Pause / Replay Button -->
                     <button onclick="toggleCustomPlayerPlay()" id="nf-btn-play" class="p-2 rounded-xl hover:bg-white/15 text-white transition-colors cursor-pointer" title="Oynat / Dayandır (Space)">
                       <svg id="nf-icon-play" class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                       <svg id="nf-icon-pause" class="w-5 h-5 fill-current hidden" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                      <svg id="nf-icon-replay" class="w-5 h-5 fill-none stroke-current hidden" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
                     </button>
 
                     <!-- 10s Backward Skip Button -->
@@ -1044,7 +1072,7 @@
                   <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
                   <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-white">Növbəti Videolar</h3>
                 </div>
-                <span class="text-[10px] text-gray-400 font-mono">AVTO-OYNAT</span>
+                <span class="text-[10px] text-emerald-400 font-mono font-bold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span>REKLAMSIZ · TƏK İZLƏMƏ</span></span>
               </div>
               
               <!-- Up Next Recommendations List -->
@@ -3873,6 +3901,7 @@
 
       // ================= CUSTOM NF VIDEO PLAYER & WATCH PAGE CONTROLLER =================
       let isCustomPlayerPlaying = false;
+      let isVideoEnded = false;
       let playerCurrentTime = 0;
       let playerDuration = 900;
       let playerTimerInterval = null;
@@ -3946,9 +3975,17 @@
             updatePlayerUI();
           }
           if (typeof data.info.playerState === 'number') {
-            if (data.info.playerState === 1) {
+            if (data.info.playerState === 0) {
+              // 0: YT.PlayerState.ENDED -> Video ended: stop, do NOT switch video, show Replay!
+              handleVideoEnded();
+            } else if (data.info.playerState === 1) {
+              if (isVideoEnded) {
+                isVideoEnded = false;
+                const replayOverlay = document.getElementById('nf-replay-overlay');
+                if (replayOverlay) replayOverlay.classList.add('hidden');
+              }
               setPlayerPlayState(true);
-            } else if (data.info.playerState === 2 || data.info.playerState === 0) {
+            } else if (data.info.playerState === 2) {
               setPlayerPlayState(false);
             }
           }
@@ -3971,12 +4008,77 @@
         if (buffFill) buffFill.style.width = `${Math.min(100, clampedPct + 15)}%`;
       }
 
+      // Video Ended Interception: Never auto-switch, enable replay
+      function handleVideoEnded() {
+        if (isVideoEnded) return;
+        isVideoEnded = true;
+        isCustomPlayerPlaying = false;
+        stopProgressTimer();
+
+        // Pause underlying video so YouTube never auto-plays recommendations or other videos
+        sendPlayerCommand('pauseVideo');
+
+        // Pin timeline to 100%
+        playerCurrentTime = playerDuration;
+        updatePlayerUI();
+
+        // Switch bottom play button to Replay icon
+        const iconPlay = document.getElementById('nf-icon-play');
+        const iconPause = document.getElementById('nf-icon-pause');
+        const iconReplay = document.getElementById('nf-icon-replay');
+        if (iconPlay) iconPlay.classList.add('hidden');
+        if (iconPause) iconPause.classList.add('hidden');
+        if (iconReplay) iconReplay.classList.remove('hidden');
+
+        const btnPlay = document.getElementById('nf-btn-play');
+        if (btnPlay) btnPlay.title = 'Yenidən Oynat (Space / R)';
+
+        // Show Center Replay Overlay
+        const replayOverlay = document.getElementById('nf-replay-overlay');
+        if (replayOverlay) replayOverlay.classList.remove('hidden');
+
+        // Hide center indicator
+        const centerInd = document.getElementById('nf-center-indicator');
+        if (centerInd) centerInd.classList.add('opacity-0');
+      }
+
+      // Replay Same Video Function
+      function replayCustomPlayer() {
+        isVideoEnded = false;
+        const replayOverlay = document.getElementById('nf-replay-overlay');
+        if (replayOverlay) replayOverlay.classList.add('hidden');
+
+        const iconPlay = document.getElementById('nf-icon-play');
+        const iconPause = document.getElementById('nf-icon-pause');
+        const iconReplay = document.getElementById('nf-icon-replay');
+        if (iconReplay) iconReplay.classList.add('hidden');
+        if (iconPlay) iconPlay.classList.add('hidden');
+        if (iconPause) iconPause.classList.remove('hidden');
+
+        const btnPlay = document.getElementById('nf-btn-play');
+        if (btnPlay) btnPlay.title = 'Oynat / Dayandır (Space)';
+
+        // Seek back to start (0s) and play
+        playerCurrentTime = 0;
+        updatePlayerUI();
+
+        sendPlayerCommand('seekTo', [0, true]);
+        sendPlayerCommand('playVideo');
+        setPlayerPlayState(true);
+        flashCenterIndicator('↺');
+        showToast('↺ Video əvvəldən başladıldı');
+      }
+
       // Play / Pause Controller
       function setPlayerPlayState(playing) {
+        if (isVideoEnded) return;
         isCustomPlayerPlaying = playing;
         const iconPlay = document.getElementById('nf-icon-play');
         const iconPause = document.getElementById('nf-icon-pause');
+        const iconReplay = document.getElementById('nf-icon-replay');
         const centerIcon = document.getElementById('nf-center-icon');
+
+        if (iconReplay) iconReplay.classList.add('hidden');
 
         if (playing) {
           if (iconPlay) iconPlay.classList.add('hidden');
@@ -3992,6 +4094,10 @@
       }
 
       function toggleCustomPlayerPlay() {
+        if (isVideoEnded) {
+          replayCustomPlayer();
+          return;
+        }
         if (isCustomPlayerPlaying) {
           pauseCustomPlayer();
         } else {
@@ -4000,6 +4106,10 @@
       }
 
       function playCustomPlayer() {
+        if (isVideoEnded) {
+          replayCustomPlayer();
+          return;
+        }
         sendPlayerCommand('playVideo');
         setPlayerPlayState(true);
         flashCenterIndicator('▶');
@@ -4015,13 +4125,13 @@
         const indicator = document.getElementById('nf-center-indicator');
         const icon = document.getElementById('nf-center-icon');
         if (!indicator || !icon) return;
-        icon.innerHTML = symbol === '▶' ? '<span class="ml-1">▶</span>' : '<span>⏸</span>';
+        icon.innerHTML = symbol === '▶' ? '<span class="ml-1">▶</span>' : symbol === '↺' ? '<span>↺</span>' : '<span>⏸</span>';
         indicator.classList.remove('opacity-0');
         indicator.classList.add('opacity-100');
         icon.style.transform = 'scale(1.2)';
         setTimeout(() => {
           icon.style.transform = 'scale(1.0)';
-          if (isCustomPlayerPlaying) {
+          if (isCustomPlayerPlaying && !isVideoEnded) {
             indicator.classList.add('opacity-0');
             indicator.classList.remove('opacity-100');
           }
@@ -4034,7 +4144,7 @@
           playerCurrentTime = Math.min(playerDuration, playerCurrentTime + 0.25 * currentPlaybackRate);
           updatePlayerUI();
           if (playerCurrentTime >= playerDuration) {
-            pauseCustomPlayer();
+            handleVideoEnded();
           }
         }, 250);
       }
@@ -4279,6 +4389,9 @@
         if (e.code === 'Space') {
           e.preventDefault();
           toggleCustomPlayerPlay();
+        } else if (e.key === 'r' || e.key === 'R') {
+          e.preventDefault();
+          replayCustomPlayer();
         } else if (e.code === 'ArrowLeft') {
           e.preventDefault();
           skipPlayerSeconds(-10);
@@ -4536,20 +4649,35 @@
         renderWatchUpNext(vid.id);
         renderWatchComments(vid.id);
 
-        // Setup Custom Player & Embed
+        // Setup Custom Player & Embed with Anti-Ad Privacy & Single Video Lock
         playerDuration = parseDurationToSeconds(vid.duration);
         playerCurrentTime = 0;
         updatePlayerUI();
 
-        // Zero 3rd-party YouTube controls/branding:
-        // controls=0: completely eliminates YouTube default player bar, seekbar, and bottom controls
-        // disablekb=1: disables YouTube keyboard capture
-        // modestbranding=1, rel=0, iv_load_policy=3, fs=0: removes external branding and overlays
-        // enablejsapi=1: gives total control to our custom player toolbar
+        // Reset replay state & overlay
+        isVideoEnded = false;
+        const replayOverlay = document.getElementById('nf-replay-overlay');
+        if (replayOverlay) replayOverlay.classList.add('hidden');
+        const replayTitle = document.getElementById('nf-replay-title');
+        if (replayTitle) replayTitle.textContent = vid.title;
+        const iconReplay = document.getElementById('nf-icon-replay');
+        if (iconReplay) iconReplay.classList.add('hidden');
+        const btnPlay = document.getElementById('nf-btn-play');
+        if (btnPlay) btnPlay.title = 'Oynat / Dayandır (Space)';
+
+        // Anti-ad & single video lock:
+        // youtube-nocookie.com: cuts tracking cookies and personalized ad targeting
+        // controls=0: hides all YouTube native player controls, overlay cards, and ad widgets
+        // modestbranding=1: strips YouTube branding logos
+        // rel=0: stops external video recommendations
+        // iv_load_policy=3: completely eliminates in-video annotation ads, banners, and links
+        // disablekb=1: disables YouTube native keyboard ad interactions
+        // playsinline=1, fs=0: keeps video embedded and ad-free
+        // loop=0: prevents native playlist jumping
         const iframe = document.getElementById('nf-player-iframe');
         if (iframe) {
           const origin = window.location.origin || 'http://localhost:3000';
-          iframe.src = `https://www.youtube-nocookie.com/embed/${vid.youtubeId}?enablejsapi=1&autoplay=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&playsinline=1&fs=0&showinfo=0&origin=${encodeURIComponent(origin)}`;
+          iframe.src = `https://www.youtube-nocookie.com/embed/${vid.youtubeId}?enablejsapi=1&autoplay=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&playsinline=1&fs=0&showinfo=0&loop=0&origin=${encodeURIComponent(origin)}`;
         }
 
         setPlayerPlayState(true);
@@ -4565,6 +4693,12 @@
         // Stop Custom Player
         pauseCustomPlayer();
         stopProgressTimer();
+
+        isVideoEnded = false;
+        const replayOverlay = document.getElementById('nf-replay-overlay');
+        if (replayOverlay) replayOverlay.classList.add('hidden');
+        const iconReplay = document.getElementById('nf-icon-replay');
+        if (iconReplay) iconReplay.classList.add('hidden');
 
         const iframe = document.getElementById('nf-player-iframe');
         if (iframe) iframe.src = '';
