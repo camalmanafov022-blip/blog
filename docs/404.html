@@ -41,7 +41,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 
     <style>body{color:#111827;background-color:#fff;font-family:Plus Jakarta Sans,sans-serif;transition:background-color .2s,color .2s}.dark body,body.dark{color:#f3f4f6;background-color:#0d0f12}.article-dropcap:first-letter{float:left;color:#ff385c;margin-top:.25rem;margin-right:.75rem;font-family:Newsreader,serif;font-size:3.5rem;font-weight:700;line-height:.85}.heading-bar{border-bottom:1px solid #e5e7eb;margin-bottom:16px;padding-bottom:8px;position:relative}.dark .heading-bar{border-bottom:1px solid #1f2937}.heading-bar:after{content:"";background-color:#ff385c;width:32px;height:2px;position:absolute;bottom:-1px;left:0}::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}.dark ::-webkit-scrollbar-thumb{background:#374151}</style>
-    <script type="module" crossorigin src="./assets/index-CjS3Ze5X.js"></script>
+    <script type="module" crossorigin src="./assets/index-lB-12sqs.js"></script>
   </head>
   <body class="bg-[#ffffff] dark:bg-[#0d0f12] text-[#111827] dark:text-[#f3f4f6] font-sans antialiased">
     
@@ -71,9 +71,12 @@
           <a href="#/bolme/sexsi-inkisaf" onclick="event.preventDefault(); filterCategory('sexsi-inkisaf'); if (currentActiveArticle) closeArticleReader(); scrollToId('main-content');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer" id="nav-item-sexsi-inkisaf">
             Şəxsi İnkişaf
           </a>
-          <a href="#/videolar" onclick="event.preventDefault(); scrollToId('video-gallery'); if (currentActiveArticle) closeArticleReader(); history.pushState(null, '', '#/videolar');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer flex items-center gap-1">
+          <a href="#/videolar" onclick="event.preventDefault(); scrollToId('video-gallery'); if (currentActiveArticle) closeArticleReader(); history.pushState(null, '', '#/videolar');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer flex items-center gap-1.5 font-bold group" id="nav-item-videolar">
+            <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-rose-600 text-white text-[10px] shadow-xs group-hover:scale-110 transition-transform">
+              <svg class="w-3 h-3 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </span>
             <span>Videolar</span>
-            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+            <span class="px-1.5 py-0.2 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 text-[10px] font-mono font-black border border-rose-200 dark:border-rose-900">PRO</span>
           </a>
           <a href="#/bolme/bloq" onclick="event.preventDefault(); filterCategory('bloq'); if (currentActiveArticle) closeArticleReader(); scrollToId('personal-column');" class="py-2 hover:text-rose-500 dark:hover:text-rose-400 transition-colors cursor-pointer" id="nav-item-bloq">
             Şəxsi Bloq
@@ -277,17 +280,100 @@
             </div>
           </div>
 
-          <!-- VIDEO SECTION (Inside Center Feed) -->
+          <!-- YOUTUBE-STYLE VIDEO THEATER & CATEGORY HUB -->
           <div id="video-gallery" class="pt-8 border-t border-gray-100 dark:border-gray-800">
-            <div class="heading-bar flex items-center justify-between mb-5">
-              <h3 class="text-base font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-                <span>Featured Videos & Talks</span>
-              </h3>
-              <span class="text-xs font-mono text-gray-400">Video İcmallar</span>
+            <!-- Header bar with YouTube red branding -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-rose-600 text-white shadow-md">
+                    <svg class="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                  </span>
+                  <h3 class="text-lg font-black text-gray-900 dark:text-white tracking-tight">
+                    Fikir & Zəka Video Klubu
+                  </h3>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900">HD MEDIA</span>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Ekspert mühazirələri, texnoloji icmallar və bəyəndiyiniz videolar</p>
+              </div>
+
+              <!-- Top Quick Action Controls -->
+              <div class="flex items-center gap-2">
+                <button onclick="filterVideoCategory('liked')" class="px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900 bg-rose-50/60 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer" title="Yalnız bəyəndiyiniz videoları göstər">
+                  <span>❤️</span>
+                  <span>Bəyəndiklərim (<span id="user-liked-videos-count">0</span>)</span>
+                </button>
+                <button onclick="openAdminModal(); switchAdminTab('videos');" class="px-3 py-1.5 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90 text-xs font-bold flex items-center gap-1.5 transition-opacity cursor-pointer" title="Admin: Yeni video əlavə et">
+                  <span>+ Video Əlavə Et</span>
+                </button>
+              </div>
             </div>
-            <div id="videos-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <!-- Dynamically populated -->
+
+            <!-- YouTube Hub Layout: Left Category Rail + Right Video Content -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+              
+              <!-- LEFT COLUMN: CREATIVE YOUTUBE VIDEO CATEGORIES (slda video kategoriyalari olsun maraqli dizaynda) -->
+              <aside class="md:col-span-4 lg:col-span-4 space-y-3">
+                <div class="p-3.5 rounded-2xl bg-gradient-to-b from-gray-50 to-gray-100/70 dark:from-gray-900 dark:to-gray-950 border border-gray-200 dark:border-gray-800 shadow-2xs">
+                  <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-gray-200 dark:border-gray-800">
+                    <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                      <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                      <span>KATEQORİYALAR</span>
+                    </span>
+                    <span id="video-total-count-badge" class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold border border-gray-200 dark:border-gray-700">0</span>
+                  </div>
+
+                  <!-- Category Items (Styled pills with icons, counters & active states) -->
+                  <div id="video-categories-list" class="space-y-1.5">
+                    <!-- Populated dynamically by renderVideoCategories() -->
+                  </div>
+                </div>
+
+                <!-- Mini Channel / Hub Spotlight Widget -->
+                <div class="p-3.5 rounded-2xl bg-gradient-to-tr from-rose-500/10 via-amber-500/5 to-transparent border border-rose-200/60 dark:border-rose-900/40 text-xs">
+                  <div class="flex items-center gap-2.5 mb-2">
+                    <div class="w-8 h-8 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                      ▶
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-gray-900 dark:text-white leading-tight">Newsfy Video Klubu</h4>
+                      <p class="text-[10px] text-gray-500 dark:text-gray-400">Həftəlik yeni video mühazirələr</p>
+                    </div>
+                  </div>
+                  <p class="text-[11px] text-gray-600 dark:text-gray-300 leading-snug mb-2.5">
+                    Seçilmiş mütəfəkkirlərin və alimlərin çıxışlarını bir toxunuşla izləyin və bəyənin.
+                  </p>
+                  <a href="#newsletter-box" class="block text-center py-1.5 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] transition-colors shadow-xs">
+                    Kanal Bildirişlərinə Abunə Ol
+                  </a>
+                </div>
+              </aside>
+
+              <!-- RIGHT COLUMN: VIDEO FEED & THEATER CARDS -->
+              <div class="md:col-span-8 lg:col-span-8 space-y-4">
+                
+                <!-- Category Status Bar -->
+                <div class="flex items-center justify-between pb-2 border-b border-gray-100 dark:border-gray-800">
+                  <div class="flex items-center gap-2">
+                    <span id="active-video-cat-title" class="text-xs font-bold text-gray-900 dark:text-white">Bütün Videolar</span>
+                    <span id="active-video-count-pill" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold">0 video</span>
+                  </div>
+                  <div class="flex items-center gap-1.5 text-[11px]">
+                    <span class="text-gray-400">Sırala:</span>
+                    <select id="video-sort-select" onchange="changeVideoSort(this.value)" class="bg-transparent border border-gray-200 dark:border-gray-800 rounded-lg px-2 py-1 text-gray-700 dark:text-gray-300 text-xs font-medium focus:outline-none">
+                      <option value="latest">Ən Son Əlavə Olunanlar</option>
+                      <option value="popular">Ən Çox Baxılanlar</option>
+                      <option value="liked">Ən Çox Bəyənilənlər</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Videos Grid -->
+                <div id="videos-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <!-- Dynamically populated by renderVideos() -->
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -401,19 +487,122 @@
       </div>
     </div>
 
-    <!-- VIDEO MODAL -->
-    <div id="video-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div class="bg-gray-900 text-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-gray-800">
-        <div class="p-4 bg-black flex items-center justify-between border-b border-gray-800">
-          <p id="video-modal-title" class="text-sm font-bold truncate max-w-md"></p>
-          <button onclick="closeVideoModal()" class="text-gray-400 hover:text-white text-xl p-1 cursor-pointer">&times;</button>
+    <!-- YOUTUBE-STYLE VIDEO THEATER MODAL -->
+    <div id="video-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-2 sm:p-4 md:p-6 bg-black/90 backdrop-blur-md overflow-y-auto">
+      <div class="bg-[#0f0f0f] text-white rounded-3xl max-w-5xl w-full overflow-hidden shadow-2xl border border-gray-800 my-auto flex flex-col max-h-[95vh]">
+        
+        <!-- Top YouTube Theater Header Bar -->
+        <div class="px-4 py-3 bg-[#181818] flex items-center justify-between border-b border-gray-800 shrink-0">
+          <div class="flex items-center gap-2.5 min-w-0 pr-3">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-rose-600 text-white font-black text-xs shadow-xs shrink-0">
+              ▶
+            </span>
+            <div class="min-w-0">
+              <span id="video-modal-category-tag" class="text-[10px] font-mono uppercase font-bold text-rose-500 block">KATEQORİYA</span>
+              <p id="video-modal-title" class="text-xs sm:text-sm font-bold truncate text-gray-100"></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="shareActiveVideo()" class="p-2 text-gray-400 hover:text-white rounded-xl hover:bg-gray-800 transition-colors text-xs flex items-center gap-1 cursor-pointer" title="Linki Kopyala">
+              <span>🔗</span>
+              <span class="hidden sm:inline">Paylaş</span>
+            </button>
+            <button onclick="closeVideoModal()" class="text-gray-400 hover:text-white text-2xl px-2 py-1 leading-none rounded-xl hover:bg-gray-800 transition-colors cursor-pointer" title="Bağla (ESC)">&times;</button>
+          </div>
         </div>
-        <div class="relative aspect-[16/9] w-full bg-black">
-          <iframe id="video-modal-iframe" class="w-full h-full border-0" allowfullscreen allow="autoplay"></iframe>
+
+        <!-- 16:9 Video Canvas -->
+        <div class="relative aspect-[16/9] w-full bg-black shrink-0">
+          <iframe id="video-modal-iframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
         </div>
-        <div class="p-5 bg-gray-900">
-          <p id="video-modal-desc" class="text-xs text-gray-300 leading-relaxed mb-3"></p>
-          <div id="video-modal-takeaways" class="p-3 bg-gray-800/80 rounded-xl text-xs space-y-1"></div>
+
+        <!-- Video Metadata, Channel Row, Actions & Recommendations (Scrollable) -->
+        <div class="p-4 sm:p-6 overflow-y-auto space-y-5 bg-[#0f0f0f]">
+          
+          <!-- Title & Stats Row -->
+          <div>
+            <h2 id="video-modal-full-title" class="text-base sm:text-xl font-extrabold text-white leading-snug mb-2"></h2>
+            <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-gray-400">
+              
+              <!-- Channel / Speaker Info -->
+              <div class="flex items-center gap-3">
+                <img id="video-modal-speaker-avatar" src="" class="w-10 h-10 rounded-full object-cover border border-gray-700 shrink-0" />
+                <div>
+                  <div class="flex items-center gap-1.5 font-bold text-gray-100">
+                    <span id="video-modal-speaker-name">Məruzəçi</span>
+                    <span class="w-3.5 h-3.5 rounded-full bg-gray-500/40 text-gray-300 flex items-center justify-center text-[9px]" title="Təsdiqlənmiş Məruzəçi">✓</span>
+                  </div>
+                  <span class="text-[11px] text-gray-400 font-mono">Fikir & Zəka Rəsmi Mühazirəsi</span>
+                </div>
+                <button id="video-modal-sub-btn" onclick="toggleChannelSubscribe()" class="ml-2 px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors cursor-pointer shadow-xs">
+                  Abunə Ol
+                </button>
+              </div>
+
+              <!-- Action Buttons (YouTube segmented pill) -->
+              <div class="flex items-center gap-2">
+                <!-- Like / Dislike Segmented Pill -->
+                <div class="flex items-center bg-[#272727] rounded-full border border-gray-700/80 overflow-hidden shadow-xs">
+                  <button id="video-modal-like-btn" onclick="toggleActiveModalVideoLike(event)" class="px-3.5 py-2 flex items-center gap-1.5 font-bold text-xs hover:bg-[#383838] transition-colors cursor-pointer text-gray-200">
+                    <span id="video-modal-like-icon">👍</span>
+                    <span>Bəyən</span>
+                    <span id="video-modal-like-count" class="font-mono text-gray-400 ml-0.5">0</span>
+                  </button>
+                  <span class="w-px h-4 bg-gray-600"></span>
+                  <button onclick="dislikeVideoFeedback()" class="px-3 py-2 text-xs hover:bg-[#383838] transition-colors cursor-pointer text-gray-400 hover:text-white" title="Bəyənmədim">
+                    👎
+                  </button>
+                </div>
+
+                <!-- Share Button -->
+                <button onclick="shareActiveVideo()" class="px-3.5 py-2 rounded-full bg-[#272727] hover:bg-[#383838] border border-gray-700/80 text-xs font-bold text-gray-200 flex items-center gap-1.5 transition-colors cursor-pointer">
+                  <span>🔗</span>
+                  <span>Paylaş</span>
+                </button>
+
+                <!-- Watch Later / Bookmark Button -->
+                <button id="video-modal-bookmark-btn" onclick="toggleVideoBookmark()" class="px-3.5 py-2 rounded-full bg-[#272727] hover:bg-[#383838] border border-gray-700/80 text-xs font-bold text-gray-200 flex items-center gap-1.5 transition-colors cursor-pointer">
+                  <span id="video-modal-bookmark-icon">☆</span>
+                  <span id="video-modal-bookmark-text">Saxla</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- YouTube-Style Description & Takeaways Drawer -->
+          <div class="p-4 rounded-2xl bg-[#212121] border border-gray-800 space-y-3">
+            <div class="flex items-center gap-2 text-xs font-bold text-gray-300">
+              <span id="video-modal-views-count" class="font-mono text-white">0 baxış</span>
+              <span>·</span>
+              <span id="video-modal-duration-tag" class="font-mono text-gray-400">00:00</span>
+              <span>·</span>
+              <span class="text-rose-400 uppercase font-mono">HD FORMAT</span>
+            </div>
+
+            <p id="video-modal-desc" class="text-xs sm:text-sm text-gray-300 leading-relaxed"></p>
+
+            <!-- Key Takeaways Highlight Box -->
+            <div class="pt-3 border-t border-gray-700/60">
+              <span class="text-xs font-bold text-white flex items-center gap-1.5 mb-2">
+                <span class="text-rose-500">💡</span>
+                <span>Bu Mühazirədən Əsas Nəticələr (Key Takeaways):</span>
+              </span>
+              <div id="video-modal-takeaways" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-300"></div>
+            </div>
+          </div>
+
+          <!-- "Növbəti Videolar" (YouTube Up Next Queue) -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+              <span>Növbəti Tövsiyə Olunan Videolar</span>
+            </h4>
+            <div id="video-modal-upnext-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <!-- Dynamically rendered -->
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -480,6 +669,9 @@
             <button onclick="switchAdminTab('articles')" class="admin-tab px-3.5 py-2 rounded-xl text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 transition-colors cursor-pointer" data-tab="articles">
               <span>📰 Bütün Xəbərlər (<span id="admin-tab-art-count">0</span>)</span>
             </button>
+            <button onclick="switchAdminTab('videos')" class="admin-tab px-3.5 py-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer" data-tab="videos">
+              <span>🎬 Videolar (<span id="admin-tab-vid-count">0</span>)</span>
+            </button>
             <button onclick="switchAdminTab('new-article')" class="admin-tab px-3.5 py-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer" data-tab="new-article" id="tab-btn-new-art">
               <span>✍️ + Yeni Xəbər Yaz (Studio)</span>
             </button>
@@ -517,6 +709,7 @@
         <!-- Mobile sub-navigation bar -->
         <div class="md:hidden px-4 py-2 bg-gray-100 dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 flex items-center gap-1.5 overflow-x-auto text-xs font-semibold shrink-0">
           <button onclick="switchAdminTab('articles')" class="admin-tab-mob py-1.5 px-3 rounded-lg text-rose-600 bg-rose-50 dark:bg-rose-950/50 whitespace-nowrap font-bold" data-tab="articles">Məqalələr</button>
+          <button onclick="switchAdminTab('videos')" class="admin-tab-mob py-1.5 px-3 rounded-lg text-gray-600 dark:text-gray-400 whitespace-nowrap font-bold" data-tab="videos">🎬 Videolar</button>
           <button onclick="switchAdminTab('new-article')" class="admin-tab-mob py-1.5 px-3 rounded-lg text-gray-600 dark:text-gray-400 whitespace-nowrap font-bold" data-tab="new-article">+ Yeni Məqalə</button>
           <button onclick="switchAdminTab('backup')" class="admin-tab-mob py-1.5 px-3 rounded-lg text-emerald-600 whitespace-nowrap font-bold" data-tab="backup">💾 Backup</button>
           <button onclick="switchAdminTab('subscribers')" class="admin-tab-mob py-1.5 px-3 rounded-lg text-gray-600 dark:text-gray-400 whitespace-nowrap font-bold" data-tab="subscribers">Abunəçilər</button>
@@ -899,6 +1092,114 @@
             </div>
           </div>
 
+            <!-- Tab: VIDEOS MANAGEMENT (YouTube Media Studio) -->
+            <div id="admin-tab-videos" class="hidden max-w-6xl mx-auto p-4 sm:p-8 space-y-6">
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-gray-200 dark:border-gray-800">
+                <div>
+                  <h2 class="font-extrabold text-base sm:text-lg text-gray-900 dark:text-white flex items-center gap-2">
+                    <span>🎬 Video Mühazirələr və İcmallar</span>
+                    <span id="admin-videos-badge-count" class="px-2 py-0.5 rounded-full text-xs font-mono bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 font-bold">0</span>
+                  </h2>
+                  <p class="text-xs text-gray-400 mt-0.5">YouTube videoları əlavə edin, kateqoriyalara ayırın və bəyənmə statistikasını izləyin.</p>
+                </div>
+                <button onclick="toggleVideoForm()" class="px-4 py-2 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-xl text-xs font-bold shadow-md cursor-pointer flex items-center gap-1.5 transition-all">
+                  <span id="admin-video-form-toggle-btn">+ Yeni Video Əlavə Et</span>
+                </button>
+              </div>
+
+              <!-- Video Add / Edit Form Card -->
+              <div id="admin-video-form-card" class="hidden p-5 sm:p-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
+                  <h3 id="admin-video-form-title" class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span>Yeni YouTube Videosu Əlavə Et</span>
+                  </h3>
+                  <button type="button" onclick="cancelVideoForm()" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer">Ləğv et</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <!-- YouTube URL or ID -->
+                  <div class="space-y-1">
+                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">YouTube Video Linki və ya ID *</label>
+                    <input type="text" id="admin-vid-url" oninput="handleAdminVideoUrlChange(this.value)" placeholder="https://www.youtube.com/watch?v=... və ya ID" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-rose-500" />
+                    <p class="text-[10px] text-gray-400">YouTube linkini yapışdırın, ID avtomatik çıxarılacaq.</p>
+                  </div>
+
+                  <!-- Video Title -->
+                  <div class="space-y-1">
+                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">Video Başlığı *</label>
+                    <input type="text" id="admin-vid-title" placeholder="Məsələn: Dopamin Detoksu və Beyin Mexanizmi" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500" />
+                  </div>
+
+                  <!-- Category -->
+                  <div class="space-y-1">
+                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">Kateqoriya *</label>
+                    <select id="admin-vid-category" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500">
+                      <option value="texnologiya">Texnologiya & AI</option>
+                      <option value="sexsi-inkisaf">Şəxsi İnkişaf</option>
+                      <option value="mehsuldarliq">Məhsuldarlıq</option>
+                      <option value="innovasiya">İnnovasiya & Trendlər</option>
+                      <option value="felsefe">Fəlsəfə & Düşüncə</option>
+                    </select>
+                  </div>
+
+                  <!-- Speaker Name -->
+                  <div class="space-y-1">
+                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">Məruzəçi / Kanal Adı *</label>
+                    <input type="text" id="admin-vid-speaker" placeholder="Məsələn: Dr. Endryu Huberman" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500" />
+                  </div>
+
+                  <!-- Speaker Avatar URL -->
+                  <div class="space-y-1">
+                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">Məruzəçi Profil Şəkli URL</label>
+                    <input type="text" id="admin-vid-avatar" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white font-mono focus:outline-none" />
+                  </div>
+
+                  <!-- Duration -->
+                  <div class="space-y-1">
+                    <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">Video Müddəti (dəq:san)</label>
+                    <input type="text" id="admin-vid-duration" placeholder="14:25" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white font-mono focus:outline-none" />
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <div class="space-y-1">
+                  <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">Video İcmalı / Qısa Təsviri</label>
+                  <textarea id="admin-vid-desc" rows="2" placeholder="Video haqqında qısa və maraqlı təsvir yazın..." class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500"></textarea>
+                </div>
+
+                <!-- Key Takeaways -->
+                <div class="space-y-1">
+                  <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">Əsas Nəticələr (Hər sətirdə 1 qeyd)</label>
+                  <textarea id="admin-vid-takeaways" rows="3" placeholder="Səhər ilk saatı ekransız keçirmək dopamin balansını saxlayır.&#10;Gündə ən azı 15 dəqiqə günəş işığı qəbul edin." class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-rose-500 font-mono"></textarea>
+                </div>
+
+                <!-- YouTube Preview Box -->
+                <div id="admin-vid-preview-box" class="hidden p-3 rounded-xl bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 flex items-center gap-3">
+                  <img id="admin-vid-preview-thumb" src="" class="w-24 h-16 rounded-lg object-cover bg-black shrink-0" />
+                  <div>
+                    <span class="text-[10px] font-bold uppercase text-rose-500 font-mono">YouTube Canlı Qapaq</span>
+                    <p id="admin-vid-preview-id" class="text-xs font-mono font-bold text-gray-900 dark:text-white"></p>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-end gap-2 pt-2">
+                  <button type="button" onclick="cancelVideoForm()" class="px-4 py-2 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-bold rounded-xl cursor-pointer">
+                    Ləğv Et
+                  </button>
+                  <button type="button" onclick="saveAdminVideo()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-md cursor-pointer transition-all">
+                    ✓ Videonu Saxla və Yay
+                  </button>
+                </div>
+              </div>
+
+              <!-- Videos Grid / List in Admin -->
+              <div id="admin-videos-list" class="space-y-3">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
             <!-- Tab: DEDICATED BACKUP & RESTORE HUB (User-requested feature) -->
             <div id="admin-tab-backup" class="hidden space-y-6 max-w-2xl">
               <!-- Header info card -->
@@ -1193,8 +1494,12 @@
           duration: '14:25',
           category: 'sexsi-inkisaf',
           speaker: 'Dr. Endryu Huberman',
+          speakerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
           thumbnail: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format&fit=crop&q=80',
-          keyTakeaways: ['Dopamin baza səviyyəsini qorumaq iradəni gücləndirir.', 'Səhər ilk 60 dəqiqə ekranlardan uzaq durmaq zəruridir.']
+          views: 18450,
+          likes: 942,
+          createdAt: 1751100000000,
+          keyTakeaways: ['Dopamin baza səviyyəsini qorumaq iradəni gücləndirir.', 'Səhər ilk 60 dəqiqə ekranlardan uzaq durmaq zəruridir.', 'Soyuq duş və təbii günəş işığı motivasiyanı 2.5 dəfə artırır.']
         },
         {
           id: 'vid-2',
@@ -1204,19 +1509,72 @@
           duration: '18:50',
           category: 'texnologiya',
           speaker: 'Sam Altman & Demis Hassabis',
+          speakerAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
           thumbnail: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&auto=format&fit=crop&q=80',
-          keyTakeaways: ['Multi-modal intellekt və robototexnika birləşir.', 'İntellektin dəyəri ucuzlaşdıqca unikal baxış bucağı bahalaşır.']
+          views: 32600,
+          likes: 1680,
+          createdAt: 1751150000000,
+          keyTakeaways: ['Multi-modal intellekt və robototexnika birləşir.', 'İntellektin maya dəyəri ucuzlaşdıqca unikal tənqidi düşüncə bahalaşır.', 'Avtonom agentlər gündəlik ofis işlərinin 60%-ni avtomatlaşdıracaq.']
         },
         {
           id: 'vid-3',
           title: 'Atomar Vərdişlər: Hər Gün 1% İnkişafın Psixologiyası',
-          description: 'Ceyms Klirin məşhur metodologiyası əsasında vərdiş yaratma və sındırma addımları.',
+          description: 'Ceyms Klirin məşhur metodologiyası əsasında vərdiş yaratma və pis vərdişləri sındırma addımları.',
           youtubeId: 'U_nzqnXWvSo',
           duration: '11:10',
           category: 'mehsuldarliq',
           speaker: 'Ceyms Klir',
+          speakerAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
           thumbnail: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop&q=80',
-          keyTakeaways: ['Sistemlər nəticəni təyin edir.', 'Kiçik addımlar zamanla böyük fərq yaradır.']
+          views: 24100,
+          likes: 1120,
+          createdAt: 1751050000000,
+          keyTakeaways: ['Sistemlər nəticəni təyin edir, məqsədlər istiqamət göstərir.', 'Kiçik addımlar zamanla eksponensial fərq yaradır.', 'İki dəqiqə qaydası: yeni vərdiş 2 dəqiqədə başlanmalıdır.']
+        },
+        {
+          id: 'vid-4',
+          title: 'Neyron Şəbəkələr və Avtonom Kodlaşdırma İnqilabı',
+          description: 'Müasir proqramlaşdırma necə dəyişir və gələcəyin mühəndisi hansı fundamental bacarıqlara sahib olmalıdır?',
+          youtubeId: 'zjkBMFhNj_g',
+          duration: '22:15',
+          category: 'texnologiya',
+          speaker: 'Andrej Karpathy',
+          speakerAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80',
+          thumbnail: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80',
+          views: 41200,
+          likes: 2190,
+          createdAt: 1751000000000,
+          keyTakeaways: ['Kod sintaksisi deyil, sistem arxitekturası əsas bacarıqdır.', 'Süni intellekt mühəndisi tələbkar koordinatora çevirir.']
+        },
+        {
+          id: 'vid-5',
+          title: 'Fokus Və Dərin İş: Rəqəmsal Xaosda Yüksək Nəticə',
+          description: 'Kal Nyuportun "Deep Work" nəzəriyyəsi: diqqəti cəmləməyin və tükənmənin qarşısını almağın elmi yolları.',
+          youtubeId: 'T9_zZ2F5QEI',
+          duration: '16:40',
+          category: 'mehsuldarliq',
+          speaker: 'Prof. Kal Nyuport',
+          speakerAvatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80',
+          thumbnail: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&auto=format&fit=crop&q=80',
+          views: 15300,
+          likes: 785,
+          createdAt: 1750950000000,
+          keyTakeaways: ['Fasiləsiz 90 dəqiqə iş, 8 saatlıq dağınıq işdən daha məhsuldardır.', 'Sosial şəbəkələrin passiv istifadəsini məhdudlaşdırın.']
+        },
+        {
+          id: 'vid-6',
+          title: 'İnnovasiya Fəlsəfəsi: Sıfırdan Birə Doğru',
+          description: 'Rəqabəti aradan qaldıran və bazarda tək olan unikal texnoloji ideyalar necə formalaşdırılır?',
+          youtubeId: 'd86czd2fXjY',
+          duration: '19:05',
+          category: 'innovasiya',
+          speaker: 'Piter Til',
+          speakerAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80',
+          thumbnail: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80',
+          views: 19700,
+          likes: 890,
+          createdAt: 1750900000000,
+          keyTakeaways: ['Kopyalamaq əvəzinə tamamilə yeni dəyər yaradın.', 'Monopoliya yaradan texnologiyalar cəmiyyət üçün ən faydalı olanlardır.']
         }
       ];
 
@@ -1242,7 +1600,21 @@
         }
         return a;
       }));
-      let videos = JSON.parse(localStorage.getItem('newsfy_videos')) || DEFAULT_VIDEOS;
+      let rawSavedVideos = JSON.parse(localStorage.getItem('newsfy_videos')) || [];
+      let videos = rawSavedVideos.length >= DEFAULT_VIDEOS.length 
+        ? rawSavedVideos.map(v => ({ ...DEFAULT_VIDEOS.find(dv => dv.id === v.id), ...v }))
+        : DEFAULT_VIDEOS.map(dv => {
+            const match = rawSavedVideos.find(v => v.id === dv.id);
+            return match ? { ...dv, ...match } : dv;
+          });
+      let videoLikes = JSON.parse(localStorage.getItem('newsfy_video_likes')) || [];
+      let currentVideoCategory = 'all';
+      let currentVideoSort = 'latest';
+      let currentActiveVideo = null;
+      let subscribedChannels = JSON.parse(localStorage.getItem('newsfy_subscribed_channels')) || [];
+      let videoWatchLater = JSON.parse(localStorage.getItem('newsfy_video_watchlater')) || [];
+      let editingVideoId = null;
+
       let subscribers = JSON.parse(localStorage.getItem('newsfy_subscribers')) || ['camal@intellektual.az', 'oxucu@newsfy.az'];
       let bookmarks = JSON.parse(localStorage.getItem('newsfy_bookmarks')) || [];
       let likes = JSON.parse(localStorage.getItem('newsfy_likes')) || [];
@@ -1373,6 +1745,16 @@
           } else {
             showToast('Buludda ən son məqalələr aktivdir.');
           }
+
+          if (window.CloudStore && window.CloudStore.loadVideos) {
+            const vList = await window.CloudStore.loadVideos();
+            if (vList && vList.length > 0) {
+              videos = vList;
+              localStorage.setItem('newsfy_videos', JSON.stringify(videos));
+              renderVideos();
+              renderVideoCategories();
+            }
+          }
           updateCloudSyncStatus('connected');
         } catch (err) {
           console.error('[Sync] Manual refresh error:', err);
@@ -1428,6 +1810,37 @@
               }
             }
           });
+
+          // 3. Videos Cloud Synchronization
+          if (store.loadVideos) {
+            store.loadVideos().then(cloudVideos => {
+              if (cloudVideos && cloudVideos.length > 0) {
+                videos = cloudVideos;
+                localStorage.setItem('newsfy_videos', JSON.stringify(videos));
+                renderVideos();
+                renderVideoCategories();
+                if (document.getElementById('admin-tab-videos') && !document.getElementById('admin-tab-videos').classList.contains('hidden')) {
+                  renderAdminVideos();
+                }
+              } else {
+                DEFAULT_VIDEOS.forEach(v => store.saveVideo(v));
+              }
+            }).catch(e => console.warn('[Sync] Videos cloud load warning:', e));
+          }
+
+          if (store.onVideosChange) {
+            store.onVideosChange((liveVideos) => {
+              if (liveVideos && liveVideos.length > 0) {
+                videos = liveVideos;
+                localStorage.setItem('newsfy_videos', JSON.stringify(videos));
+                renderVideos();
+                renderVideoCategories();
+                if (document.getElementById('admin-tab-videos') && !document.getElementById('admin-tab-videos').classList.contains('hidden')) {
+                  renderAdminVideos();
+                }
+              }
+            });
+          }
         };
 
         if (window.CloudStore && window.CloudStore.isReady) {
@@ -1585,6 +1998,7 @@
         renderLatestFeed();
         renderMostViewed();
         renderVideos();
+        renderVideoCategories();
         renderPersonalPosts();
         updateSavedCount();
         updateNavState();
@@ -1966,23 +2380,255 @@
         `).join('');
       }
 
-      function renderVideos() {
-        document.getElementById('videos-grid').innerHTML = videos.map(vid => `
-          <div onclick="openVideo('${vid.id}')" class="group cursor-pointer rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 hover:shadow-md transition-all flex flex-col justify-between">
-            <div class="relative aspect-[16/9] w-full overflow-hidden bg-black">
-              <img src="${vid.thumbnail}" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500" />
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center font-bold text-xs shadow-lg group-hover:scale-110 transition-transform">▶</div>
+      // VIDEO CATEGORIES CONFIGURATION & ICONS
+      const videoCategoryMeta = [
+        { key: 'all', label: 'Bütün Videolar', icon: '🎬', desc: 'Bütün mühazirə və çıxışlar' },
+        { key: 'texnologiya', label: 'AI & Texnologiya', icon: '🤖', desc: 'Süni intellekt, robototexnika və kod' },
+        { key: 'sexsi-inkisaf', label: 'Şəxsi İnkişaf', icon: '🧠', desc: 'Dopamin, şüur və vərdişlər' },
+        { key: 'mehsuldarliq', label: 'Məhsuldarlıq', icon: '⚡', desc: 'Fokus, zaman idarəetməsi və sistemlər' },
+        { key: 'innovasiya', label: 'İnnovasiya & Biznes', icon: '💡', desc: 'Startaplar və sıfırdan birə' },
+        { key: 'liked', label: 'Bəyəndiklərim', icon: '❤️', desc: 'Sizin bəyəndiyiniz videolar' }
+      ];
+
+      function renderVideoCategories() {
+        const container = document.getElementById('video-categories-list');
+        if (!container) return;
+
+        // Update total video count badge
+        const totalBadge = document.getElementById('video-total-count-badge');
+        if (totalBadge) totalBadge.textContent = videos.length;
+
+        // Update user liked videos counter
+        const likedCountBadge = document.getElementById('user-liked-videos-count');
+        if (likedCountBadge) likedCountBadge.textContent = videoLikes.length;
+
+        container.innerHTML = videoCategoryMeta.map(cat => {
+          let count = 0;
+          if (cat.key === 'all') {
+            count = videos.length;
+          } else if (cat.key === 'liked') {
+            count = videos.filter(v => videoLikes.includes(v.id)).length;
+          } else {
+            count = videos.filter(v => v.category === cat.key).length;
+          }
+
+          const isActive = currentVideoCategory === cat.key;
+          const activeClasses = isActive
+            ? 'bg-rose-600 text-white shadow-md font-bold scale-[1.02]'
+            : 'bg-white/80 dark:bg-gray-800/60 hover:bg-white dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200/60 dark:border-gray-700/60';
+
+          const countBadgeClass = isActive
+            ? 'bg-white/20 text-white font-mono'
+            : 'bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 font-mono';
+
+          return `
+            <button onclick="filterVideoCategory('${cat.key}')" class="w-full text-left px-3 py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-between group ${activeClasses}">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="text-base shrink-0 group-hover:scale-110 transition-transform">${cat.icon}</span>
+                <div class="min-w-0">
+                  <span class="text-xs truncate block leading-tight">${cat.label}</span>
+                  <span class="text-[9px] opacity-75 truncate block font-normal hidden sm:block">${cat.desc}</span>
+                </div>
               </div>
-              <span class="absolute bottom-2 right-2 px-1.5 py-0.5 bg-black/80 text-white text-[10px] font-mono rounded">${vid.duration}</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-md text-xs shrink-0 ${countBadgeClass}">${count}</span>
+            </button>
+          `;
+        }).join('');
+      }
+
+      function filterVideoCategory(catKey) {
+        currentVideoCategory = catKey;
+
+        // Update title and count pill
+        const catObj = videoCategoryMeta.find(c => c.key === catKey) || { label: 'Bütün Videolar' };
+        const titleElem = document.getElementById('active-video-cat-title');
+        if (titleElem) titleElem.textContent = catObj.label;
+
+        renderVideoCategories();
+        renderVideos();
+      }
+
+      function changeVideoSort(sortVal) {
+        currentVideoSort = sortVal;
+        renderVideos();
+      }
+
+      // VIDEO LIKING SYSTEM (Instant Local & Firestore Cloud Persistence)
+      async function toggleVideoLike(videoId, event) {
+        if (event) event.stopPropagation();
+
+        const vid = videos.find(v => v.id === videoId);
+        if (!vid) return;
+
+        const isCurrentlyLiked = videoLikes.includes(videoId);
+        let delta = 1;
+
+        if (isCurrentlyLiked) {
+          // Unlike
+          videoLikes = videoLikes.filter(id => id !== videoId);
+          vid.likes = Math.max(0, (vid.likes || 1) - 1);
+          delta = -1;
+          showToast('Bəyənmə geri götürüldü.');
+        } else {
+          // Like
+          videoLikes.push(videoId);
+          vid.likes = (vid.likes || 0) + 1;
+          delta = 1;
+          showToast('❤️ Videonu bəyəndiniz!');
+          if (window.confetti) {
+            window.confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 } });
+          }
+        }
+
+        // Save locally
+        localStorage.setItem('newsfy_video_likes', JSON.stringify(videoLikes));
+        localStorage.setItem('newsfy_videos', JSON.stringify(videos));
+
+        // Update categories counters
+        renderVideoCategories();
+        renderVideos();
+
+        // If video modal is open for this video, update its like button too
+        if (currentActiveVideo && currentActiveVideo.id === videoId) {
+          updateModalLikeButton(vid);
+        }
+
+        // Sync like to CloudStore Firestore
+        try {
+          if (window.CloudStore && window.CloudStore.likeVideo) {
+            await window.CloudStore.likeVideo(videoId, delta);
+          } else if (window.CloudStore && window.CloudStore.saveVideo) {
+            await window.CloudStore.saveVideo(vid);
+          }
+        } catch (err) {
+          console.warn('[Like] Video cloud sync notice:', err);
+        }
+      }
+
+      function shareVideoUrl(videoId, event) {
+        if (event) event.stopPropagation();
+        const vid = videos.find(v => v.id === videoId);
+        if (!vid) return;
+        const url = window.location.origin + window.location.pathname + '#/video/' + videoId;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(url).then(() => {
+            showToast('🔗 Video linki kopyalandı!');
+          });
+        } else {
+          prompt('Video linkini kopyalayın:', url);
+        }
+      }
+
+      function renderVideos() {
+        const grid = document.getElementById('videos-grid');
+        if (!grid) return;
+
+        let filtered = [...videos];
+
+        if (currentVideoCategory === 'liked') {
+          filtered = filtered.filter(v => videoLikes.includes(v.id));
+        } else if (currentVideoCategory !== 'all') {
+          filtered = filtered.filter(v => v.category === currentVideoCategory);
+        }
+
+        // Apply Sorting
+        if (currentVideoSort === 'popular') {
+          filtered.sort((a, b) => (b.views || 0) - (a.views || 0));
+        } else if (currentVideoSort === 'liked') {
+          filtered.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+        } else {
+          // latest
+          filtered.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        }
+
+        // Update count pill
+        const countPill = document.getElementById('active-video-count-pill');
+        if (countPill) countPill.textContent = `${filtered.length} video`;
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-1 sm:col-span-2 py-12 text-center space-y-3 bg-gray-50/50 dark:bg-gray-900/50 rounded-2xl border border-gray-100 dark:border-gray-800">
+              <span class="text-3xl block">🎬</span>
+              <p class="text-xs text-gray-500 font-medium">Bu kateqoriyada hələlik video yoxdur.</p>
+              ${currentVideoCategory === 'liked' ? '<p class="text-[11px] text-gray-400">Videoların altındakı ❤️ düyməsinə basaraq sevdiyiniz videoları bura toplaya bilərsiniz.</p>' : ''}
+              <button onclick="filterVideoCategory('all')" class="px-4 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold hover:bg-rose-700 transition-colors cursor-pointer">
+                Bütün Videolara Bax
+              </button>
             </div>
-            <div class="p-4">
-              <span class="text-[10px] font-bold text-rose-500 uppercase block mb-1">${vid.category}</span>
-              <h4 class="text-xs font-bold text-gray-900 dark:text-white group-hover:text-rose-500 leading-snug line-clamp-2 mb-2">${vid.title}</h4>
-              <p class="text-[11px] text-gray-400 truncate">${vid.speaker}</p>
+          `;
+          return;
+        }
+
+        grid.innerHTML = filtered.map(vid => {
+          const isLiked = videoLikes.includes(vid.id);
+          const likeCount = vid.likes || 0;
+          const viewsFormatted = (vid.views || 1200) >= 1000 
+            ? ((vid.views || 1200) / 1000).toFixed(1).replace('.0', '') + 'K' 
+            : (vid.views || 1200);
+
+          return `
+            <div onclick="openVideo('${vid.id}')" class="group cursor-pointer rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 hover:shadow-xl hover:border-gray-300 dark:hover:border-gray-700 transition-all flex flex-col justify-between">
+              
+              <!-- 16:9 Thumbnail Canvas -->
+              <div class="relative aspect-[16/9] w-full overflow-hidden bg-black">
+                <img src="${vid.thumbnail}" alt="${vid.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-95" loading="lazy" />
+                
+                <!-- YouTube Dark Gradient & Red Play Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 opacity-60 group-hover:opacity-80 transition-opacity"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="w-11 h-11 rounded-full bg-rose-600/90 text-white flex items-center justify-center font-bold text-sm shadow-xl group-hover:scale-115 group-hover:bg-rose-600 transition-transform">
+                    <span class="ml-0.5">▶</span>
+                  </div>
+                </div>
+
+                <!-- HD Badge -->
+                <span class="absolute top-2.5 left-2.5 px-2 py-0.5 bg-black/70 text-rose-400 border border-rose-500/30 text-[9px] font-mono font-bold rounded-md backdrop-blur-xs">
+                  HD
+                </span>
+
+                <!-- Duration Pill -->
+                <span class="absolute bottom-2.5 right-2.5 px-2 py-0.5 bg-black/85 text-white text-[10px] font-mono font-bold rounded-md shadow-xs">
+                  ${vid.duration || '12:00'}
+                </span>
+              </div>
+
+              <!-- Metadata & Channel Info -->
+              <div class="p-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between gap-2 mb-2">
+                    <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider font-mono">${categoryLabels[vid.category] || vid.category}</span>
+                    <span class="text-[10px] text-gray-400 font-mono">${viewsFormatted} baxış</span>
+                  </div>
+                  
+                  <h4 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-white group-hover:text-rose-500 leading-snug line-clamp-2 transition-colors mb-3">
+                    ${vid.title}
+                  </h4>
+                </div>
+
+                <!-- Channel / Speaker & User Like Button -->
+                <div class="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <img src="${vid.speakerAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&auto=format&fit=crop&q=80'}" class="w-6 h-6 rounded-full object-cover shrink-0 border border-gray-200 dark:border-gray-800" />
+                    <span class="text-[11px] font-medium text-gray-600 dark:text-gray-300 truncate">${vid.speaker}</span>
+                  </div>
+
+                  <!-- Quick Like & Share Actions -->
+                  <div class="flex items-center gap-1.5 shrink-0" onclick="event.stopPropagation();">
+                    <button onclick="toggleVideoLike('${vid.id}', event)" class="px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${isLiked ? 'bg-rose-500 text-white shadow-xs' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-rose-500'}" title="${isLiked ? 'Bəyənməni geri götür' : 'Bu videonu bəyən'}">
+                      <span>${isLiked ? '❤️' : '🤍'}</span>
+                      <span class="font-mono text-[11px]">${likeCount}</span>
+                    </button>
+                    <button onclick="shareVideoUrl('${vid.id}', event)" class="p-1 text-gray-400 hover:text-rose-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-xs" title="Linki Kopyala">
+                      🔗
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       }
 
       function renderPersonalPosts() {
@@ -2335,29 +2981,214 @@
         renderAll();
       }
 
-      // VIDEO MODAL
+      // ================= YOUTUBE THEATER CONTROLLER & PLAYER =================
+      function updateModalLikeButton(vid) {
+        const likeBtn = document.getElementById('video-modal-like-btn');
+        const countSpan = document.getElementById('video-modal-like-count');
+        const iconSpan = document.getElementById('video-modal-like-icon');
+        if (!likeBtn || !vid) return;
+
+        const isLiked = videoLikes.includes(vid.id);
+        if (countSpan) countSpan.textContent = vid.likes || 0;
+        if (iconSpan) iconSpan.textContent = isLiked ? '❤️' : '👍';
+
+        if (isLiked) {
+          likeBtn.className = 'px-3.5 py-2 flex items-center gap-1.5 font-bold text-xs bg-rose-600/30 text-rose-400 hover:bg-rose-600/40 transition-colors cursor-pointer';
+          if (countSpan) countSpan.className = 'font-mono text-rose-300 ml-0.5 font-bold';
+        } else {
+          likeBtn.className = 'px-3.5 py-2 flex items-center gap-1.5 font-bold text-xs hover:bg-[#383838] transition-colors cursor-pointer text-gray-200';
+          if (countSpan) countSpan.className = 'font-mono text-gray-400 ml-0.5';
+        }
+      }
+
+      function toggleActiveModalVideoLike(event) {
+        if (!currentActiveVideo) return;
+        toggleVideoLike(currentActiveVideo.id, event);
+      }
+
+      function dislikeVideoFeedback() {
+        showToast('Rəyiniz qeydə alındı. Təşəkkür edirik!');
+      }
+
+      function shareActiveVideo() {
+        if (!currentActiveVideo) return;
+        const url = window.location.origin + window.location.pathname + '#/video/' + currentActiveVideo.id;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(url).then(() => {
+            showToast('🔗 Video linki panoya kopyalandı!');
+          });
+        } else {
+          prompt('Video linkini kopyalayın:', url);
+        }
+      }
+
+      function toggleChannelSubscribe() {
+        if (!currentActiveVideo) return;
+        const speaker = currentActiveVideo.speaker || 'Kanal';
+        const subBtn = document.getElementById('video-modal-sub-btn');
+        const idx = subscribedChannels.indexOf(speaker);
+
+        if (idx > -1) {
+          subscribedChannels.splice(idx, 1);
+          if (subBtn) {
+            subBtn.textContent = 'Abunə Ol';
+            subBtn.className = 'ml-2 px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors cursor-pointer shadow-xs';
+          }
+          showToast(`"${speaker}" kanalından abunəlik ləğv edildi.`);
+        } else {
+          subscribedChannels.push(speaker);
+          if (subBtn) {
+            subBtn.textContent = 'Abunə Olundu ✓';
+            subBtn.className = 'ml-2 px-3.5 py-1.5 rounded-full bg-gray-800 text-gray-300 border border-gray-700 font-bold text-xs transition-colors cursor-pointer shadow-xs';
+          }
+          showToast(`🎉 "${speaker}" kanalına uğurla abunə oldunuz!`);
+          if (window.confetti) window.confetti({ particleCount: 30, spread: 45, origin: { y: 0.7 } });
+        }
+        localStorage.setItem('newsfy_subscribed_channels', JSON.stringify(subscribedChannels));
+      }
+
+      function toggleVideoBookmark() {
+        if (!currentActiveVideo) return;
+        const id = currentActiveVideo.id;
+        const idx = videoWatchLater.indexOf(id);
+        const icon = document.getElementById('video-modal-bookmark-icon');
+        const text = document.getElementById('video-modal-bookmark-text');
+
+        if (idx > -1) {
+          videoWatchLater.splice(idx, 1);
+          if (icon) icon.textContent = '☆';
+          if (text) text.textContent = 'Saxla';
+          showToast('Video "Sonra İzlə" siyahısından çıxarıldı.');
+        } else {
+          videoWatchLater.push(id);
+          if (icon) icon.textContent = '★';
+          if (text) text.textContent = 'Saxlandı';
+          showToast('★ Video "Sonra İzlə" siyahısına əlavə olundu!');
+        }
+        localStorage.setItem('newsfy_video_watchlater', JSON.stringify(videoWatchLater));
+      }
+
       function openVideo(id, updateUrl = true) {
         const vid = videos.find(v => v.id === id);
         if (!vid) return;
-        document.getElementById('video-modal-title').textContent = vid.title;
-        document.getElementById('video-modal-desc').textContent = vid.description;
-        document.getElementById('video-modal-iframe').src = `https://www.youtube-nocookie.com/embed/${vid.youtubeId}?autoplay=1`;
-        document.getElementById('video-modal-takeaways').innerHTML = (vid.keyTakeaways || []).map(t => `<div>• ${t}</div>`).join('');
+
+        currentActiveVideo = vid;
+        vid.views = (vid.views || 0) + 1;
+        localStorage.setItem('newsfy_videos', JSON.stringify(videos));
+
+        // Set Top Header Info
+        const catTag = document.getElementById('video-modal-category-tag');
+        if (catTag) catTag.textContent = categoryLabels[vid.category] || vid.category || 'MÜHAZİRƏ';
+
+        const titleElem = document.getElementById('video-modal-title');
+        if (titleElem) titleElem.textContent = vid.title;
+
+        const fullTitle = document.getElementById('video-modal-full-title');
+        if (fullTitle) fullTitle.textContent = vid.title;
+
+        // Channel Info
+        const avatar = document.getElementById('video-modal-speaker-avatar');
+        if (avatar) avatar.src = vid.speakerAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80';
+
+        const speakerName = document.getElementById('video-modal-speaker-name');
+        if (speakerName) speakerName.textContent = vid.speaker || 'Məruzəçi';
+
+        const subBtn = document.getElementById('video-modal-sub-btn');
+        if (subBtn) {
+          const isSubscribed = subscribedChannels.includes(vid.speaker);
+          subBtn.textContent = isSubscribed ? 'Abunə Olundu ✓' : 'Abunə Ol';
+          subBtn.className = isSubscribed 
+            ? 'ml-2 px-3.5 py-1.5 rounded-full bg-gray-800 text-gray-300 border border-gray-700 font-bold text-xs transition-colors cursor-pointer shadow-xs'
+            : 'ml-2 px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors cursor-pointer shadow-xs';
+        }
+
+        // Bookmark state
+        const bmIcon = document.getElementById('video-modal-bookmark-icon');
+        const bmText = document.getElementById('video-modal-bookmark-text');
+        const isBookmarked = videoWatchLater.includes(vid.id);
+        if (bmIcon) bmIcon.textContent = isBookmarked ? '★' : '☆';
+        if (bmText) bmText.textContent = isBookmarked ? 'Saxlandı' : 'Saxla';
+
+        // Update Like Button
+        updateModalLikeButton(vid);
+
+        // Stats & Description
+        const viewsCount = document.getElementById('video-modal-views-count');
+        if (viewsCount) {
+          const v = vid.views || 1000;
+          viewsCount.textContent = v >= 1000 ? `${(v / 1000).toFixed(1).replace('.0', '')}K baxış` : `${v} baxış`;
+        }
+
+        const durationTag = document.getElementById('video-modal-duration-tag');
+        if (durationTag) durationTag.textContent = vid.duration || '15:00';
+
+        const descElem = document.getElementById('video-modal-desc');
+        if (descElem) descElem.textContent = vid.description || 'Bu mühazirədə ən son texnoloji və elmi yanaşmalar təhlil edilir.';
+
+        // Key Takeaways
+        const takeawaysElem = document.getElementById('video-modal-takeaways');
+        if (takeawaysElem) {
+          const items = vid.keyTakeaways && vid.keyTakeaways.length > 0
+            ? vid.keyTakeaways
+            : ['Diqqət və fokus mexanizmlərini qorumaq fərdi inkişafın açarıdır.', 'Texnologiyadan şüurlu istifadə məhsuldarlığı artırır.'];
+
+          takeawaysElem.innerHTML = items.map(t => `
+            <div class="p-2.5 rounded-xl bg-black/40 border border-gray-800/80 flex items-start gap-2">
+              <span class="text-emerald-400 font-bold shrink-0 mt-0.5">✓</span>
+              <span class="leading-relaxed text-[11px]">${t}</span>
+            </div>
+          `).join('');
+        }
+
+        // Up Next Recommended Videos Queue
+        const upNextContainer = document.getElementById('video-modal-upnext-grid');
+        if (upNextContainer) {
+          const otherVideos = videos.filter(v => v.id !== vid.id).slice(0, 3);
+          upNextContainer.innerHTML = otherVideos.map(nextVid => `
+            <div onclick="openVideo('${nextVid.id}')" class="group cursor-pointer p-2 rounded-xl bg-[#1e1e1e] hover:bg-[#282828] border border-gray-800 transition-colors flex items-center gap-3">
+              <div class="relative w-24 aspect-[16/9] rounded-lg overflow-hidden bg-black shrink-0">
+                <img src="${nextVid.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                <span class="absolute bottom-1 right-1 px-1 py-0.2 bg-black/80 text-[9px] font-mono rounded text-white">${nextVid.duration}</span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <span class="text-[9px] font-bold uppercase text-rose-500 font-mono block">${categoryLabels[nextVid.category] || nextVid.category}</span>
+                <h5 class="text-xs font-bold text-white group-hover:text-rose-400 truncate leading-snug">${nextVid.title}</h5>
+                <p class="text-[10px] text-gray-400 truncate">${nextVid.speaker}</p>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        // Set iFrame src
+        const iframe = document.getElementById('video-modal-iframe');
+        if (iframe) {
+          iframe.src = `https://www.youtube-nocookie.com/embed/${vid.youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+        }
+
         const modal = document.getElementById('video-modal');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+
         if (updateUrl) {
           history.pushState({ videoId: id }, '', '#/video/' + id);
         }
+
+        document.title = `${vid.title} — Video İcmal | Fikir & Zəka`;
       }
 
       function closeVideoModal(updateUrl = true) {
         const modal = document.getElementById('video-modal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.getElementById('video-modal-iframe').src = '';
+        if (modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }
+        const iframe = document.getElementById('video-modal-iframe');
+        if (iframe) iframe.src = '';
+        currentActiveVideo = null;
+
         if (updateUrl && window.location.hash.startsWith('#/video')) {
           history.pushState(null, '', currentCategory !== 'all' ? '#/bolme/' + currentCategory : '#/');
+          document.title = 'Fikir & Zəka | Müasir Düşüncə, Texnologiya və Şəxsi İnkişaf Portalı';
         }
       }
 
@@ -2814,6 +3645,7 @@
         });
 
         document.getElementById('admin-tab-articles').classList.toggle('hidden', tab !== 'articles');
+        document.getElementById('admin-tab-videos').classList.toggle('hidden', tab !== 'videos');
         document.getElementById('admin-tab-new-article').classList.toggle('hidden', tab !== 'new-article');
         document.getElementById('admin-tab-backup').classList.toggle('hidden', tab !== 'backup');
         document.getElementById('admin-tab-subscribers').classList.toggle('hidden', tab !== 'subscribers');
@@ -2821,6 +3653,7 @@
 
         updateAdminCounts();
         if (tab === 'articles') renderAdminArticles();
+        if (tab === 'videos') renderAdminVideos();
         if (tab === 'new-article') {
           renderTagChips();
           updateSeoPreview();
@@ -2828,6 +3661,219 @@
         }
         if (tab === 'backup') renderBackupHub();
         if (tab === 'subscribers') renderAdminSubscribers();
+      }
+
+      // ================= ADMIN VIDEO MANAGEMENT (YOUTUBE MEDIA STUDIO) =================
+      function extractYouTubeId(urlOrId) {
+        if (!urlOrId) return '';
+        const clean = urlOrId.trim();
+        if (/^[a-zA-Z0-9_-]{11}$/.test(clean)) return clean;
+        const match = clean.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+        return match ? match[1] : clean;
+      }
+
+      function handleAdminVideoUrlChange(val) {
+        const id = extractYouTubeId(val);
+        const previewBox = document.getElementById('admin-vid-preview-box');
+        const previewThumb = document.getElementById('admin-vid-preview-thumb');
+        const previewId = document.getElementById('admin-vid-preview-id');
+
+        if (id && id.length >= 11) {
+          if (previewBox) previewBox.classList.remove('hidden');
+          if (previewThumb) previewThumb.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+          if (previewId) previewId.textContent = `YouTube Video ID: ${id}`;
+        } else {
+          if (previewBox) previewBox.classList.add('hidden');
+        }
+      }
+
+      function toggleVideoForm(isEdit = false) {
+        const card = document.getElementById('admin-video-form-card');
+        const btn = document.getElementById('admin-video-form-toggle-btn');
+        if (!card) return;
+
+        if (card.classList.contains('hidden')) {
+          card.classList.remove('hidden');
+          if (btn) btn.textContent = '✕ Formu Bağla';
+          if (!isEdit) {
+            cancelVideoForm(false);
+          }
+          setTimeout(() => document.getElementById('admin-vid-url')?.focus(), 50);
+        } else {
+          card.classList.add('hidden');
+          if (btn) btn.textContent = '+ Yeni Video Əlavə Et';
+          cancelVideoForm(false);
+        }
+      }
+
+      function cancelVideoForm(hide = true) {
+        editingVideoId = null;
+        const urlInput = document.getElementById('admin-vid-url');
+        if (urlInput) urlInput.value = '';
+        const titleInput = document.getElementById('admin-vid-title');
+        if (titleInput) titleInput.value = '';
+        const catInput = document.getElementById('admin-vid-category');
+        if (catInput) catInput.value = 'texnologiya';
+        const speakerInput = document.getElementById('admin-vid-speaker');
+        if (speakerInput) speakerInput.value = '';
+        const avatarInput = document.getElementById('admin-vid-avatar');
+        if (avatarInput) avatarInput.value = '';
+        const durInput = document.getElementById('admin-vid-duration');
+        if (durInput) durInput.value = '';
+        const descInput = document.getElementById('admin-vid-desc');
+        if (descInput) descInput.value = '';
+        const takeInput = document.getElementById('admin-vid-takeaways');
+        if (takeInput) takeInput.value = '';
+        const previewBox = document.getElementById('admin-vid-preview-box');
+        if (previewBox) previewBox.classList.add('hidden');
+        const formTitle = document.getElementById('admin-video-form-title');
+        if (formTitle) formTitle.innerHTML = '<span class="w-2 h-2 rounded-full bg-rose-500"></span><span>Yeni YouTube Videosu Əlavə Et</span>';
+
+        if (hide) {
+          const card = document.getElementById('admin-video-form-card');
+          if (card) card.classList.add('hidden');
+          const btn = document.getElementById('admin-video-form-toggle-btn');
+          if (btn) btn.textContent = '+ Yeni Video Əlavə Et';
+        }
+      }
+
+      function editAdminVideo(id) {
+        const vid = videos.find(v => v.id === id);
+        if (!vid) return;
+        editingVideoId = id;
+
+        const card = document.getElementById('admin-video-form-card');
+        if (card) card.classList.remove('hidden');
+        const btn = document.getElementById('admin-video-form-toggle-btn');
+        if (btn) btn.textContent = '✕ Redaktəni Bağla';
+
+        const formTitle = document.getElementById('admin-video-form-title');
+        if (formTitle) formTitle.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500"></span><span>Videonu Redaktə Et: ${vid.title}</span>`;
+
+        document.getElementById('admin-vid-url').value = `https://www.youtube.com/watch?v=${vid.youtubeId}`;
+        document.getElementById('admin-vid-title').value = vid.title || '';
+        document.getElementById('admin-vid-category').value = vid.category || 'texnologiya';
+        document.getElementById('admin-vid-speaker').value = vid.speaker || '';
+        document.getElementById('admin-vid-avatar').value = vid.speakerAvatar || '';
+        document.getElementById('admin-vid-duration').value = vid.duration || '';
+        document.getElementById('admin-vid-desc').value = vid.description || '';
+        document.getElementById('admin-vid-takeaways').value = (vid.keyTakeaways || []).join('\n');
+
+        handleAdminVideoUrlChange(vid.youtubeId);
+        card.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      async function saveAdminVideo() {
+        const urlRaw = document.getElementById('admin-vid-url').value.trim();
+        const title = document.getElementById('admin-vid-title').value.trim();
+        const cat = document.getElementById('admin-vid-category').value;
+        const speaker = document.getElementById('admin-vid-speaker').value.trim();
+        const avatar = document.getElementById('admin-vid-avatar').value.trim();
+        const duration = document.getElementById('admin-vid-duration').value.trim() || '15:00';
+        const desc = document.getElementById('admin-vid-desc').value.trim();
+        const takeawaysRaw = document.getElementById('admin-vid-takeaways').value.trim();
+
+        if (!urlRaw) {
+          alert('YouTube linki və ya ID mütləq daxil edilməlidir.');
+          document.getElementById('admin-vid-url').focus();
+          return;
+        }
+        if (!title) {
+          alert('Video başlığı daxil edilməlidir.');
+          document.getElementById('admin-vid-title').focus();
+          return;
+        }
+
+        const ytId = extractYouTubeId(urlRaw);
+        if (!ytId || ytId.length < 5) {
+          alert('Düzgün YouTube linki və ya 11 simvollu ID daxil edin.');
+          return;
+        }
+
+        const takeaways = takeawaysRaw
+          ? takeawaysRaw.split('\n').map(l => l.replace(/^[•\-\*\s]+/, '').trim()).filter(Boolean)
+          : ['Əsas fikirlər və elmi təhlil.'];
+
+        const thumb = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+        const speakerAvatar = avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80';
+
+        let targetVideo = null;
+        if (editingVideoId) {
+          targetVideo = videos.find(v => v.id === editingVideoId);
+          if (targetVideo) {
+            targetVideo.title = title;
+            targetVideo.youtubeId = ytId;
+            targetVideo.category = cat;
+            targetVideo.speaker = speaker || 'Ekspert Məruzəçi';
+            targetVideo.speakerAvatar = speakerAvatar;
+            targetVideo.duration = duration;
+            targetVideo.description = desc;
+            targetVideo.keyTakeaways = takeaways;
+            targetVideo.thumbnail = thumb;
+          }
+          showToast('✓ Video uğurla yeniləndi!');
+        } else {
+          targetVideo = {
+            id: 'vid-' + Date.now(),
+            createdAt: Date.now(),
+            title,
+            youtubeId: ytId,
+            category: cat,
+            speaker: speaker || 'Ekspert Məruzəçi',
+            speakerAvatar,
+            duration,
+            description: desc || 'Seçilmiş video mühazirə.',
+            keyTakeaways: takeaways,
+            thumbnail: thumb,
+            views: 1,
+            likes: 0
+          };
+          videos.unshift(targetVideo);
+          showToast('🎉 Yeni YouTube videosu əlavə edildi və canlı yayımlandı!');
+          if (window.confetti) window.confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+        }
+
+        localStorage.setItem('newsfy_videos', JSON.stringify(videos));
+
+        // Sync to Firebase Firestore
+        try {
+          if (window.CloudStore && window.CloudStore.saveVideo && targetVideo) {
+            await window.CloudStore.saveVideo(targetVideo);
+          }
+        } catch (err) {
+          console.warn('[Admin] Video cloud sync notice:', err);
+        }
+
+        cancelVideoForm(true);
+        renderAdminVideos();
+        renderVideoCategories();
+        renderVideos();
+        updateAdminCounts();
+      }
+
+      async function deleteAdminVideo(id) {
+        const vid = videos.find(v => v.id === id);
+        if (!confirm(`"${vid ? vid.title : 'Bu video'}" silinsin?`)) return;
+
+        videos = videos.filter(v => v.id !== id);
+        videoLikes = videoLikes.filter(vId => vId !== id);
+        localStorage.setItem('newsfy_videos', JSON.stringify(videos));
+        localStorage.setItem('newsfy_video_likes', JSON.stringify(videoLikes));
+
+        // Delete from Firestore
+        try {
+          if (window.CloudStore && window.CloudStore.deleteVideo) {
+            await window.CloudStore.deleteVideo(id);
+          }
+        } catch (err) {
+          console.warn('[Admin] Video cloud delete notice:', err);
+        }
+
+        renderAdminVideos();
+        renderVideoCategories();
+        renderVideos();
+        updateAdminCounts();
+        showToast('🗑️ Video bazadan silindi.');
       }
 
       function updateAdminCounts() {

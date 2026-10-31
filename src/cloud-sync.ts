@@ -113,6 +113,88 @@ export const CloudStore = {
     } catch (e: any) {
       return { success: false, count: 0, error: e?.message || String(e) };
     }
+  },
+
+  async loadVideos(): Promise<any[]> {
+    try {
+      const snap = await getDocs(collection(db, 'videos'));
+      const list: any[] = [];
+      snap.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (data && data.id) {
+          list.push(data);
+        }
+      });
+      return list;
+    } catch (err) {
+      console.warn('[CloudStore] loadVideos notice:', err);
+      return [];
+    }
+  },
+
+  async saveVideo(video: any): Promise<boolean> {
+    try {
+      if (!video || !video.id) throw new Error('Missing video ID');
+      if (!video.createdAt) video.createdAt = Date.now();
+      const cleaned = cleanForFirestore(video);
+      await setDoc(doc(db, 'videos', video.id), cleaned, { merge: true });
+      return true;
+    } catch (err) {
+      console.error('[CloudStore] saveVideo error:', err);
+      throw err;
+    }
+  },
+
+  async deleteVideo(id: string): Promise<boolean> {
+    try {
+      await deleteDoc(doc(db, 'videos', id));
+      return true;
+    } catch (err) {
+      console.error('[CloudStore] deleteVideo error:', err);
+      throw err;
+    }
+  },
+
+  async likeVideo(id: string, delta: number = 1): Promise<number | null> {
+    try {
+      const vDoc = doc(db, 'videos', id);
+      const snap = await getDocs(collection(db, 'videos'));
+      let target = null;
+      snap.forEach(d => {
+        if (d.id === id) target = d.data();
+      });
+      const newLikes = Math.max(0, ((target as any)?.likes || 0) + delta);
+      await setDoc(vDoc, { likes: newLikes }, { merge: true });
+      return newLikes;
+    } catch (err) {
+      console.warn('[CloudStore] likeVideo fallback:', err);
+      return null;
+    }
+  },
+
+  onVideosChange(callback: (videos: any[]) => void): () => void {
+    try {
+      const unsubscribe = onSnapshot(
+        collection(db, 'videos'),
+        (snapshot) => {
+          const list: any[] = [];
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            if (data && data.id) {
+              list.push(data);
+            }
+          });
+          callback(list);
+        },
+        (error) => {
+          console.warn('[CloudStore] Videos snapshot listener notice:', error);
+        }
+      );
+      return unsubscribe;
+    } catch (err) {
+      console.error('[CloudStore] onVideosChange error:', err);
+      return () => {};
+    }
   }
 };
 
