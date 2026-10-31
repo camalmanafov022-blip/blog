@@ -40,6 +40,9 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 
+    <!-- YouTube IFrame API for Custom Player Controls -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
     <style>
       body {
         font-family: 'Plus Jakarta Sans', sans-serif;
@@ -89,6 +92,37 @@
       }
       .dark ::-webkit-scrollbar-thumb {
         background: #374151;
+      }
+
+      /* Custom Video Player Range Slider */
+      input[type="range"].nf-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        background: rgba(255, 255, 255, 0.25);
+        height: 4px;
+        border-radius: 9999px;
+        outline: none;
+      }
+      input[type="range"].nf-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ffffff;
+        cursor: pointer;
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+        transition: transform 0.15s ease;
+      }
+      input[type="range"].nf-slider::-webkit-slider-thumb:hover {
+        transform: scale(1.3);
+      }
+      @keyframes nfRipple {
+        0% { transform: scale(0.8); opacity: 1; }
+        100% { transform: scale(1.6); opacity: 0; }
+      }
+      .animate-nf-ripple {
+        animation: nfRipple 0.5s ease-out forwards;
       }
     </style>
   </head>
@@ -684,124 +718,345 @@
       </div>
     </div>
 
-    <!-- YOUTUBE-STYLE VIDEO THEATER MODAL -->
-    <div id="video-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-2 sm:p-4 md:p-6 bg-black/90 backdrop-blur-md overflow-y-auto">
-      <div class="bg-[#0f0f0f] text-white rounded-3xl max-w-5xl w-full overflow-hidden shadow-2xl border border-gray-800 my-auto flex flex-col max-h-[95vh]">
-        
-        <!-- Top YouTube Theater Header Bar -->
-        <div class="px-4 py-3 bg-[#181818] flex items-center justify-between border-b border-gray-800 shrink-0">
-          <div class="flex items-center gap-2.5 min-w-0 pr-3">
-            <span class="inline-flex items-center justify-center w-6 h-6 rounded-md bg-rose-600 text-white font-black text-xs shadow-xs shrink-0">
-              ▶
-            </span>
-            <div class="min-w-0">
-              <span id="video-modal-category-tag" class="text-[10px] font-mono uppercase font-bold text-rose-500 block">KATEQORİYA</span>
-              <p id="video-modal-title" class="text-xs sm:text-sm font-bold truncate text-gray-100"></p>
+    <!-- ================= STANDALONE VIDEO WATCH PAGE VIEW (YouTube-Style Dedicated Watch Page) ================= -->
+    <div id="video-watch-page" class="hidden min-h-screen pb-24 bg-[#0a0c14] text-gray-100">
+      
+      <!-- Top Action Sub-Bar (Matches Navigation) -->
+      <div class="sticky top-20 z-30 bg-[#0e111a]/95 backdrop-blur-md border-b border-gray-800 shadow-2xs">
+        <div class="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
+          
+          <div class="flex items-center gap-3 shrink-0">
+            <button onclick="closeVideoWatchPage()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 font-bold text-xs transition-colors cursor-pointer group">
+              <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+              <span>Geri Qayıt</span>
+            </button>
+            <div class="hidden md:flex items-center gap-2 text-xs text-gray-400">
+              <span>/</span>
+              <span class="text-rose-500 font-bold uppercase font-mono text-[10px]" id="watch-breadcrumb-cat">KATEQORİYA</span>
+              <span>/</span>
+              <span class="text-gray-300 font-medium truncate max-w-xs sm:max-w-md" id="watch-breadcrumb-title"></span>
             </div>
           </div>
+
           <div class="flex items-center gap-2 shrink-0">
-            <button onclick="shareActiveVideo()" class="p-2 text-gray-400 hover:text-white rounded-xl hover:bg-gray-800 transition-colors text-xs flex items-center gap-1 cursor-pointer" title="Linki Kopyala">
+            <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-950/60 text-rose-400 border border-rose-900/60 font-mono text-[10px] font-bold">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+              <span>NF HD PLAYER</span>
+            </span>
+            <button onclick="shareActiveVideo()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-gray-200 flex items-center gap-1.5 transition-colors cursor-pointer">
               <span>🔗</span>
               <span class="hidden sm:inline">Paylaş</span>
             </button>
-            <button onclick="closeVideoModal()" class="text-gray-400 hover:text-white text-2xl px-2 py-1 leading-none rounded-xl hover:bg-gray-800 transition-colors cursor-pointer" title="Bağla (ESC)">&times;</button>
           </div>
-        </div>
 
-        <!-- 16:9 Video Canvas -->
-        <div class="relative aspect-[16/9] w-full bg-black shrink-0">
-          <iframe id="video-modal-iframe" class="w-full h-full border-0" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe>
         </div>
+      </div>
 
-        <!-- Video Metadata, Channel Row, Actions & Recommendations (Scrollable) -->
-        <div class="p-4 sm:p-6 overflow-y-auto space-y-5 bg-[#0f0f0f]">
+      <!-- Main Watch Page Container -->
+      <div class="max-w-[1440px] 2xl:max-w-[1560px] mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          <!-- Title & Stats Row -->
-          <div>
-            <h2 id="video-modal-full-title" class="text-base sm:text-xl font-extrabold text-white leading-snug mb-2"></h2>
-            <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-gray-400">
+          <!-- LEFT COLUMN: CUSTOM PLAYER & DETAILS (8 COLS) -->
+          <div id="watch-main-col" class="lg:col-span-8 space-y-6">
+            
+            <!-- CUSTOM VIDEO PLAYER STAGE CANVAS -->
+            <div id="nf-player-stage" onmousemove="handlePlayerMouseMove()" onmouseleave="handlePlayerMouseLeave()" class="relative w-full aspect-[16/9] bg-black rounded-3xl overflow-hidden shadow-2xl border border-gray-800 group select-none transition-all">
               
-              <!-- Channel / Speaker Info -->
-              <div class="flex items-center gap-3">
-                <img id="video-modal-speaker-avatar" src="" class="w-10 h-10 rounded-full object-cover border border-gray-700 shrink-0" />
-                <div>
-                  <div class="flex items-center gap-1.5 font-bold text-gray-100">
-                    <span id="video-modal-speaker-name">Məruzəçi</span>
-                    <span class="w-3.5 h-3.5 rounded-full bg-gray-500/40 text-gray-300 flex items-center justify-center text-[9px]" title="Təsdiqlənmiş Məruzəçi">✓</span>
+              <!-- Embedded Video Frame with controls=0 (Raw video, NO native controls) -->
+              <div class="absolute inset-0 w-full h-full bg-black">
+                <iframe id="nf-player-iframe" class="w-full h-full border-0 pointer-events-none scale-[1.01]" allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+              </div>
+
+              <!-- Transparent Click Surface (Play / Pause / Double-click to skip) -->
+              <div id="nf-player-click-surface" onclick="handleStageClick(event)" ondblclick="handleStageDblClick(event)" class="absolute inset-0 z-10 cursor-pointer">
+              </div>
+
+              <!-- Watermark Brand Pill (Top-Left) -->
+              <div class="absolute top-4 left-4 z-20 pointer-events-none flex items-center gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                <span class="px-2.5 py-1 rounded-lg bg-black/60 text-white font-mono font-bold text-[10px] backdrop-blur-md border border-white/15 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                  <span>NF Player</span>
+                </span>
+                <span id="nf-active-quality-pill" class="px-2 py-1 rounded-lg bg-black/60 text-emerald-400 font-mono font-bold text-[10px] backdrop-blur-md border border-white/15">
+                  1080p Ultra HD
+                </span>
+              </div>
+
+              <!-- Centered Big Play/Pause Ripple Indicator -->
+              <div id="nf-center-indicator" class="absolute inset-0 z-15 flex items-center justify-center pointer-events-none transition-all">
+                <div id="nf-center-icon" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-rose-600/90 text-white flex items-center justify-center text-2xl sm:text-3xl shadow-2xl backdrop-blur-xs transition-transform transform scale-100">
+                  <span class="ml-1">▶</span>
+                </div>
+              </div>
+
+              <!-- Double Click Skip Splashes -->
+              <div id="nf-skip-left-splash" class="hidden absolute left-8 top-1/2 -translate-y-1/2 z-25 pointer-events-none bg-black/85 text-white px-4 py-2 rounded-2xl border border-white/20 text-xs font-mono font-bold shadow-xl">
+                ◀◀ 10 SAN GERİ
+              </div>
+              <div id="nf-skip-right-splash" class="hidden absolute right-8 top-1/2 -translate-y-1/2 z-25 pointer-events-none bg-black/85 text-white px-4 py-2 rounded-2xl border border-white/20 text-xs font-mono font-bold shadow-xl">
+                10 SAN İRƏLİ ▶▶
+              </div>
+
+              <!-- CUSTOM PLAYER CONTROLS OVERLAY (Mənim Öz Pleyer Çubuğum) -->
+              <div id="nf-player-controls" class="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/95 via-black/80 to-transparent pt-8 pb-3 px-3 sm:px-6 transition-opacity duration-300">
+                
+                <!-- Custom Scrubber / Timeline Bar (Qabağa / Dala vermə çubuğu) -->
+                <div id="nf-scrubber-container" onmousemove="handleScrubberHover(event)" onmouseleave="handleScrubberLeave()" onclick="handleScrubberSeek(event)" class="group/scrub relative h-2 hover:h-3 w-full bg-white/25 rounded-full cursor-pointer transition-all mb-3">
+                  <!-- Buffered Fill -->
+                  <div id="nf-buffered-fill" class="absolute top-0 left-0 h-full bg-white/35 rounded-full" style="width: 0%"></div>
+                  <!-- Played Progress Fill -->
+                  <div id="nf-progress-fill" class="absolute top-0 left-0 h-full bg-gradient-to-r from-rose-600 to-red-500 rounded-full relative" style="width: 0%">
+                    <!-- Scrubber Thumb Knob -->
+                    <div id="nf-scrubber-thumb" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-3.5 h-3.5 bg-white rounded-full shadow-lg border-2 border-rose-600 transform scale-0 group-hover/scrub:scale-100 transition-transform"></div>
                   </div>
-                  <span class="text-[11px] text-gray-400 font-mono">Fikir & Zəka Rəsmi Mühazirəsi</span>
-                </div>
-                <button id="video-modal-sub-btn" onclick="toggleChannelSubscribe()" class="ml-2 px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors cursor-pointer shadow-xs">
-                  Abunə Ol
-                </button>
-              </div>
-
-              <!-- Action Buttons (YouTube segmented pill) -->
-              <div class="flex items-center gap-2">
-                <!-- Like / Dislike Segmented Pill -->
-                <div class="flex items-center bg-[#272727] rounded-full border border-gray-700/80 overflow-hidden shadow-xs">
-                  <button id="video-modal-like-btn" onclick="toggleActiveModalVideoLike(event)" class="px-3.5 py-2 flex items-center gap-1.5 font-bold text-xs hover:bg-[#383838] transition-colors cursor-pointer text-gray-200">
-                    <span id="video-modal-like-icon">👍</span>
-                    <span>Bəyən</span>
-                    <span id="video-modal-like-count" class="font-mono text-gray-400 ml-0.5">0</span>
-                  </button>
-                  <span class="w-px h-4 bg-gray-600"></span>
-                  <button onclick="dislikeVideoFeedback()" class="px-3 py-2 text-xs hover:bg-[#383838] transition-colors cursor-pointer text-gray-400 hover:text-white" title="Bəyənmədim">
-                    👎
-                  </button>
+                  <!-- Hover Time Tooltip -->
+                  <div id="nf-scrubber-tooltip" class="hidden absolute -top-8 -translate-x-1/2 px-2 py-0.5 rounded-md bg-black/90 text-white text-[10px] font-mono border border-gray-700 pointer-events-none shadow-md">
+                    00:00
+                  </div>
                 </div>
 
-                <!-- Share Button -->
-                <button onclick="shareActiveVideo()" class="px-3.5 py-2 rounded-full bg-[#272727] hover:bg-[#383838] border border-gray-700/80 text-xs font-bold text-gray-200 flex items-center gap-1.5 transition-colors cursor-pointer">
-                  <span>🔗</span>
-                  <span>Paylaş</span>
-                </button>
+                <!-- Bottom Control Buttons Row -->
+                <div class="flex items-center justify-between gap-2 text-white">
+                  
+                  <!-- Left Group: Play/Pause, -10s, +10s, Volume, Time -->
+                  <div class="flex items-center gap-1.5 sm:gap-2.5">
+                    
+                    <!-- Play / Pause Button -->
+                    <button onclick="toggleCustomPlayerPlay()" id="nf-btn-play" class="p-2 rounded-xl hover:bg-white/15 text-white transition-colors cursor-pointer" title="Oynat / Dayandır (Space)">
+                      <svg id="nf-icon-play" class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                      <svg id="nf-icon-pause" class="w-5 h-5 fill-current hidden" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
 
-                <!-- Watch Later / Bookmark Button -->
-                <button id="video-modal-bookmark-btn" onclick="toggleVideoBookmark()" class="px-3.5 py-2 rounded-full bg-[#272727] hover:bg-[#383838] border border-gray-700/80 text-xs font-bold text-gray-200 flex items-center gap-1.5 transition-colors cursor-pointer">
-                  <span id="video-modal-bookmark-icon">☆</span>
-                  <span id="video-modal-bookmark-text">Saxla</span>
-                </button>
+                    <!-- 10s Backward Skip Button -->
+                    <button onclick="skipPlayerSeconds(-10)" class="p-2 rounded-xl hover:bg-white/15 text-gray-200 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-xs font-mono font-bold" title="10 saniyə dala ver (←)">
+                      <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+                      <span class="text-[10px] hidden sm:inline">-10s</span>
+                    </button>
+
+                    <!-- 10s Forward Skip Button -->
+                    <button onclick="skipPlayerSeconds(10)" class="p-2 rounded-xl hover:bg-white/15 text-gray-200 hover:text-white transition-colors cursor-pointer flex items-center gap-1 text-xs font-mono font-bold" title="10 saniyə qabağa ver (→)">
+                      <span class="text-[10px] hidden sm:inline">+10s</span>
+                      <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+                    </button>
+
+                    <!-- Volume Controls: Speaker Icon + Slider Bar -->
+                    <div class="flex items-center gap-1.5 group/vol">
+                      <button onclick="togglePlayerMute()" id="nf-btn-vol" class="p-2 rounded-xl hover:bg-white/15 text-gray-200 hover:text-white transition-colors cursor-pointer" title="Səs / Səssiz (M)">
+                        <span id="nf-vol-icon" class="text-base">🔊</span>
+                      </button>
+                      <input type="range" id="nf-volume-slider" min="0" max="100" value="85" oninput="handleVolumeSlider(this.value)" class="nf-slider w-16 sm:w-20 cursor-pointer accent-rose-500" title="Səsi artır / azalt" />
+                    </div>
+
+                    <!-- Time Elapsed / Total Duration -->
+                    <div class="text-[11px] font-mono text-gray-300 ml-1">
+                      <span id="nf-time-current" class="text-white font-bold">00:00</span>
+                      <span class="text-gray-500">/</span>
+                      <span id="nf-time-duration" class="text-gray-400">00:00</span>
+                    </div>
+
+                  </div>
+
+                  <!-- Right Group: Sürət (Speed), Keyfiyyət (Quality), Teatr, Tam Ekran -->
+                  <div class="flex items-center gap-1 sm:gap-2">
+                    
+                    <!-- Speed Selector Dropdown -->
+                    <div class="relative">
+                      <button onclick="toggleSpeedMenu()" id="nf-btn-speed" class="px-2.5 py-1.5 rounded-xl hover:bg-white/15 text-xs font-mono font-bold text-gray-200 hover:text-white transition-colors cursor-pointer flex items-center gap-1" title="Oynatma Sürəti">
+                        <span id="nf-speed-label">1.0x</span>
+                      </button>
+                      <!-- Speed Menu Popup -->
+                      <div id="nf-speed-menu" class="hidden absolute bottom-10 right-0 z-30 bg-[#161822] border border-gray-700 rounded-2xl p-1.5 shadow-2xl min-w-[110px] space-y-0.5">
+                        <div class="px-2 py-1 text-[9px] font-mono uppercase text-gray-400 border-b border-gray-700/60 mb-1">SÜRƏT</div>
+                        <button onclick="setPlayerSpeed(0.5)" class="w-full text-left px-2.5 py-1 text-xs rounded-lg hover:bg-white/10 text-gray-300 hover:text-white cursor-pointer">0.5x</button>
+                        <button onclick="setPlayerSpeed(0.75)" class="w-full text-left px-2.5 py-1 text-xs rounded-lg hover:bg-white/10 text-gray-300 hover:text-white cursor-pointer">0.75x</button>
+                        <button onclick="setPlayerSpeed(1.0)" class="w-full text-left px-2.5 py-1 text-xs rounded-lg hover:bg-rose-600 text-white font-bold cursor-pointer">1.0x (Normal)</button>
+                        <button onclick="setPlayerSpeed(1.25)" class="w-full text-left px-2.5 py-1 text-xs rounded-lg hover:bg-white/10 text-gray-300 hover:text-white cursor-pointer">1.25x</button>
+                        <button onclick="setPlayerSpeed(1.5)" class="w-full text-left px-2.5 py-1 text-xs rounded-lg hover:bg-white/10 text-gray-300 hover:text-white cursor-pointer">1.5x</button>
+                        <button onclick="setPlayerSpeed(2.0)" class="w-full text-left px-2.5 py-1 text-xs rounded-lg hover:bg-white/10 text-gray-300 hover:text-white cursor-pointer">2.0x</button>
+                      </div>
+                    </div>
+
+                    <!-- Quality (Görüntü Keyfiyyəti) Selector Dropdown -->
+                    <div class="relative">
+                      <button onclick="toggleQualityMenu()" id="nf-btn-quality" class="px-2.5 py-1.5 rounded-xl hover:bg-white/15 text-xs font-mono font-bold text-gray-200 hover:text-white transition-colors cursor-pointer flex items-center gap-1.5" title="Video Görüntü Keyfiyyəti">
+                        <span>⚙️</span>
+                        <span id="nf-quality-label" class="hidden sm:inline">1080p HD</span>
+                      </button>
+                      <!-- Quality Menu Popup -->
+                      <div id="nf-quality-menu" class="hidden absolute bottom-10 right-0 z-30 bg-[#161822] border border-gray-700 rounded-2xl p-1.5 shadow-2xl min-w-[170px] space-y-0.5">
+                        <div class="px-2.5 py-1 text-[9px] font-mono uppercase text-gray-400 border-b border-gray-700/60 mb-1">GÖRÜNTÜ KEYFİYYƏTİ</div>
+                        <button onclick="setPlayerQuality('hd1080', '1080p Full HD (60fps)')" class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-rose-600 text-white font-bold flex items-center justify-between cursor-pointer">
+                          <span>1080p Full HD</span>
+                          <span class="text-[9px] font-mono px-1 rounded bg-rose-500/30 text-rose-300">MAX</span>
+                        </button>
+                        <button onclick="setPlayerQuality('hd720', '720p HD')" class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-white/10 text-gray-300 hover:text-white flex items-center justify-between cursor-pointer">
+                          <span>720p HD</span>
+                          <span class="text-[9px] font-mono text-gray-400">HD</span>
+                        </button>
+                        <button onclick="setPlayerQuality('large', '480p SD')" class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-white/10 text-gray-300 hover:text-white cursor-pointer">
+                          <span>480p SD</span>
+                        </button>
+                        <button onclick="setPlayerQuality('medium', '360p')" class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-white/10 text-gray-300 hover:text-white cursor-pointer">
+                          <span>360p</span>
+                        </button>
+                        <button onclick="setPlayerQuality('auto', 'Avtomatik (1080p)')" class="w-full text-left px-2.5 py-1.5 text-xs rounded-lg hover:bg-white/10 text-gray-300 hover:text-white border-t border-gray-700/60 mt-1 cursor-pointer">
+                          <span>Avtomatik (1080p)</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Theater Mode Toggle Button -->
+                    <button onclick="toggleTheaterMode()" class="p-2 rounded-xl hover:bg-white/15 text-gray-300 hover:text-white transition-colors cursor-pointer hidden sm:block" title="Geniş Teatr Rejimi (T)">
+                      <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><rect width="20" height="15" x="2" y="4.5" rx="2"/><path d="M6 8.5h12v7H6z"/></svg>
+                    </button>
+
+                    <!-- Fullscreen (Tam Ekran) Button -->
+                    <button onclick="togglePlayerFullscreen()" class="p-2 rounded-xl hover:bg-white/15 text-gray-300 hover:text-white transition-colors cursor-pointer" title="Tam Ekran (F)">
+                      <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"/></svg>
+                    </button>
+
+                  </div>
+
+                </div>
+
               </div>
 
             </div>
-          </div>
+            <!-- END OF CUSTOM PLAYER STAGE -->
 
-          <!-- YouTube-Style Description & Takeaways Drawer -->
-          <div class="p-4 rounded-2xl bg-[#212121] border border-gray-800 space-y-3">
-            <div class="flex items-center gap-2 text-xs font-bold text-gray-300">
-              <span id="video-modal-views-count" class="font-mono text-white">0 baxış</span>
-              <span>·</span>
-              <span id="video-modal-duration-tag" class="font-mono text-gray-400">00:00</span>
-              <span>·</span>
-              <span class="text-rose-400 uppercase font-mono">HD FORMAT</span>
+            <!-- Video Metadata Row: Title, Channel, Like/Dislike/Share Buttons -->
+            <div class="space-y-4">
+              <h1 id="watch-full-title" class="text-lg sm:text-2xl font-black text-white leading-tight"></h1>
+
+              <!-- Channel & Segmented Actions Bar -->
+              <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-gray-800">
+                
+                <!-- Channel / Speaker Info -->
+                <div class="flex items-center gap-3">
+                  <img id="watch-speaker-avatar" src="" class="w-11 h-11 rounded-full object-cover border-2 border-gray-700 shadow-md shrink-0" />
+                  <div>
+                    <div class="flex items-center gap-1.5 font-bold text-gray-100 text-sm">
+                      <span id="watch-speaker-name">Məruzəçi</span>
+                      <span class="w-4 h-4 rounded-full bg-blue-500/30 text-blue-400 flex items-center justify-center text-[10px]" title="Təsdiqlənmiş Müəllif">✓</span>
+                    </div>
+                    <span class="text-[11px] text-gray-400 font-mono">Newsfy Rəsmi Video Dərsi</span>
+                  </div>
+                  <button id="watch-sub-btn" onclick="toggleWatchChannelSubscribe()" class="ml-2 px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors cursor-pointer shadow-md">
+                    Abunə Ol
+                  </button>
+                </div>
+
+                <!-- YouTube-Style Pill Action Buttons -->
+                <div class="flex items-center gap-2 flex-wrap">
+                  <!-- Like / Dislike Segmented Pill -->
+                  <div class="flex items-center bg-[#1f222e] rounded-full border border-gray-700 overflow-hidden shadow-xs">
+                    <button id="watch-like-btn" onclick="toggleWatchVideoLike(event)" class="px-4 py-2 flex items-center gap-1.5 font-bold text-xs hover:bg-white/10 transition-colors cursor-pointer text-gray-200">
+                      <span id="watch-like-icon">❤️</span>
+                      <span id="watch-like-count" class="font-mono text-gray-300">0</span>
+                    </button>
+                    <span class="w-px h-4 bg-gray-700"></span>
+                    <button onclick="dislikeVideoFeedback()" class="px-3 py-2 text-xs hover:bg-white/10 transition-colors cursor-pointer text-gray-400 hover:text-white" title="Bəyənmədim">
+                      👎
+                    </button>
+                  </div>
+
+                  <!-- Share Button -->
+                  <button onclick="shareActiveVideo()" class="px-4 py-2 rounded-full bg-[#1f222e] hover:bg-white/10 border border-gray-700 text-xs font-bold text-gray-200 flex items-center gap-1.5 transition-colors cursor-pointer">
+                    <span>🔗</span>
+                    <span>Paylaş</span>
+                  </button>
+
+                  <!-- Watch Later / Bookmark Button -->
+                  <button id="watch-bookmark-btn" onclick="toggleWatchVideoBookmark()" class="px-4 py-2 rounded-full bg-[#1f222e] hover:bg-white/10 border border-gray-700 text-xs font-bold text-gray-200 flex items-center gap-1.5 transition-colors cursor-pointer">
+                    <span id="watch-bookmark-icon">★</span>
+                    <span id="watch-bookmark-text">Sonra İzlə</span>
+                  </button>
+                </div>
+
+              </div>
             </div>
 
-            <p id="video-modal-desc" class="text-xs sm:text-sm text-gray-300 leading-relaxed"></p>
+            <!-- Expandable Description & Takeaways Card -->
+            <div class="p-5 rounded-2xl bg-[#131622] border border-gray-800 space-y-4">
+              <div class="flex items-center gap-2 text-xs font-bold text-gray-300">
+                <span id="watch-views-count" class="font-mono text-white">0 baxış</span>
+                <span>•</span>
+                <span id="watch-duration-tag" class="font-mono text-gray-400">00:00</span>
+                <span>•</span>
+                <span id="watch-category-badge" class="px-2 py-0.5 rounded-md bg-rose-950/60 text-rose-400 border border-rose-900 text-[10px] font-mono uppercase">AI</span>
+                <span>•</span>
+                <span class="text-emerald-400 font-mono text-[10px]">1080P ULTRA HD</span>
+              </div>
 
-            <!-- Key Takeaways Highlight Box -->
-            <div class="pt-3 border-t border-gray-700/60">
-              <span class="text-xs font-bold text-white flex items-center gap-1.5 mb-2">
-                <span class="text-rose-500">💡</span>
-                <span>Bu Mühazirədən Əsas Nəticələr (Key Takeaways):</span>
-              </span>
-              <div id="video-modal-takeaways" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-300"></div>
+              <p id="watch-video-desc" class="text-xs sm:text-sm text-gray-300 leading-relaxed"></p>
+
+              <!-- Key Takeaways Highlight Box -->
+              <div class="pt-3 border-t border-gray-700/60">
+                <span class="text-xs font-bold text-white flex items-center gap-1.5 mb-2.5">
+                  <span class="text-rose-500">💡</span>
+                  <span>Bu Mühazirədən Əsas Nəticələr (Key Takeaways):</span>
+                </span>
+                <div id="watch-video-takeaways" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-300"></div>
+              </div>
             </div>
+
+            <!-- Interactive Video Comments Section -->
+            <div id="watch-comments-section" class="p-5 rounded-2xl bg-[#131622] border border-gray-800 space-y-5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">💬</span>
+                  <h3 class="text-sm font-bold text-white">Oxucu Şərhləri</h3>
+                  <span id="watch-comments-count-pill" class="text-xs font-mono px-2 py-0.5 rounded-full bg-white/10 text-gray-300">3 şərh</span>
+                </div>
+              </div>
+
+              <!-- Write Comment Form -->
+              <form onsubmit="handleNewVideoComment(event)" class="space-y-3">
+                <div class="flex gap-3">
+                  <div class="w-9 h-9 rounded-full bg-rose-600 text-white font-black flex items-center justify-center text-xs shrink-0 shadow-sm">
+                    Siz
+                  </div>
+                  <div class="flex-1 space-y-2">
+                    <input type="text" id="watch-comment-author" placeholder="Adınız..." class="w-full sm:w-64 px-3 py-1.5 bg-[#0a0c14] border border-gray-700 rounded-xl text-xs text-white focus:outline-none focus:border-rose-500" />
+                    <textarea id="watch-comment-text" required rows="2" placeholder="Bu video və mühazirə haqqında fikirlərinizi bölüşün..." class="w-full px-3.5 py-2.5 bg-[#0a0c14] border border-gray-700 rounded-xl text-xs text-white focus:outline-none focus:border-rose-500"></textarea>
+                  </div>
+                </div>
+                <div class="flex justify-end">
+                  <button type="submit" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer shadow-md">
+                    Şərh Yaz
+                  </button>
+                </div>
+              </form>
+
+              <!-- Existing Comments List -->
+              <div id="watch-comments-list" class="space-y-3 pt-2 border-t border-gray-800">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
           </div>
 
-          <!-- "Növbəti Videolar" (YouTube Up Next Queue) -->
-          <div class="space-y-3 pt-2">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-              <span>Növbəti Tövsiyə Olunan Videolar</span>
-            </h4>
-            <div id="video-modal-upnext-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <!-- Dynamically rendered -->
+          <!-- RIGHT COLUMN: UP NEXT QUEUE (4 COLS) -->
+          <div id="watch-sidebar-col" class="lg:col-span-4 space-y-4">
+            <div class="p-4 rounded-2xl bg-[#131622] border border-gray-800 space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-gray-800">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                  <h3 class="text-xs font-mono font-bold uppercase tracking-wider text-white">Növbəti Videolar</h3>
+                </div>
+                <span class="text-[10px] text-gray-400 font-mono">AVTO-OYNAT</span>
+              </div>
+              
+              <!-- Up Next Recommendations List -->
+              <div id="watch-upnext-grid" class="space-y-3">
+                <!-- Rendered dynamically -->
+              </div>
             </div>
           </div>
 
         </div>
       </div>
+
     </div>
 
     <!-- SEARCH MODAL -->
@@ -1914,6 +2169,12 @@
         return false;
       }
 
+      function renderVideoCategories() {
+        if (typeof renderPageVideoCategories === 'function') {
+          renderPageVideoCategories();
+        }
+      }
+
       async function manualRefreshFromCloud() {
         updateCloudSyncStatus('syncing', 'Yüklənir...');
         try {
@@ -1949,8 +2210,11 @@
             if (vList && vList.length > 0) {
               videos = vList;
               localStorage.setItem('newsfy_videos', JSON.stringify(videos));
-              renderVideos();
-              renderVideoCategories();
+              if (typeof renderVideos === 'function') renderVideos();
+              if (typeof renderVideoCategories === 'function') renderVideoCategories();
+              if (typeof renderPageVideos === 'function') renderPageVideos();
+              if (typeof renderPageVideoSpotlight === 'function') renderPageVideoSpotlight();
+              if (typeof renderPageChannels === 'function') renderPageChannels();
             }
           }
           updateCloudSyncStatus('connected');
@@ -2015,10 +2279,13 @@
               if (cloudVideos && cloudVideos.length > 0) {
                 videos = cloudVideos;
                 localStorage.setItem('newsfy_videos', JSON.stringify(videos));
-                renderVideos();
-                renderVideoCategories();
+                if (typeof renderVideos === 'function') renderVideos();
+                if (typeof renderVideoCategories === 'function') renderVideoCategories();
+                if (typeof renderPageVideos === 'function') renderPageVideos();
+                if (typeof renderPageVideoSpotlight === 'function') renderPageVideoSpotlight();
+                if (typeof renderPageChannels === 'function') renderPageChannels();
                 if (document.getElementById('admin-tab-videos') && !document.getElementById('admin-tab-videos').classList.contains('hidden')) {
-                  renderAdminVideos();
+                  if (typeof renderAdminVideos === 'function') renderAdminVideos();
                 }
               } else {
                 DEFAULT_VIDEOS.forEach(v => store.saveVideo(v));
@@ -2031,10 +2298,13 @@
               if (liveVideos && liveVideos.length > 0) {
                 videos = liveVideos;
                 localStorage.setItem('newsfy_videos', JSON.stringify(videos));
-                renderVideos();
-                renderVideoCategories();
+                if (typeof renderVideos === 'function') renderVideos();
+                if (typeof renderVideoCategories === 'function') renderVideoCategories();
+                if (typeof renderPageVideos === 'function') renderPageVideos();
+                if (typeof renderPageVideoSpotlight === 'function') renderPageVideoSpotlight();
+                if (typeof renderPageChannels === 'function') renderPageChannels();
                 if (document.getElementById('admin-tab-videos') && !document.getElementById('admin-tab-videos').classList.contains('hidden')) {
-                  renderAdminVideos();
+                  if (typeof renderAdminVideos === 'function') renderAdminVideos();
                 }
               }
             });
@@ -2657,6 +2927,11 @@
       }
 
       function closeVideosPage(updateUrl = true) {
+        const watchPage = document.getElementById('video-watch-page');
+        if (watchPage && !watchPage.classList.contains('hidden')) {
+          closeVideoWatchPage(false);
+        }
+
         const videosPage = document.getElementById('videos-page-view');
         if (videosPage) videosPage.classList.add('hidden');
 
@@ -3266,6 +3541,12 @@
         // Update Page Title and Meta Description dynamically
         document.title = `${art.title} — Fikir & Zəka`;
 
+        // If video watch page is open, close it
+        const watchPage = document.getElementById('video-watch-page');
+        if (watchPage && !watchPage.classList.contains('hidden')) {
+          closeVideoWatchPage(false);
+        }
+
         // If videos page is active, hide it
         if (isVideosPageActive) {
           const videosPage = document.getElementById('videos-page-view');
@@ -3590,11 +3871,434 @@
         renderAll();
       }
 
-      // ================= YOUTUBE THEATER CONTROLLER & PLAYER =================
-      function updateModalLikeButton(vid) {
-        const likeBtn = document.getElementById('video-modal-like-btn');
-        const countSpan = document.getElementById('video-modal-like-count');
-        const iconSpan = document.getElementById('video-modal-like-icon');
+      // ================= CUSTOM NF VIDEO PLAYER & WATCH PAGE CONTROLLER =================
+      let isCustomPlayerPlaying = false;
+      let playerCurrentTime = 0;
+      let playerDuration = 900;
+      let playerTimerInterval = null;
+      let currentVolume = 85;
+      let isMuted = false;
+      let currentPlaybackRate = 1.0;
+      let currentVideoQuality = 'hd1080';
+      let controlsHideTimeout = null;
+      let isTheaterMode = false;
+      let videoComments = JSON.parse(localStorage.getItem('newsfy_video_comments') || '{}');
+      let clickTimer = null;
+
+      // Helper: Format seconds to MM:SS
+      function formatTime(seconds) {
+        if (!seconds || isNaN(seconds) || seconds < 0) return '00:00';
+        const sec = Math.floor(seconds);
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        const mm = m < 10 ? '0' + m : '' + m;
+        const ss = s < 10 ? '0' + s : '' + s;
+        return `${mm}:${ss}`;
+      }
+
+      function parseDurationToSeconds(str) {
+        if (!str) return 900;
+        const parts = str.split(':').map(Number);
+        if (parts.length === 2) {
+          return parts[0] * 60 + parts[1];
+        } else if (parts.length === 3) {
+          return parts[0] * 3600 + parts[1] * 60 + parts[2];
+        }
+        return 900;
+      }
+
+      // Send command to YouTube iframe via postMessage (enablejsapi=1)
+      function sendPlayerCommand(command, args = []) {
+        const iframe = document.getElementById('nf-player-iframe');
+        if (!iframe || !iframe.contentWindow) return;
+        try {
+          iframe.contentWindow.postMessage(
+            JSON.stringify({
+              event: 'command',
+              func: command,
+              args: args
+            }),
+            '*'
+          );
+        } catch (e) {
+          console.warn('[NF Player] Command send notice:', e);
+        }
+      }
+
+      // Listen for YouTube IFrame state / time updates
+      window.addEventListener('message', function (event) {
+        if (!event.data) return;
+        let data = event.data;
+        if (typeof data === 'string') {
+          try {
+            data = JSON.parse(data);
+          } catch (e) {
+            return;
+          }
+        }
+        if (data.event === 'infoDelivery' && data.info) {
+          if (typeof data.info.currentTime === 'number') {
+            playerCurrentTime = data.info.currentTime;
+            updatePlayerUI();
+          }
+          if (typeof data.info.duration === 'number' && data.info.duration > 0) {
+            playerDuration = data.info.duration;
+            updatePlayerUI();
+          }
+          if (typeof data.info.playerState === 'number') {
+            if (data.info.playerState === 1) {
+              setPlayerPlayState(true);
+            } else if (data.info.playerState === 2 || data.info.playerState === 0) {
+              setPlayerPlayState(false);
+            }
+          }
+        }
+      });
+
+      // Update Scrubber Progress & Time Displays
+      function updatePlayerUI() {
+        const timeCur = document.getElementById('nf-time-current');
+        const timeDur = document.getElementById('nf-time-duration');
+        const progFill = document.getElementById('nf-progress-fill');
+        const buffFill = document.getElementById('nf-buffered-fill');
+
+        if (timeCur) timeCur.textContent = formatTime(playerCurrentTime);
+        if (timeDur) timeDur.textContent = formatTime(playerDuration);
+
+        const pct = playerDuration > 0 ? (playerCurrentTime / playerDuration) * 100 : 0;
+        const clampedPct = Math.min(100, Math.max(0, pct));
+        if (progFill) progFill.style.width = `${clampedPct}%`;
+        if (buffFill) buffFill.style.width = `${Math.min(100, clampedPct + 15)}%`;
+      }
+
+      // Play / Pause Controller
+      function setPlayerPlayState(playing) {
+        isCustomPlayerPlaying = playing;
+        const iconPlay = document.getElementById('nf-icon-play');
+        const iconPause = document.getElementById('nf-icon-pause');
+        const centerIcon = document.getElementById('nf-center-icon');
+
+        if (playing) {
+          if (iconPlay) iconPlay.classList.add('hidden');
+          if (iconPause) iconPause.classList.remove('hidden');
+          if (centerIcon) centerIcon.innerHTML = '<span>⏸</span>';
+          startProgressTimer();
+        } else {
+          if (iconPlay) iconPlay.classList.remove('hidden');
+          if (iconPause) iconPause.classList.add('hidden');
+          if (centerIcon) centerIcon.innerHTML = '<span class="ml-1">▶</span>';
+          stopProgressTimer();
+        }
+      }
+
+      function toggleCustomPlayerPlay() {
+        if (isCustomPlayerPlaying) {
+          pauseCustomPlayer();
+        } else {
+          playCustomPlayer();
+        }
+      }
+
+      function playCustomPlayer() {
+        sendPlayerCommand('playVideo');
+        setPlayerPlayState(true);
+        flashCenterIndicator('▶');
+      }
+
+      function pauseCustomPlayer() {
+        sendPlayerCommand('pauseVideo');
+        setPlayerPlayState(false);
+        flashCenterIndicator('⏸');
+      }
+
+      function flashCenterIndicator(symbol) {
+        const indicator = document.getElementById('nf-center-indicator');
+        const icon = document.getElementById('nf-center-icon');
+        if (!indicator || !icon) return;
+        icon.innerHTML = symbol === '▶' ? '<span class="ml-1">▶</span>' : '<span>⏸</span>';
+        indicator.classList.remove('opacity-0');
+        indicator.classList.add('opacity-100');
+        icon.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+          icon.style.transform = 'scale(1.0)';
+          if (isCustomPlayerPlaying) {
+            indicator.classList.add('opacity-0');
+            indicator.classList.remove('opacity-100');
+          }
+        }, 500);
+      }
+
+      function startProgressTimer() {
+        stopProgressTimer();
+        playerTimerInterval = setInterval(() => {
+          playerCurrentTime = Math.min(playerDuration, playerCurrentTime + 0.25 * currentPlaybackRate);
+          updatePlayerUI();
+          if (playerCurrentTime >= playerDuration) {
+            pauseCustomPlayer();
+          }
+        }, 250);
+      }
+
+      function stopProgressTimer() {
+        if (playerTimerInterval) {
+          clearInterval(playerTimerInterval);
+          playerTimerInterval = null;
+        }
+      }
+
+      // Single Click (Play/Pause) vs Double Click (Skip 10s left/right)
+      function handleStageClick(event) {
+        if (clickTimer) {
+          clearTimeout(clickTimer);
+          clickTimer = null;
+        }
+        clickTimer = setTimeout(() => {
+          toggleCustomPlayerPlay();
+          clickTimer = null;
+        }, 220);
+      }
+
+      function handleStageDblClick(event) {
+        if (clickTimer) {
+          clearTimeout(clickTimer);
+          clickTimer = null;
+        }
+        const stage = document.getElementById('nf-player-stage');
+        if (!stage) return;
+        const rect = stage.getBoundingClientRect();
+        const clickX = event.clientX - rect.left;
+        if (clickX < rect.width / 2) {
+          skipPlayerSeconds(-10);
+        } else {
+          skipPlayerSeconds(10);
+        }
+      }
+
+      // Skip Seconds (Qabağa / Dala vermə: -10s, +10s)
+      function skipPlayerSeconds(delta) {
+        playerCurrentTime = Math.max(0, Math.min(playerDuration, playerCurrentTime + delta));
+        sendPlayerCommand('seekTo', [playerCurrentTime, true]);
+        updatePlayerUI();
+
+        // Flash skip notification badge
+        const splashId = delta > 0 ? 'nf-skip-right-splash' : 'nf-skip-left-splash';
+        const splash = document.getElementById(splashId);
+        if (splash) {
+          splash.classList.remove('hidden');
+          setTimeout(() => {
+            splash.classList.add('hidden');
+          }, 650);
+        }
+      }
+
+      // Scrubber Seek & Hover Tooltip
+      function handleScrubberSeek(event) {
+        const container = document.getElementById('nf-scrubber-container');
+        if (!container) return;
+        const rect = container.getBoundingClientRect();
+        const clickX = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
+        const pct = clickX / rect.width;
+        playerCurrentTime = pct * playerDuration;
+        sendPlayerCommand('seekTo', [playerCurrentTime, true]);
+        updatePlayerUI();
+      }
+
+      function handleScrubberHover(event) {
+        const container = document.getElementById('nf-scrubber-container');
+        const tooltip = document.getElementById('nf-scrubber-tooltip');
+        if (!container || !tooltip) return;
+        const rect = container.getBoundingClientRect();
+        const hoverX = Math.max(0, Math.min(rect.width, event.clientX - rect.left));
+        const pct = hoverX / rect.width;
+        const hoverTime = pct * playerDuration;
+
+        tooltip.textContent = formatTime(hoverTime);
+        tooltip.style.left = `${hoverX}px`;
+        tooltip.classList.remove('hidden');
+      }
+
+      function handleScrubberLeave() {
+        const tooltip = document.getElementById('nf-scrubber-tooltip');
+        if (tooltip) tooltip.classList.add('hidden');
+      }
+
+      // Volume & Mute Controller (Səsini artırıb çoxaltma / azaltma)
+      function handleVolumeSlider(val) {
+        currentVolume = parseInt(val, 10);
+        if (currentVolume === 0) {
+          isMuted = true;
+          sendPlayerCommand('mute');
+        } else {
+          isMuted = false;
+          sendPlayerCommand('unMute');
+          sendPlayerCommand('setVolume', [currentVolume]);
+        }
+        updateVolumeIcon();
+      }
+
+      function togglePlayerMute() {
+        isMuted = !isMuted;
+        const slider = document.getElementById('nf-volume-slider');
+        if (isMuted) {
+          sendPlayerCommand('mute');
+          if (slider) slider.value = 0;
+        } else {
+          sendPlayerCommand('unMute');
+          const restoreVol = currentVolume > 0 ? currentVolume : 80;
+          currentVolume = restoreVol;
+          sendPlayerCommand('setVolume', [restoreVol]);
+          if (slider) slider.value = restoreVol;
+        }
+        updateVolumeIcon();
+      }
+
+      function updateVolumeIcon() {
+        const icon = document.getElementById('nf-vol-icon');
+        if (!icon) return;
+        if (isMuted || currentVolume === 0) {
+          icon.textContent = '🔇';
+        } else if (currentVolume < 35) {
+          icon.textContent = '🔈';
+        } else if (currentVolume < 70) {
+          icon.textContent = '🔉';
+        } else {
+          icon.textContent = '🔊';
+        }
+      }
+
+      // Speed Selector (0.5x - 2.0x)
+      function toggleSpeedMenu() {
+        const menu = document.getElementById('nf-speed-menu');
+        const qMenu = document.getElementById('nf-quality-menu');
+        if (qMenu) qMenu.classList.add('hidden');
+        if (menu) menu.classList.toggle('hidden');
+      }
+
+      function setPlayerSpeed(rate) {
+        currentPlaybackRate = rate;
+        sendPlayerCommand('setPlaybackRate', [rate]);
+        const label = document.getElementById('nf-speed-label');
+        if (label) label.textContent = `${rate}x`;
+        const menu = document.getElementById('nf-speed-menu');
+        if (menu) menu.classList.add('hidden');
+        showToast(`⚡ Oynatma sürəti: ${rate}x`);
+      }
+
+      // Quality Selector (Video görüntü keyfiyyətini artırma / seçmə)
+      function toggleQualityMenu() {
+        const menu = document.getElementById('nf-quality-menu');
+        const sMenu = document.getElementById('nf-speed-menu');
+        if (sMenu) sMenu.classList.add('hidden');
+        if (menu) menu.classList.toggle('hidden');
+      }
+
+      function setPlayerQuality(quality, label) {
+        currentVideoQuality = quality;
+        sendPlayerCommand('setPlaybackQuality', [quality]);
+        sendPlayerCommand('setPlaybackQualityRange', [quality, quality]);
+
+        const qLabel = document.getElementById('nf-quality-label');
+        if (qLabel) {
+          qLabel.textContent = quality === 'hd1080' ? '1080p HD' : quality === 'hd720' ? '720p HD' : quality === 'large' ? '480p SD' : quality === 'medium' ? '360p' : 'Avtomatik';
+        }
+
+        const activePill = document.getElementById('nf-active-quality-pill');
+        if (activePill) {
+          activePill.textContent = label.includes('1080p') ? '1080p Ultra HD' : label.includes('720p') ? '720p HD' : label.includes('480p') ? '480p SD' : '360p SD';
+        }
+
+        const menu = document.getElementById('nf-quality-menu');
+        if (menu) menu.classList.add('hidden');
+        showToast(`✨ Görüntü keyfiyyəti seçildi: ${label}`);
+      }
+
+      // Theater & Fullscreen Modes
+      function toggleTheaterMode() {
+        isTheaterMode = !isTheaterMode;
+        const mainCol = document.getElementById('watch-main-col');
+        const sideCol = document.getElementById('watch-sidebar-col');
+        if (!mainCol || !sideCol) return;
+
+        if (isTheaterMode) {
+          mainCol.className = 'lg:col-span-12 space-y-6';
+          sideCol.className = 'lg:col-span-12 space-y-4';
+          showToast('🎭 Geniş Teatr Rejimi aktiv edildi');
+        } else {
+          mainCol.className = 'lg:col-span-8 space-y-6';
+          sideCol.className = 'lg:col-span-4 space-y-4';
+          showToast('Standart rejimə qayıdıldı');
+        }
+      }
+
+      function togglePlayerFullscreen() {
+        const stage = document.getElementById('nf-player-stage');
+        if (!stage) return;
+        if (!document.fullscreenElement) {
+          if (stage.requestFullscreen) {
+            stage.requestFullscreen();
+          } else if (stage.webkitRequestFullscreen) {
+            stage.webkitRequestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      }
+
+      function handlePlayerMouseMove() {
+        const controls = document.getElementById('nf-player-controls');
+        if (!controls) return;
+        controls.style.opacity = '1';
+        clearTimeout(controlsHideTimeout);
+        if (isCustomPlayerPlaying) {
+          controlsHideTimeout = setTimeout(() => {
+            controls.style.opacity = '0';
+          }, 3500);
+        }
+      }
+
+      function handlePlayerMouseLeave() {
+        const controls = document.getElementById('nf-player-controls');
+        if (!controls) return;
+        if (isCustomPlayerPlaying) {
+          controls.style.opacity = '0';
+        }
+        const sMenu = document.getElementById('nf-speed-menu');
+        const qMenu = document.getElementById('nf-quality-menu');
+        if (sMenu) sMenu.classList.add('hidden');
+        if (qMenu) qMenu.classList.add('hidden');
+      }
+
+      // Keyboard Controls (Space = Play/Pause, Arrows = Skip, M = Mute, F = Fullscreen, T = Theater)
+      window.addEventListener('keydown', (e) => {
+        const watchPage = document.getElementById('video-watch-page');
+        if (!watchPage || watchPage.classList.contains('hidden')) return;
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+
+        if (e.code === 'Space') {
+          e.preventDefault();
+          toggleCustomPlayerPlay();
+        } else if (e.code === 'ArrowLeft') {
+          e.preventDefault();
+          skipPlayerSeconds(-10);
+        } else if (e.code === 'ArrowRight') {
+          e.preventDefault();
+          skipPlayerSeconds(10);
+        } else if (e.key === 'm' || e.key === 'M') {
+          togglePlayerMute();
+        } else if (e.key === 'f' || e.key === 'F') {
+          togglePlayerFullscreen();
+        } else if (e.key === 't' || e.key === 'T') {
+          toggleTheaterMode();
+        }
+      });
+
+      // ================= STANDALONE WATCH PAGE METADATA & ACTIONS =================
+      function updateWatchLikeButton(vid) {
+        const likeBtn = document.getElementById('watch-like-btn');
+        const countSpan = document.getElementById('watch-like-count');
+        const iconSpan = document.getElementById('watch-like-icon');
         if (!likeBtn || !vid) return;
 
         const isLiked = videoLikes.includes(vid.id);
@@ -3602,17 +4306,18 @@
         if (iconSpan) iconSpan.textContent = isLiked ? '❤️' : '👍';
 
         if (isLiked) {
-          likeBtn.className = 'px-3.5 py-2 flex items-center gap-1.5 font-bold text-xs bg-rose-600/30 text-rose-400 hover:bg-rose-600/40 transition-colors cursor-pointer';
+          likeBtn.className = 'px-4 py-2 flex items-center gap-1.5 font-bold text-xs bg-rose-600/30 text-rose-400 hover:bg-rose-600/40 transition-colors cursor-pointer';
           if (countSpan) countSpan.className = 'font-mono text-rose-300 ml-0.5 font-bold';
         } else {
-          likeBtn.className = 'px-3.5 py-2 flex items-center gap-1.5 font-bold text-xs hover:bg-[#383838] transition-colors cursor-pointer text-gray-200';
-          if (countSpan) countSpan.className = 'font-mono text-gray-400 ml-0.5';
+          likeBtn.className = 'px-4 py-2 flex items-center gap-1.5 font-bold text-xs hover:bg-white/10 transition-colors cursor-pointer text-gray-200';
+          if (countSpan) countSpan.className = 'font-mono text-gray-300 ml-0.5';
         }
       }
 
-      function toggleActiveModalVideoLike(event) {
+      function toggleWatchVideoLike(event) {
         if (!currentActiveVideo) return;
         toggleVideoLike(currentActiveVideo.id, event);
+        updateWatchLikeButton(currentActiveVideo);
       }
 
       function dislikeVideoFeedback() {
@@ -3631,52 +4336,138 @@
         }
       }
 
-      function toggleChannelSubscribe() {
+      function updateWatchSubscribeButton(speaker) {
+        const subBtn = document.getElementById('watch-sub-btn');
+        if (!subBtn) return;
+        const isSubscribed = subscribedChannels.includes(speaker);
+        subBtn.textContent = isSubscribed ? 'Abunə Olundu ✓' : 'Abunə Ol';
+        subBtn.className = isSubscribed
+          ? 'ml-2 px-4 py-2 rounded-full bg-gray-800 text-gray-300 border border-gray-700 font-bold text-xs transition-colors cursor-pointer shadow-md'
+          : 'ml-2 px-4 py-2 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors cursor-pointer shadow-md';
+      }
+
+      function toggleWatchChannelSubscribe() {
         if (!currentActiveVideo) return;
         const speaker = currentActiveVideo.speaker || 'Kanal';
-        const subBtn = document.getElementById('video-modal-sub-btn');
         const idx = subscribedChannels.indexOf(speaker);
 
         if (idx > -1) {
           subscribedChannels.splice(idx, 1);
-          if (subBtn) {
-            subBtn.textContent = 'Abunə Ol';
-            subBtn.className = 'ml-2 px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors cursor-pointer shadow-xs';
-          }
           showToast(`"${speaker}" kanalından abunəlik ləğv edildi.`);
         } else {
           subscribedChannels.push(speaker);
-          if (subBtn) {
-            subBtn.textContent = 'Abunə Olundu ✓';
-            subBtn.className = 'ml-2 px-3.5 py-1.5 rounded-full bg-gray-800 text-gray-300 border border-gray-700 font-bold text-xs transition-colors cursor-pointer shadow-xs';
-          }
           showToast(`🎉 "${speaker}" kanalına uğurla abunə oldunuz!`);
           if (window.confetti) window.confetti({ particleCount: 30, spread: 45, origin: { y: 0.7 } });
         }
         localStorage.setItem('newsfy_subscribed_channels', JSON.stringify(subscribedChannels));
+        updateWatchSubscribeButton(speaker);
       }
 
-      function toggleVideoBookmark() {
+      function updateWatchBookmarkButton(id) {
+        const bmIcon = document.getElementById('watch-bookmark-icon');
+        const bmText = document.getElementById('watch-bookmark-text');
+        const isBookmarked = videoWatchLater.includes(id);
+        if (bmIcon) bmIcon.textContent = isBookmarked ? '★' : '☆';
+        if (bmText) bmText.textContent = isBookmarked ? 'Saxlandı' : 'Sonra İzlə';
+      }
+
+      function toggleWatchVideoBookmark() {
         if (!currentActiveVideo) return;
         const id = currentActiveVideo.id;
         const idx = videoWatchLater.indexOf(id);
-        const icon = document.getElementById('video-modal-bookmark-icon');
-        const text = document.getElementById('video-modal-bookmark-text');
 
         if (idx > -1) {
           videoWatchLater.splice(idx, 1);
-          if (icon) icon.textContent = '☆';
-          if (text) text.textContent = 'Saxla';
           showToast('Video "Sonra İzlə" siyahısından çıxarıldı.');
         } else {
           videoWatchLater.push(id);
-          if (icon) icon.textContent = '★';
-          if (text) text.textContent = 'Saxlandı';
           showToast('★ Video "Sonra İzlə" siyahısına əlavə olundu!');
         }
         localStorage.setItem('newsfy_video_watchlater', JSON.stringify(videoWatchLater));
+        updateWatchBookmarkButton(id);
       }
 
+      function renderWatchUpNext(currentId) {
+        const container = document.getElementById('watch-upnext-grid');
+        if (!container) return;
+        const others = videos.filter(v => v.id !== currentId).slice(0, 5);
+        container.innerHTML = others.map(nextVid => `
+          <div onclick="openVideo('${nextVid.id}')" class="group cursor-pointer p-2.5 rounded-xl bg-black/40 hover:bg-white/10 border border-gray-800 transition-colors flex items-center gap-3">
+            <div class="relative w-28 aspect-[16/9] rounded-lg overflow-hidden bg-black shrink-0">
+              <img src="${nextVid.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+              <span class="absolute bottom-1 right-1 px-1 py-0.2 bg-black/85 text-[9px] font-mono rounded text-white font-bold">${nextVid.duration}</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <span class="text-[9px] font-bold uppercase text-rose-500 font-mono block">${categoryLabels[nextVid.category] || nextVid.category}</span>
+              <h5 class="text-xs font-bold text-white group-hover:text-rose-400 truncate leading-snug">${nextVid.title}</h5>
+              <p class="text-[10px] text-gray-400 truncate mt-0.5">${nextVid.speaker}</p>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function renderWatchComments(videoId) {
+        const listContainer = document.getElementById('watch-comments-list');
+        const countPill = document.getElementById('watch-comments-count-pill');
+        if (!listContainer) return;
+
+        const defaultComments = [
+          { author: 'Eldar Qasımov', time: '1 saat əvvəl', text: 'Çox dəyərli və əhatəli mühazirə oldu. Təşəkkürlər Fikir & Zəka komandası!' },
+          { author: 'Nərgiz Əliyeva', time: '3 saat əvvəl', text: 'Təqdimat dili və vizual izahlar möhtəşəmdir. Xüsusilə ikinci hissə çox maraqlı idi.' }
+        ];
+
+        const list = videoComments[videoId] || defaultComments;
+        if (countPill) countPill.textContent = `${list.length} şərh`;
+
+        listContainer.innerHTML = list.map(c => `
+          <div class="p-3 rounded-xl bg-black/30 border border-gray-800/80 space-y-1">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-gray-200">${c.author}</span>
+              <span class="text-[10px] font-mono text-gray-400">${c.time}</span>
+            </div>
+            <p class="text-xs text-gray-300 leading-relaxed">${c.text}</p>
+          </div>
+        `).join('');
+      }
+
+      function handleNewVideoComment(event) {
+        event.preventDefault();
+        if (!currentActiveVideo) return;
+        const authorInput = document.getElementById('watch-comment-author');
+        const textInput = document.getElementById('watch-comment-text');
+        const author = authorInput?.value.trim() || 'Oxucu';
+        const text = textInput?.value.trim();
+        if (!text) return;
+
+        const vidId = currentActiveVideo.id;
+        if (!videoComments[vidId]) {
+          videoComments[vidId] = [
+            { author: 'Eldar Qasımov', time: '1 saat əvvəl', text: 'Çox dəyərli və əhatəli mühazirə oldu. Təşəkkürlər Fikir & Zəka komandası!' },
+            { author: 'Nərgiz Əliyeva', time: '3 saat əvvəl', text: 'Təqdimat dili və vizual izahlar möhtəşəmdir. Xüsusilə ikinci hissə çox maraqlı idi.' }
+          ];
+        }
+
+        videoComments[vidId].unshift({
+          author,
+          time: 'İndicə',
+          text
+        });
+
+        localStorage.setItem('newsfy_video_comments', JSON.stringify(videoComments));
+        if (textInput) textInput.value = '';
+        renderWatchComments(vidId);
+        showToast('✓ Şərhiniz dərc edildi!');
+      }
+
+      // Backward-compatible shim for admin or other callers
+      function updateModalLikeButton(vid) {
+        updateWatchLikeButton(vid);
+      }
+      function closeVideoModal(updateUrl = true) {
+        closeVideoWatchPage(updateUrl);
+      }
+
+      // ================= OPEN DEDICATED WATCH PAGE =================
       function openVideo(id, updateUrl = true) {
         const vid = videos.find(v => v.id === id);
         if (!vid) return;
@@ -3685,62 +4476,54 @@
         vid.views = (vid.views || 0) + 1;
         localStorage.setItem('newsfy_videos', JSON.stringify(videos));
 
-        // Set Top Header Info
-        const catTag = document.getElementById('video-modal-category-tag');
-        if (catTag) catTag.textContent = categoryLabels[vid.category] || vid.category || 'MÜHAZİRƏ';
+        // Hide other main views
+        document.getElementById('main-content')?.classList.add('hidden');
+        document.getElementById('article-reader-view')?.classList.add('hidden');
+        document.getElementById('videos-page-view')?.classList.add('hidden');
 
-        const titleElem = document.getElementById('video-modal-title');
-        if (titleElem) titleElem.textContent = vid.title;
+        // Show Watch Page
+        const watchPage = document.getElementById('video-watch-page');
+        if (watchPage) watchPage.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'instant' });
 
-        const fullTitle = document.getElementById('video-modal-full-title');
+        // Update Breadcrumb & Top Bar
+        const bCat = document.getElementById('watch-breadcrumb-cat');
+        if (bCat) bCat.textContent = categoryLabels[vid.category] || vid.category || 'MÜHAZİRƏ';
+        const bTitle = document.getElementById('watch-breadcrumb-title');
+        if (bTitle) bTitle.textContent = vid.title;
+
+        // Update Title & Speaker
+        const fullTitle = document.getElementById('watch-full-title');
         if (fullTitle) fullTitle.textContent = vid.title;
-
-        // Channel Info
-        const avatar = document.getElementById('video-modal-speaker-avatar');
+        const avatar = document.getElementById('watch-speaker-avatar');
         if (avatar) avatar.src = vid.speakerAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80';
-
-        const speakerName = document.getElementById('video-modal-speaker-name');
+        const speakerName = document.getElementById('watch-speaker-name');
         if (speakerName) speakerName.textContent = vid.speaker || 'Məruzəçi';
 
-        const subBtn = document.getElementById('video-modal-sub-btn');
-        if (subBtn) {
-          const isSubscribed = subscribedChannels.includes(vid.speaker);
-          subBtn.textContent = isSubscribed ? 'Abunə Olundu ✓' : 'Abunə Ol';
-          subBtn.className = isSubscribed 
-            ? 'ml-2 px-3.5 py-1.5 rounded-full bg-gray-800 text-gray-300 border border-gray-700 font-bold text-xs transition-colors cursor-pointer shadow-xs'
-            : 'ml-2 px-3.5 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-colors cursor-pointer shadow-xs';
-        }
-
-        // Bookmark state
-        const bmIcon = document.getElementById('video-modal-bookmark-icon');
-        const bmText = document.getElementById('video-modal-bookmark-text');
-        const isBookmarked = videoWatchLater.includes(vid.id);
-        if (bmIcon) bmIcon.textContent = isBookmarked ? '★' : '☆';
-        if (bmText) bmText.textContent = isBookmarked ? 'Saxlandı' : 'Saxla';
-
-        // Update Like Button
-        updateModalLikeButton(vid);
+        // Subscribe, Likes & Bookmark State
+        updateWatchSubscribeButton(vid.speaker);
+        updateWatchLikeButton(vid);
+        updateWatchBookmarkButton(vid.id);
 
         // Stats & Description
-        const viewsCount = document.getElementById('video-modal-views-count');
+        const viewsCount = document.getElementById('watch-views-count');
         if (viewsCount) {
           const v = vid.views || 1000;
           viewsCount.textContent = v >= 1000 ? `${(v / 1000).toFixed(1).replace('.0', '')}K baxış` : `${v} baxış`;
         }
-
-        const durationTag = document.getElementById('video-modal-duration-tag');
+        const durationTag = document.getElementById('watch-duration-tag');
         if (durationTag) durationTag.textContent = vid.duration || '15:00';
-
-        const descElem = document.getElementById('video-modal-desc');
+        const catBadge = document.getElementById('watch-category-badge');
+        if (catBadge) catBadge.textContent = (categoryLabels[vid.category] || vid.category || 'VİDEO').toUpperCase();
+        const descElem = document.getElementById('watch-video-desc');
         if (descElem) descElem.textContent = vid.description || 'Bu mühazirədə ən son texnoloji və elmi yanaşmalar təhlil edilir.';
 
         // Key Takeaways
-        const takeawaysElem = document.getElementById('video-modal-takeaways');
+        const takeawaysElem = document.getElementById('watch-video-takeaways');
         if (takeawaysElem) {
           const items = vid.keyTakeaways && vid.keyTakeaways.length > 0
             ? vid.keyTakeaways
             : ['Diqqət və fokus mexanizmlərini qorumaq fərdi inkişafın açarıdır.', 'Texnologiyadan şüurlu istifadə məhsuldarlığı artırır.'];
-
           takeawaysElem.innerHTML = items.map(t => `
             <div class="p-2.5 rounded-xl bg-black/40 border border-gray-800/80 flex items-start gap-2">
               <span class="text-emerald-400 font-bold shrink-0 mt-0.5">✓</span>
@@ -3749,34 +4532,27 @@
           `).join('');
         }
 
-        // Up Next Recommended Videos Queue
-        const upNextContainer = document.getElementById('video-modal-upnext-grid');
-        if (upNextContainer) {
-          const otherVideos = videos.filter(v => v.id !== vid.id).slice(0, 3);
-          upNextContainer.innerHTML = otherVideos.map(nextVid => `
-            <div onclick="openVideo('${nextVid.id}')" class="group cursor-pointer p-2 rounded-xl bg-[#1e1e1e] hover:bg-[#282828] border border-gray-800 transition-colors flex items-center gap-3">
-              <div class="relative w-24 aspect-[16/9] rounded-lg overflow-hidden bg-black shrink-0">
-                <img src="${nextVid.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                <span class="absolute bottom-1 right-1 px-1 py-0.2 bg-black/80 text-[9px] font-mono rounded text-white">${nextVid.duration}</span>
-              </div>
-              <div class="min-w-0 flex-1">
-                <span class="text-[9px] font-bold uppercase text-rose-500 font-mono block">${categoryLabels[nextVid.category] || nextVid.category}</span>
-                <h5 class="text-xs font-bold text-white group-hover:text-rose-400 truncate leading-snug">${nextVid.title}</h5>
-                <p class="text-[10px] text-gray-400 truncate">${nextVid.speaker}</p>
-              </div>
-            </div>
-          `).join('');
-        }
+        // Up Next Queue & Comments
+        renderWatchUpNext(vid.id);
+        renderWatchComments(vid.id);
 
-        // Set iFrame src
-        const iframe = document.getElementById('video-modal-iframe');
+        // Setup Custom Player & Embed
+        playerDuration = parseDurationToSeconds(vid.duration);
+        playerCurrentTime = 0;
+        updatePlayerUI();
+
+        // Zero 3rd-party YouTube controls/branding:
+        // controls=0: completely eliminates YouTube default player bar, seekbar, and bottom controls
+        // disablekb=1: disables YouTube keyboard capture
+        // modestbranding=1, rel=0, iv_load_policy=3, fs=0: removes external branding and overlays
+        // enablejsapi=1: gives total control to our custom player toolbar
+        const iframe = document.getElementById('nf-player-iframe');
         if (iframe) {
-          iframe.src = `https://www.youtube-nocookie.com/embed/${vid.youtubeId}?autoplay=1&rel=0&modestbranding=1`;
+          const origin = window.location.origin || 'http://localhost:3000';
+          iframe.src = `https://www.youtube-nocookie.com/embed/${vid.youtubeId}?enablejsapi=1&autoplay=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&playsinline=1&fs=0&showinfo=0&origin=${encodeURIComponent(origin)}`;
         }
 
-        const modal = document.getElementById('video-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        setPlayerPlayState(true);
 
         if (updateUrl) {
           history.pushState({ videoId: id }, '', '#/video/' + id);
@@ -3785,24 +4561,33 @@
         document.title = `${vid.title} — Video İcmal | Fikir & Zəka`;
       }
 
-      function closeVideoModal(updateUrl = true) {
-        const modal = document.getElementById('video-modal');
-        if (modal) {
-          modal.classList.add('hidden');
-          modal.classList.remove('flex');
-        }
-        const iframe = document.getElementById('video-modal-iframe');
+      function closeVideoWatchPage(updateUrl = true) {
+        // Stop Custom Player
+        pauseCustomPlayer();
+        stopProgressTimer();
+
+        const iframe = document.getElementById('nf-player-iframe');
         if (iframe) iframe.src = '';
+
+        const watchPage = document.getElementById('video-watch-page');
+        if (watchPage) watchPage.classList.add('hidden');
+
         currentActiveVideo = null;
 
-        if (updateUrl && window.location.hash.startsWith('#/video')) {
-          if (isVideosPageActive) {
+        if (isVideosPageActive) {
+          const vPage = document.getElementById('videos-page-view');
+          if (vPage) vPage.classList.remove('hidden');
+          if (updateUrl) {
             const backHash = currentVideoCategory && currentVideoCategory !== 'all'
               ? '#/videolar/' + encodeURIComponent(currentVideoCategory)
               : '#/videolar';
             history.pushState(null, '', backHash);
             document.title = 'Videolar & Video Dərslər — Fikir & Zəka HD Video Klubu';
-          } else {
+          }
+        } else {
+          const mainContent = document.getElementById('main-content');
+          if (mainContent) mainContent.classList.remove('hidden');
+          if (updateUrl) {
             history.pushState(null, '', currentCategory !== 'all' ? '#/bolme/' + currentCategory : '#/');
             document.title = 'Fikir & Zəka | Müasir Düşüncə, Texnologiya və Şəxsi İnkişaf Portalı';
           }
@@ -4465,6 +5250,8 @@
         renderAdminVideos();
         renderVideoCategories();
         renderVideos();
+        if (typeof renderPageVideos === 'function') renderPageVideos();
+        if (typeof renderPageVideoSpotlight === 'function') renderPageVideoSpotlight();
         updateAdminCounts();
       }
 
@@ -4489,6 +5276,8 @@
         renderAdminVideos();
         renderVideoCategories();
         renderVideos();
+        if (typeof renderPageVideos === 'function') renderPageVideos();
+        if (typeof renderPageVideoSpotlight === 'function') renderPageVideoSpotlight();
         updateAdminCounts();
         showToast('🗑️ Video bazadan silindi.');
       }
@@ -5093,10 +5882,10 @@
         if (!hash || hash === '#' || hash === '#/' || hash === '#top') {
           if (currentActiveArticle) closeArticleReader(false);
           if (isVideosPageActive) closeVideosPage(false);
+          const watchPage = document.getElementById('video-watch-page');
+          if (watchPage && !watchPage.classList.contains('hidden')) closeVideoWatchPage(false);
           const adminModal = document.getElementById('admin-modal');
           if (adminModal && !adminModal.classList.contains('hidden')) closeAdminModal(false);
-          const videoModal = document.getElementById('video-modal');
-          if (videoModal && !videoModal.classList.contains('hidden')) closeVideoModal(false);
           if (showingSavedOnly) {
             showingSavedOnly = false;
             const btn = document.getElementById('filter-saved-btn');
@@ -5118,6 +5907,8 @@
           const slugOrId = decodeURIComponent(artMatch[1]);
           const art = articles.find(a => (a.slug && a.slug.toLowerCase() === slugOrId.toLowerCase()) || a.id === slugOrId);
           if (art) {
+            const watchPage = document.getElementById('video-watch-page');
+            if (watchPage && !watchPage.classList.contains('hidden')) closeVideoWatchPage(false);
             if (isVideosPageActive) closeVideosPage(false);
             openArticle(art.id, false);
             return;
@@ -5128,6 +5919,8 @@
         const catMatch = hash.match(/^#\/?(?:bolme|kateqoriya|category)\/([^/?#]+)/i);
         if (catMatch) {
           const cat = decodeURIComponent(catMatch[1]);
+          const watchPage = document.getElementById('video-watch-page');
+          if (watchPage && !watchPage.classList.contains('hidden')) closeVideoWatchPage(false);
           if (isVideosPageActive) closeVideosPage(false);
           filterCategory(cat, false);
           if (currentActiveArticle) closeArticleReader(false);
@@ -5136,6 +5929,8 @@
 
         // 4. Saved Bookmarks: #/saxlananlar, #/bookmarks
         if (/^#\/?(?:saxlananlar|bookmarks)/i.test(hash)) {
+          const watchPage = document.getElementById('video-watch-page');
+          if (watchPage && !watchPage.classList.contains('hidden')) closeVideoWatchPage(false);
           if (isVideosPageActive) closeVideosPage(false);
           showingSavedOnly = true;
           const btn = document.getElementById('filter-saved-btn');
@@ -5154,6 +5949,8 @@
         }
         const vidsPageMatch = hash.match(/^#\/?videolar(?:\/([^/?#]+))?/i);
         if (vidsPageMatch) {
+          const watchPage = document.getElementById('video-watch-page');
+          if (watchPage && !watchPage.classList.contains('hidden')) closeVideoWatchPage(false);
           if (currentActiveArticle) closeArticleReader(false);
           const cat = vidsPageMatch[1] ? decodeURIComponent(vidsPageMatch[1]) : 'all';
           openVideosPage(cat, false);
@@ -5162,6 +5959,8 @@
 
         // 6. Admin Panel: #/admin
         if (/^#\/?admin/i.test(hash)) {
+          const watchPage = document.getElementById('video-watch-page');
+          if (watchPage && !watchPage.classList.contains('hidden')) closeVideoWatchPage(false);
           openAdminModal(false);
           return;
         }
