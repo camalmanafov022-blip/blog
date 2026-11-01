@@ -1687,7 +1687,12 @@
                 </p>
                 <div class="mt-2 pt-2 border-t border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-[11px] font-mono">
                   <span>Hazırkı Baza: <b id="backup-stat-articles">0</b> məqalə, <b id="backup-stat-videos">0</b> video, <b id="backup-stat-subs">0</b> abunəçi</span>
-                  <span class="text-emerald-600 dark:text-emerald-400 font-bold">✓ Baza aktivdir</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-emerald-600 dark:text-emerald-400 font-bold hidden sm:inline">✓ Sıfır Keş Aktiv</span>
+                    <button type="button" onclick="refreshFromHostingStorage(false)" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold cursor-pointer transition-colors flex items-center gap-1" title="Hostinqdən dərhal ən son məlumatları çək">
+                      <span>⚡</span><span>Keşi Yenilə</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -2100,28 +2105,66 @@
       let currentFontSizeIndex = 0;
       const fontSizes = ['text-base sm:text-lg leading-relaxed sm:leading-loose', 'text-lg sm:text-xl leading-relaxed sm:leading-loose', 'text-xl sm:text-2xl leading-relaxed sm:leading-loose'];
 
-      // ================= 100% SELF-HOSTED STORAGE ENGINE (data.json + api.php) =================
+      // ================= 100% SELF-HOSTED ZERO-CACHE STORAGE ENGINE =================
       // Hər hansı hostinqdə (cPanel, Apache, Nginx, PHP, Node.js) tam müstəqil işləyir.
       // Bütün xəbərlər və videolar birbaşa öz hostinqinizdəki data.json faylında saxlanılır.
+      // Keşlənməni 100% ləğv etmək üçün dinamik timestamp və avtomatik versiya yoxlayıcı quraşdırılıb.
+
+      let serverLastUpdatedAt = 0;
+      let isCheckingUpdates = false;
+
+      function getCacheBuster() {
+        return `_nocache=${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+      }
+
+      function broadcastDataUpdate() {
+        serverLastUpdatedAt = Date.now();
+        try {
+          localStorage.setItem('newsfy_cache_bust_ts', String(Date.now()));
+        } catch (_) {}
+        if (typeof BroadcastChannel !== 'undefined') {
+          try {
+            const bc = new BroadcastChannel('newsfy_cms_channel');
+            bc.postMessage({ action: 'RELOAD_DATA', time: Date.now() });
+          } catch (_) {}
+        }
+      }
+
       const HostStore = {
         async loadAll() {
+          const buster = getCacheBuster();
           try {
-            // First attempt: api.php?action=load
-            const res = await fetch('./api.php?action=load', { cache: 'no-cache' });
+            // First attempt: api.php?action=load with dynamic anti-cache param
+            const res = await fetch(`./api.php?action=load&${buster}`, {
+              cache: 'no-store',
+              headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+              }
+            });
             if (res.ok) {
               const resJson = await res.json();
               if (resJson && resJson.success && resJson.data) {
+                if (resJson.updatedAt) serverLastUpdatedAt = Number(resJson.updatedAt);
+                else if (resJson.data.updatedAt) serverLastUpdatedAt = Number(resJson.data.updatedAt);
                 return resJson.data;
               }
             }
           } catch (_) {}
 
           try {
-            // Fallback: direct data.json
-            const res2 = await fetch('./data.json', { cache: 'no-cache' });
+            // Fallback: direct data.json with dynamic anti-cache param
+            const res2 = await fetch(`./data.json?${buster}`, {
+              cache: 'no-store',
+              headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache'
+              }
+            });
             if (res2.ok) {
               const json2 = await res2.json();
               if (json2 && (json2.articles || json2.videos)) {
+                if (json2.updatedAt) serverLastUpdatedAt = Number(json2.updatedAt);
                 return json2;
               }
             }
@@ -2132,62 +2175,87 @@
 
         async saveArticle(article) {
           try {
-            await fetch('./api.php?action=save_article', {
+            const res = await fetch('./api.php?action=save_article', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
               body: JSON.stringify({ article })
             });
+            if (res.ok) {
+              const json = await res.json();
+              if (json && json.updatedAt) serverLastUpdatedAt = Number(json.updatedAt);
+            }
           } catch (e) {
             console.warn('[HostStore] Save article notice:', e);
           }
+          broadcastDataUpdate();
         },
 
         async deleteArticle(id) {
           try {
-            await fetch('./api.php?action=delete_article', {
+            const res = await fetch('./api.php?action=delete_article', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
               body: JSON.stringify({ id })
             });
+            if (res.ok) {
+              const json = await res.json();
+              if (json && json.updatedAt) serverLastUpdatedAt = Number(json.updatedAt);
+            }
           } catch (e) {
             console.warn('[HostStore] Delete article notice:', e);
           }
+          broadcastDataUpdate();
         },
 
         async saveVideo(video) {
           try {
-            await fetch('./api.php?action=save_video', {
+            const res = await fetch('./api.php?action=save_video', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
               body: JSON.stringify({ video })
             });
+            if (res.ok) {
+              const json = await res.json();
+              if (json && json.updatedAt) serverLastUpdatedAt = Number(json.updatedAt);
+            }
           } catch (e) {
             console.warn('[HostStore] Save video notice:', e);
           }
+          broadcastDataUpdate();
         },
 
         async deleteVideo(id) {
           try {
-            await fetch('./api.php?action=delete_video', {
+            const res = await fetch('./api.php?action=delete_video', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
               body: JSON.stringify({ id })
             });
+            if (res.ok) {
+              const json = await res.json();
+              if (json && json.updatedAt) serverLastUpdatedAt = Number(json.updatedAt);
+            }
           } catch (e) {
             console.warn('[HostStore] Delete video notice:', e);
           }
+          broadcastDataUpdate();
         },
 
         async saveAll(bundle) {
           try {
-            await fetch('./api.php?action=save_all', {
+            const res = await fetch('./api.php?action=save_all', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
               body: JSON.stringify(bundle)
             });
+            if (res.ok) {
+              const json = await res.json();
+              if (json && json.updatedAt) serverLastUpdatedAt = Number(json.updatedAt);
+            }
           } catch (e) {
             console.warn('[HostStore] Save all notice:', e);
           }
+          broadcastDataUpdate();
         }
       };
 
@@ -2242,9 +2310,13 @@
                 renderAdminArticles();
                 renderAdminVideos();
               }
+              if (currentActiveArticle) {
+                const updatedActive = articles.find(a => a.id === currentActiveArticle.id || a.slug === currentActiveArticle.slug);
+                if (updatedActive) openArticle(updatedActive.id, false);
+              }
               updateAdminCounts();
               if (!silent) {
-                showToast(`✓ Hostinqdən ${articles.length} məqalə və ${videos.length} video yükləndi.`);
+                showToast(`⚡ Ən son dəyişikliklər dərhal yeniləndi! (${articles.length} məqalə, ${videos.length} video)`);
               }
             }
           }
@@ -2253,8 +2325,41 @@
         }
       }
 
+      // Live Background Version Watcher: Check every 8 seconds with ~50 bytes overhead
+      async function checkForRemoteUpdates() {
+        if (isCheckingUpdates) return;
+        isCheckingUpdates = true;
+        try {
+          const buster = getCacheBuster();
+          const res = await fetch(`./api.php?action=version&${buster}`, {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache'
+            }
+          });
+          if (res.ok) {
+            const verJson = await res.json();
+            if (verJson && verJson.updatedAt) {
+              const remoteTime = Number(verJson.updatedAt);
+              if (serverLastUpdatedAt > 0 && remoteTime > serverLastUpdatedAt) {
+                serverLastUpdatedAt = remoteTime;
+                await refreshFromHostingStorage(true);
+              } else if (!serverLastUpdatedAt) {
+                serverLastUpdatedAt = remoteTime;
+              }
+            }
+          }
+        } catch (_) {}
+        finally {
+          isCheckingUpdates = false;
+        }
+      }
+
       async function initHostingStorage() {
         await refreshFromHostingStorage(true);
+        // Start live version polling (8-second interval)
+        setInterval(checkForRemoteUpdates, 8000);
       }
 
       // URL BUILDERS & TOAST
@@ -5976,15 +6081,37 @@
       window.addEventListener('popstate', handleRoute);
       window.addEventListener('scroll', updateReadingProgress);
 
-      // Auto-refresh when user returns to tab or window gains focus (seamless sync between PC and phone)
+      // Auto-refresh when user returns to tab or window gains focus (seamless zero-cache between PC and phone)
       window.addEventListener('focus', () => {
-        if (typeof refreshFromHostingStorage === 'function') {
-          refreshFromHostingStorage(true);
-        }
+        if (typeof checkForRemoteUpdates === 'function') checkForRemoteUpdates();
+        if (typeof refreshFromHostingStorage === 'function') refreshFromHostingStorage(true);
       });
       document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && typeof refreshFromHostingStorage === 'function') {
-          refreshFromHostingStorage(true);
+        if (document.visibilityState === 'visible') {
+          if (typeof checkForRemoteUpdates === 'function') checkForRemoteUpdates();
+          if (typeof refreshFromHostingStorage === 'function') refreshFromHostingStorage(true);
+        }
+      });
+
+      // Cross-tab instant sync via BroadcastChannel and storage event
+      if (typeof BroadcastChannel !== 'undefined') {
+        try {
+          const bc = new BroadcastChannel('newsfy_cms_channel');
+          bc.onmessage = (msg) => {
+            if (msg.data && msg.data.action === 'RELOAD_DATA') {
+              if (typeof refreshFromHostingStorage === 'function') {
+                refreshFromHostingStorage(true);
+              }
+            }
+          };
+        } catch (_) {}
+      }
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'newsfy_cache_bust_ts') {
+          if (typeof refreshFromHostingStorage === 'function') {
+            refreshFromHostingStorage(true);
+          }
         }
       });
     </script>

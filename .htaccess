@@ -1,0 +1,24 @@
+# Newsfy CMS - Zero-Cache Apache / LiteSpeed Directives
+# Bu qaydalar brauzer və server keşini avtomatik ləğv edir ki, hər yeni xəbər dərhal görünsün
+
+<IfModule mod_headers.c>
+    # Disable cache for JSON data files
+    <FilesMatch "\.(json|php)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0"
+        Header set Pragma "no-cache"
+        Header set Expires "Mon, 26 Jul 1997 05:00:00 GMT"
+    </FilesMatch>
+
+    # Disable cache for HTML index
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType application/json "access plus 0 seconds"
+    ExpiresByType text/html "access plus 0 seconds"
+</IfModule>

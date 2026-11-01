@@ -14,9 +14,23 @@ function hostingStoragePlugin(): Plugin {
           const dataFilePath = path.resolve(__dirname, 'data.json');
           res.setHeader('Content-Type', 'application/json; charset=utf-8');
           res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0');
+          res.setHeader('Pragma', 'no-cache');
+          res.setHeader('Expires', '0');
 
           if (req.method === 'GET') {
             try {
+              if (url.includes('action=version') || url.includes('action=check')) {
+                const content = fs.existsSync(dataFilePath) ? JSON.parse(fs.readFileSync(dataFilePath, 'utf-8')) : { updatedAt: Date.now() };
+                res.end(JSON.stringify({
+                  success: true,
+                  updatedAt: content.updatedAt || Date.now(),
+                  articleCount: (content.articles || []).length,
+                  videoCount: (content.videos || []).length
+                }));
+                return;
+              }
+
               if (fs.existsSync(dataFilePath)) {
                 const content = fs.readFileSync(dataFilePath, 'utf-8');
                 res.end(JSON.stringify({ success: true, storage: 'hosting_data_json', data: JSON.parse(content) }));
