@@ -1,0 +1,269 @@
+{
+  "articles": [
+    {
+      "id": "art-1",
+      "title": "Süni İntellekt Dövründə İnsan Ağlının Üstünlüyü: Dərin Düşünmə Qabiliyyəti",
+      "slug": "suni-intellekt-dovrunde-insan-aglinin-ustunluyu",
+      "category": "texnologiya",
+      "excerpt": "Generativ süni intellekt modelləri hər gün daha da təkmilləşir. Bəs bu dövrdə insanın əsas rəqabət üstünlüyü nə olacaq? Dərin təhlil və gələcəyə baxış.",
+      "content": "Süni intellekt və avtomatlaşdırma artıq sadəcə texnoloji şirkətlərin deyil, bütün cəmiyyətin həyat tərzini yenidən formalaşdırır. Hər kəsin eyni məlumat bazasına və süni intellekt alətlərinə çıxışı olduğu bir dünyada informasiyanın özü deyil, onu necə sintez etdiyimiz və hansı sualları verdiyimiz ön plana çıxır.\n\n### Dərin Düşünmənin (Deep Work) Qiyməti\n\nMüasir dövrdə diqqət ən nadir və ən bahalı resursa çevrilib. Sosial şəbəkələrin davamlı bildirişləri və qısa məzmun formatları insan beynini fraqmentlərə bölür. Lakin mürəkkəb problemləri həll etmək üçün dərin fokuslanma tələb olunur.\n\n> \"Gələcəkdə iki növ insan olacaq: texnologiyanın diqqətini idarə etdiyi insanlar və diqqətinə sahib çıxaraq texnologiyanı idarə edən insanlar.\"\n\n### Gələcəkdə Əvəzolunmaz Olacaq 3 Əsas Bacarıq\n\n1. Tənqidi və Fəlsəfi Təhlil: Problemin kökünü sorğulamaq.\n2. Emosional İntellekt və Empatiya: İnsanlararası dərin etimad yaratmaq.\n3. Fənlərarası Sintez: Texnologiya ilə fəlsəfəni, dizayn ilə psixologiyanı birləşdirmək.",
+      "coverImage": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&auto=format&fit=crop&q=80",
+      "photoCredit": "Unsplash / DeepMind Research",
+      "readTimeMinutes": 6,
+      "author": {
+        "name": "Martina Richter",
+        "role": "UX/UI Designer",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
+      },
+      "publishedAt": "İyun 30, 2026",
+      "createdAt": 1751241600000,
+      "views": 2420,
+      "likes": 124,
+      "tags": [
+        "Süni İntellekt",
+        "Gələcək",
+        "Dərin Düşüncə",
+        "VIP Analitika"
+      ],
+      "isPremium": true,
+      "isBreaking": false,
+      "featured": true,
+      "status": "published"
+    },
+    {
+      "id": "art-2",
+      "title": "Şəxsi İntizam və Vərdişlər: 1% Qaydasının Həyatımıza Təsiri",
+      "slug": "sexsi-intizam-ve-verdisler-1-faiz-qaydasi",
+      "category": "sexsi-inkisaf",
+      "excerpt": "Hər gün sadəcə 1 faiz daha yaxşı olmaq bir ildə insanı necə 37 qat daha güclü edir? Vərdişlərin atomar gücü və psixoloji mexanizmi.",
+      "content": "Böyük hədəflərə çatmaq istəyəndə əksər insanlar dərhal radikal dəyişikliklər etməyə çalışırlar. Lakin psixologiya sübut edir ki, bu cür kəskin addımlar tez bir zamanda tükənmə ilə nəticələnir.\n\n### Vərdişlərin Mürəkkəb Faiz Qaydası\n\nƏgər siz hər gün sadəcə 1% daha yaxşılaşsanız, riyazi olaraq bir ilin sonunda (1.01^365) başlanğıc vəziyyətinizdən təxminən 37 qat daha irəli gedəcəksiniz.",
+      "coverImage": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&auto=format&fit=crop&q=80",
+      "photoCredit": "Unsplash / Productivity Lab",
+      "readTimeMinutes": 5,
+      "author": {
+        "name": "Hannah Ziegler",
+        "role": "Graphic Designer",
+        "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80"
+      },
+      "publishedAt": "İyun 28, 2026",
+      "createdAt": 1751068800000,
+      "views": 1880,
+      "likes": 95,
+      "tags": [
+        "Vərdişlər",
+        "İnkişaf"
+      ],
+      "isPremium": false,
+      "isBreaking": false,
+      "featured": true,
+      "status": "published"
+    },
+    {
+      "id": "art-3",
+      "title": "Dərin İş (Deep Work): Diqqət Dağınıqlığı Əsrində Fokuslanma Sənəti",
+      "slug": "derin-is-deep-work-fokuslanma-seneti",
+      "category": "mehsuldarliq",
+      "excerpt": "Hər 5 dəqiqədən bir telefona baxmaq vərdişi beynimizin strukturunu necə dəyişir və bunu aradan qaldırmaq üçün hansı rəqəmsal detoks metodları var?",
+      "content": "Bugünkü rəqəmsal mühitdə ən böyük rəqibimiz rəqib şirkətlər deyil, cibimizdə gəzdirdiyimiz və bizi daimi dopamin asılılığında saxlayan cihazlardır.",
+      "coverImage": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80",
+      "photoCredit": "Unsplash / Focus Studio",
+      "readTimeMinutes": 4,
+      "author": {
+        "name": "Camal Mənafov",
+        "role": "Baş Redaktor",
+        "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"
+      },
+      "publishedAt": "İyun 25, 2026",
+      "createdAt": 1750809600000,
+      "views": 1340,
+      "likes": 78,
+      "tags": [
+        "Fokus",
+        "Dərin İş"
+      ],
+      "isPremium": false,
+      "isBreaking": false,
+      "featured": false,
+      "status": "published"
+    },
+    {
+      "id": "art-4",
+      "title": "Kvant Hesablamaları və 2030-cu İllərin Texnoloji Sıçrayışı",
+      "slug": "kvant-hesablamalari-ve-2030-texnoloji-sicrayisi",
+      "category": "innovasiya",
+      "excerpt": "Kvant bitləri (kübitlər), superpozisiya və dolaşıqlıq prinsipləri mövcud kriptoqrafiyanı və dərman kəşflərini necə kökündən dəyişəcək?",
+      "content": "Klassik kompüterlər məlumatı 0 və ya 1 şəklində emal etdiyi halda, kvant kompüterləri eyni anda həm 0, həm də 1 ola bilən kübitlərdən istifadə edir.",
+      "coverImage": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop&q=80",
+      "photoCredit": "Reuters / Kvant Texnologiyaları Mərkəzi",
+      "readTimeMinutes": 7,
+      "author": {
+        "name": "Elvin Qasımov",
+        "role": "Kvant Mühəndisi",
+        "avatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&auto=format&fit=crop&q=80"
+      },
+      "publishedAt": "İyun 29, 2026",
+      "createdAt": 1751155200000,
+      "views": 1950,
+      "likes": 88,
+      "tags": [
+        "Kvant",
+        "İnnovasiya",
+        "Son Dəqiqə"
+      ],
+      "isPremium": false,
+      "isBreaking": true,
+      "featured": true,
+      "status": "published"
+    },
+    {
+      "id": "art-5",
+      "title": "Şəxsi Qeydlər: Həyatı Məqsədyönlü Yaşamaq və Stoitsizm Təlimi",
+      "slug": "sexsi-qeydler-stoitsizm-telimi",
+      "category": "bloq",
+      "excerpt": "Mark Avreli və Senekanın prinsipləri bu günün gərgin dünyasında daxili dincliyi tapmaq üçün necə yol göstərir?",
+      "content": "Biz xarici hadisələri idarə edə bilmərik, lakin onlara verdiyimiz reaksiyaya 100% sahibik.",
+      "coverImage": "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&auto=format&fit=crop&q=80",
+      "photoCredit": "Unsplash / Philosophy Corner",
+      "readTimeMinutes": 4,
+      "author": {
+        "name": "Camal Mənafov",
+        "role": "Müəllif",
+        "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"
+      },
+      "publishedAt": "İyun 20, 2026",
+      "createdAt": 1750500000000,
+      "views": 1120,
+      "likes": 62,
+      "tags": [
+        "Stoitsizm",
+        "Şəxsi Bloq"
+      ],
+      "isPremium": false,
+      "isBreaking": false,
+      "featured": false,
+      "status": "published"
+    }
+  ],
+  "videos": [
+    {
+      "id": "vid-1",
+      "title": "Beynimizin Diqqət Mexanizmi və Dopamin Detoksu Necə İşləyir?",
+      "description": "Rəqəmsal cihazların yaratdığı dopamin dalğalanmaları və 7 günlük bərpa proqramı haqqında elmi təhlil.",
+      "youtubeId": "p3JLaF_4Tz8",
+      "duration": "14:25",
+      "category": "sexsi-inkisaf",
+      "speaker": "Dr. Endryu Huberman",
+      "speakerAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+      "thumbnail": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format&fit=crop&q=80",
+      "views": 18450,
+      "likes": 942,
+      "createdAt": 1751100000000,
+      "keyTakeaways": [
+        "Dopamin baza səviyyəsini qorumaq iradəni gücləndirir.",
+        "Səhər ilk 60 dəqiqə ekranlardan uzaq durmaq zəruridir.",
+        "Soyuq duş və təbii günəş işığı motivasiyanı 2.5 dəfə artırır."
+      ]
+    },
+    {
+      "id": "vid-2",
+      "title": "Gələcəyin Süni İntellekt Trendləri: AGI Nə Vaxt Reallığa Çevriləcək?",
+      "description": "Böyük dil modellərindən avtonom agentlərə və ümumi süni intellektə doğru inkişaf yolu.",
+      "youtubeId": "7xTGNNLPyMI",
+      "duration": "18:50",
+      "category": "texnologiya",
+      "speaker": "Sam Altman & Demis Hassabis",
+      "speakerAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
+      "thumbnail": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&auto=format&fit=crop&q=80",
+      "views": 32600,
+      "likes": 1680,
+      "createdAt": 1751150000000,
+      "keyTakeaways": [
+        "Multi-modal intellekt və robototexnika birləşir.",
+        "İntellektin maya dəyəri ucuzlaşdıqca unikal tənqidi düşüncə bahalaşır.",
+        "Avtonom agentlər gündəlik ofis işlərinin 60%-ni avtomatlaşdıracaq."
+      ]
+    },
+    {
+      "id": "vid-3",
+      "title": "Atomar Vərdişlər: Hər Gün 1% İnkişafın Psixologiyası",
+      "description": "Ceyms Klirin məşhur metodologiyası əsasında vərdiş yaratma və pis vərdişləri sındırma addımları.",
+      "youtubeId": "U_nzqnXWvSo",
+      "duration": "11:10",
+      "category": "mehsuldarliq",
+      "speaker": "Ceyms Klir",
+      "speakerAvatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+      "thumbnail": "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop&q=80",
+      "views": 24100,
+      "likes": 1120,
+      "createdAt": 1751050000000,
+      "keyTakeaways": [
+        "Sistemlər nəticəni təyin edir, məqsədlər istiqamət göstərir.",
+        "Kiçik addımlar zamanla eksponensial fərq yaradır.",
+        "İki dəqiqə qaydası: yeni vərdiş 2 dəqiqədə başlanmalıdır."
+      ]
+    },
+    {
+      "id": "vid-4",
+      "title": "Neyron Şəbəkələr və Avtonom Kodlaşdırma İnqilabı",
+      "description": "Müasir proqramlaşdırma necə dəyişir və gələcəyin mühəndisi hansı fundamental bacarıqlara sahib olmalıdır?",
+      "youtubeId": "zjkBMFhNj_g",
+      "duration": "22:15",
+      "category": "texnologiya",
+      "speaker": "Andrej Karpathy",
+      "speakerAvatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80",
+      "thumbnail": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80",
+      "views": 41200,
+      "likes": 2190,
+      "createdAt": 1751000000000,
+      "keyTakeaways": [
+        "Kod sintaksisi deyil, sistem arxitekturası əsas bacarıqdır.",
+        "Süni intellekt mühəndisi tələbkar koordinatora çevirir."
+      ]
+    },
+    {
+      "id": "vid-5",
+      "title": "Fokus Və Dərin İş: Rəqəmsal Xaosda Yüksək Nəticə",
+      "description": "Kal Nyuportun \"Deep Work\" nəzəriyyəsi: diqqəti cəmləməyin və tükənmənin qarşısını almağın elmi yolları.",
+      "youtubeId": "T9_zZ2F5QEI",
+      "duration": "16:40",
+      "category": "mehsuldarliq",
+      "speaker": "Prof. Kal Nyuport",
+      "speakerAvatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80",
+      "thumbnail": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&auto=format&fit=crop&q=80",
+      "views": 15300,
+      "likes": 785,
+      "createdAt": 1750950000000,
+      "keyTakeaways": [
+        "Fasiləsiz 90 dəqiqə iş, 8 saatlıq dağınıq işdən daha məhsuldardır.",
+        "Sosial şəbəkələrin passiv istifadəsini məhdudlaşdırın."
+      ]
+    },
+    {
+      "id": "vid-6",
+      "title": "İnnovasiya Fəlsəfəsi: Sıfırdan Birə Doğru",
+      "description": "Rəqabəti aradan qaldıran və bazarda tək olan unikal texnoloji ideyalar necə formalaşdırılır?",
+      "youtubeId": "d86czd2fXjY",
+      "duration": "19:05",
+      "category": "innovasiya",
+      "speaker": "Piter Til",
+      "speakerAvatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80",
+      "thumbnail": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80",
+      "views": 19700,
+      "likes": 890,
+      "createdAt": 1750900000000,
+      "keyTakeaways": [
+        "Kopyalamaq əvəzinə tamamilə yeni dəyər yaradın.",
+        "Monopoliya yaradan texnologiyalar cəmiyyət üçün ən faydalı olanlardır."
+      ]
+    }
+  ],
+  "subscribers": [
+    "camal@intellektual.az",
+    "oxucu@newsfy.az"
+  ],
+  "settings": {
+    "pubId": "ca-pub-9847291847192841",
+    "pin": "admin123"
+  },
+  "updatedAt": 1751241600000
+}

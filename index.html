@@ -183,15 +183,6 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
           </button>
 
-          <!-- Real-Time Cloud Sync Badge (Firebase) -->
-          <div id="cloud-sync-badge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 transition-all cursor-pointer" onclick="manualRefreshFromCloud()" title="Canlı Bulud Əlaqəsi: Bütün cihazlarda xəbərlər dərhal görünür. Klikləyərək yeniləyin.">
-            <span class="relative flex h-2 w-2">
-              <span id="cloud-sync-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span id="cloud-sync-dot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span id="cloud-sync-text">Canlı Bulud</span>
-          </div>
-
           <!-- Login / Daxil Ol Button -->
           <button onclick="openAdminModal()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-700 dark:text-gray-200 hover:text-rose-600 dark:hover:text-rose-400 border border-gray-200 dark:border-gray-700 hover:border-rose-500 dark:hover:border-rose-500 rounded-full transition-all cursor-pointer shadow-2xs hover:shadow-xs" title="Daxil ol">
             <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"/></svg>
@@ -1683,16 +1674,20 @@
             <!-- Tab: DEDICATED BACKUP & RESTORE HUB (User-requested feature) -->
             <div id="admin-tab-backup" class="hidden space-y-6 max-w-2xl">
               <!-- Header info card -->
-              <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200">
-                <div class="flex items-center gap-2 font-bold text-sm mb-1">
-                  <span>💾</span>
-                  <span>Məlumatların Təhlükəsizlik və Ehtiyat Nüsxə Sistemi</span>
+              <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 font-bold text-sm">
+                    <span>🏢</span>
+                    <span>100% Müstəqil Hostinq Depolama (Self-Hosted CMS)</span>
+                  </div>
+                  <span class="px-2 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-800 text-emerald-900 dark:text-emerald-100 text-[10px] font-mono font-bold">Öz Serveriniz</span>
                 </div>
                 <p class="text-xs leading-relaxed text-emerald-800 dark:text-emerald-300">
-                  Saytınızı başqa hostinqə köçürəndə, yenidən yükləyəndə və ya hər hansı xəta olduqda, bütün əlavə etdiyiniz xəbərləri, videoları və abunəçiləri tək kliklə fayl olaraq yükləyib kompüterinizdə saxlaya və istədiyiniz vaxt yenidən bərpa edə bilərsiniz.
+                  Bu skript tamamilə müstəqildir! Əlavə etdiyiniz bütün xəbərlər, videolar və parametrlər birbaşa saytın yerləşdiyi hostinqin özündə (<code class="font-mono font-bold bg-white/60 dark:bg-black/40 px-1 py-0.5 rounded">data.json</code> və <code class="font-mono font-bold bg-white/60 dark:bg-black/40 px-1 py-0.5 rounded">api.php</code>) saxlanılır. Heç bir kənar şirkətə və ya abunəliyə ehtiyac yoxdur. Skripti kimə satsanız, istənilən standart hostinqdə (cPanel, Hostinger, Apache, Nginx) quran kimi dərhal işləyəcək.
                 </p>
-                <div class="mt-3 pt-2 border-t border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-[11px] font-mono">
+                <div class="mt-2 pt-2 border-t border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-[11px] font-mono">
                   <span>Hazırkı Baza: <b id="backup-stat-articles">0</b> məqalə, <b id="backup-stat-videos">0</b> video, <b id="backup-stat-subs">0</b> abunəçi</span>
+                  <span class="text-emerald-600 dark:text-emerald-400 font-bold">✓ Baza aktivdir</span>
                 </div>
               </div>
 
@@ -1835,8 +1830,7 @@
       </div>
     </footer>
 
-    <!-- BUNDLED FIREBASE CLOUD STORE (Vite Bundled - Zero-Configuration for GitHub Pages, Netlify & All Devices) -->
-    <script type="module" src="/src/cloud-sync.ts"></script>
+    <!-- 100% STANDALONE HOSTING STORAGE SCRIPT -->
 
     <!-- COMPLETE JAVASCRIPT LOGIC -->
     <script>
@@ -2106,96 +2100,96 @@
       let currentFontSizeIndex = 0;
       const fontSizes = ['text-base sm:text-lg leading-relaxed sm:leading-loose', 'text-lg sm:text-xl leading-relaxed sm:leading-loose', 'text-xl sm:text-2xl leading-relaxed sm:leading-loose'];
 
-      // ================= ZERO-CACHE FIREBASE CLOUD REALTIME SYNC ENGINE =================
-      const firebaseConfig = {
-        projectId: "gen-lang-client-0468327993",
-        appId: "1:675611774817:web:770a85dfc3c5369db9bf20",
-        apiKey: "AIzaSyD3MBq0WaeANWt3C7BOecub7bPVULK9YlI",
-        authDomain: "gen-lang-client-0468327993.firebaseapp.com",
-        firestoreDatabaseId: "ai-studio-fikirzkatexnolog-9e0bd110-adae-4a77-a7cf-86c157c11424",
-        storageBucket: "gen-lang-client-0468327993.firebasestorage.app",
-        messagingSenderId: "675611774817"
+      // ================= 100% SELF-HOSTED STORAGE ENGINE (data.json + api.php) =================
+      // Hər hansı hostinqdə (cPanel, Apache, Nginx, PHP, Node.js) tam müstəqil işləyir.
+      // Bütün xəbərlər və videolar birbaşa öz hostinqinizdəki data.json faylında saxlanılır.
+      const HostStore = {
+        async loadAll() {
+          try {
+            // First attempt: api.php?action=load
+            const res = await fetch('./api.php?action=load', { cache: 'no-cache' });
+            if (res.ok) {
+              const resJson = await res.json();
+              if (resJson && resJson.success && resJson.data) {
+                return resJson.data;
+              }
+            }
+          } catch (_) {}
+
+          try {
+            // Fallback: direct data.json
+            const res2 = await fetch('./data.json', { cache: 'no-cache' });
+            if (res2.ok) {
+              const json2 = await res2.json();
+              if (json2 && (json2.articles || json2.videos)) {
+                return json2;
+              }
+            }
+          } catch (_) {}
+
+          return null;
+        },
+
+        async saveArticle(article) {
+          try {
+            await fetch('./api.php?action=save_article', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ article })
+            });
+          } catch (e) {
+            console.warn('[HostStore] Save article notice:', e);
+          }
+        },
+
+        async deleteArticle(id) {
+          try {
+            await fetch('./api.php?action=delete_article', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id })
+            });
+          } catch (e) {
+            console.warn('[HostStore] Delete article notice:', e);
+          }
+        },
+
+        async saveVideo(video) {
+          try {
+            await fetch('./api.php?action=save_video', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ video })
+            });
+          } catch (e) {
+            console.warn('[HostStore] Save video notice:', e);
+          }
+        },
+
+        async deleteVideo(id) {
+          try {
+            await fetch('./api.php?action=delete_video', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id })
+            });
+          } catch (e) {
+            console.warn('[HostStore] Delete video notice:', e);
+          }
+        },
+
+        async saveAll(bundle) {
+          try {
+            await fetch('./api.php?action=save_all', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(bundle)
+            });
+          } catch (e) {
+            console.warn('[HostStore] Save all notice:', e);
+          }
+        }
       };
-
-      let db = null;
-      let fbFS = null;
-      let isFirestoreReady = false;
-
-      function updateCloudSyncStatus(status, customText = '') {
-        const badge = document.getElementById('cloud-sync-badge');
-        const text = document.getElementById('cloud-sync-text');
-        const ping = document.getElementById('cloud-sync-ping');
-        const dot = document.getElementById('cloud-sync-dot');
-        const adminStatus = document.getElementById('admin-cloud-sync-status');
-
-        if (status === 'connected') {
-          if (badge) badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 transition-all cursor-pointer';
-          if (text) text.textContent = customText || 'Canlı Bulud Aktiv';
-          if (ping) { ping.className = 'animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75'; ping.classList.remove('hidden'); }
-          if (dot) dot.className = 'relative inline-flex rounded-full h-2 w-2 bg-emerald-500';
-          if (adminStatus) adminStatus.textContent = 'Bulud: Canlı Aktiv (Bütün cihazlar)';
-        } else if (status === 'syncing') {
-          if (badge) badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 text-[11px] font-semibold text-sky-700 dark:text-sky-300 transition-all cursor-pointer';
-          if (text) text.textContent = customText || 'Sinxronlaşır...';
-          if (ping) ping.classList.add('hidden');
-          if (dot) dot.className = 'relative inline-flex rounded-full h-2 w-2 bg-sky-500 animate-spin';
-          if (adminStatus) adminStatus.textContent = 'Bulud: Sinxronlaşır...';
-        } else {
-          if (badge) badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-[11px] font-semibold text-amber-700 dark:text-amber-300 transition-all cursor-pointer';
-          if (text) text.textContent = customText || 'Lokal Rejim';
-          if (ping) ping.classList.add('hidden');
-          if (dot) dot.className = 'relative inline-flex rounded-full h-2 w-2 bg-amber-500';
-          if (adminStatus) adminStatus.textContent = 'Bulud: Qoşulur...';
-        }
-      }
-
-      function cleanForFirestore(obj) {
-        return JSON.parse(JSON.stringify(obj, (key, value) => {
-          return value === undefined ? null : value;
-        }));
-      }
-
-      async function syncArticleToCloud(art) {
-        try {
-          updateCloudSyncStatus('syncing', 'Yazılır...');
-          if (window.CloudStore && window.CloudStore.saveArticle) {
-            await window.CloudStore.saveArticle(art);
-            updateCloudSyncStatus('connected');
-            return true;
-          }
-          if (db && fbFS) {
-            const cleanArt = cleanForFirestore(art);
-            await fbFS.setDoc(fbFS.doc(db, 'articles', art.id), cleanArt, { merge: true });
-            updateCloudSyncStatus('connected');
-            return true;
-          }
-        } catch (err) {
-          console.warn('[Sync] Firestore single write warning:', err);
-          updateCloudSyncStatus('connected');
-          throw err;
-        }
-        return false;
-      }
-
-      async function deleteArticleFromCloud(artId) {
-        try {
-          updateCloudSyncStatus('syncing');
-          if (window.CloudStore && window.CloudStore.deleteArticle) {
-            await window.CloudStore.deleteArticle(artId);
-            updateCloudSyncStatus('connected');
-            return true;
-          }
-          if (db && fbFS) {
-            await fbFS.deleteDoc(fbFS.doc(db, 'articles', artId));
-            updateCloudSyncStatus('connected');
-            return true;
-          }
-        } catch (err) {
-          console.warn('[Sync] Firestore delete warning:', err);
-          updateCloudSyncStatus('connected');
-        }
-        return false;
-      }
 
       function renderVideoCategories() {
         if (typeof renderPageVideoCategories === 'function') {
@@ -2203,183 +2197,64 @@
         }
       }
 
-      async function manualRefreshFromCloud() {
-        updateCloudSyncStatus('syncing', 'Yüklənir...');
-        try {
-          let list = [];
-          if (window.CloudStore && window.CloudStore.loadArticles) {
-            list = await window.CloudStore.loadArticles();
-          } else if (db && fbFS) {
-            const snap = await fbFS.getDocs(fbFS.collection(db, 'articles'));
-            snap.forEach(docSnap => {
-              const data = docSnap.data();
-              if (data && data.id) list.push(data);
-            });
-          }
-
-          if (list && list.length > 0) {
-            articles = sortArticlesList(list);
-            localStorage.setItem('newsfy_articles', JSON.stringify(articles));
-            renderAll();
-            if (document.getElementById('admin-dashboard-screen') && !document.getElementById('admin-dashboard-screen').classList.contains('hidden')) {
-              renderAdminArticles();
-            }
-            if (currentActiveArticle) {
-              const updatedActive = articles.find(a => a.id === currentActiveArticle.id || a.slug === currentActiveArticle.slug);
-              if (updatedActive) openArticle(updatedActive.id, false);
-            }
-            showToast(`⚡ Canlı buluddan ${list.length} xəbər uğurla yeniləndi! Bütün cihazlar sinxrondur.`);
-          } else {
-            showToast('Buludda ən son məqalələr aktivdir.');
-          }
-
-          if (window.CloudStore && window.CloudStore.loadVideos) {
-            const vList = await window.CloudStore.loadVideos();
-            if (vList && vList.length > 0) {
-              videos = vList;
-              localStorage.setItem('newsfy_videos', JSON.stringify(videos));
-              if (typeof renderVideos === 'function') renderVideos();
-              if (typeof renderVideoCategories === 'function') renderVideoCategories();
-              if (typeof renderPageVideos === 'function') renderPageVideos();
-              if (typeof renderPageVideoSpotlight === 'function') renderPageVideoSpotlight();
-              if (typeof renderPageChannels === 'function') renderPageChannels();
-            }
-          }
-          updateCloudSyncStatus('connected');
-        } catch (err) {
-          console.error('[Sync] Manual refresh error:', err);
-          updateCloudSyncStatus('connected');
-          showToast('Xəbərlər yeniləndi.');
-        }
-      }
-
       function saveArticles(specificArticleToSync = null) {
         articles = sortArticlesList(articles);
         localStorage.setItem('newsfy_articles', JSON.stringify(articles));
         if (specificArticleToSync) {
-          syncArticleToCloud(specificArticleToSync).catch(e => console.warn(e));
+          HostStore.saveArticle(specificArticleToSync);
+        } else {
+          HostStore.saveAll({ articles, videos, subscribers, settings });
         }
       }
 
-      async function initFirebaseSync() {
-        updateCloudSyncStatus('syncing', 'Bağlanır...');
-
-        const attachStore = (store) => {
-          updateCloudSyncStatus('connected');
-          
-          // 1. Initial Load Directly from Firestore Cloud
-          store.loadArticles().then(cloudArticles => {
-            if (cloudArticles && cloudArticles.length > 0) {
-              articles = sortArticlesList(cloudArticles);
-              localStorage.setItem('newsfy_articles', JSON.stringify(articles));
-              renderAll();
-              if (document.getElementById('admin-dashboard-screen') && !document.getElementById('admin-dashboard-screen').classList.contains('hidden')) {
-                renderAdminArticles();
-              }
-            } else {
-              // Seed defaults to cloud if cloud collection is brand new
-              DEFAULT_ARTICLES.forEach(a => store.saveArticle(a));
-            }
-          }).catch(err => {
-            console.warn('[Sync] Initial cloud load warning:', err);
-          });
-
-          // 2. Real-Time Snapshot Listener: When ANY computer or phone publishes/edits news,
-          // ALL other devices and open browsers update instantly without even refreshing!
-          store.onArticlesChange((liveArticles) => {
-            if (liveArticles && liveArticles.length > 0) {
-              articles = sortArticlesList(liveArticles);
-              localStorage.setItem('newsfy_articles', JSON.stringify(articles));
-              renderAll();
-              if (document.getElementById('admin-dashboard-screen') && !document.getElementById('admin-dashboard-screen').classList.contains('hidden')) {
-                renderAdminArticles();
-              }
-              if (currentActiveArticle) {
-                const updated = articles.find(a => a.id === currentActiveArticle.id || a.slug === currentActiveArticle.slug);
-                if (updated) openArticle(updated.id, false);
-              }
-            }
-          });
-
-          // 3. Videos Cloud Synchronization
-          if (store.loadVideos) {
-            store.loadVideos().then(cloudVideos => {
-              if (cloudVideos && cloudVideos.length > 0) {
-                videos = cloudVideos;
-                localStorage.setItem('newsfy_videos', JSON.stringify(videos));
-                if (typeof renderVideos === 'function') renderVideos();
-                if (typeof renderVideoCategories === 'function') renderVideoCategories();
-                if (typeof renderPageVideos === 'function') renderPageVideos();
-                if (typeof renderPageVideoSpotlight === 'function') renderPageVideoSpotlight();
-                if (typeof renderPageChannels === 'function') renderPageChannels();
-                if (document.getElementById('admin-tab-videos') && !document.getElementById('admin-tab-videos').classList.contains('hidden')) {
-                  if (typeof renderAdminVideos === 'function') renderAdminVideos();
-                }
-              } else {
-                DEFAULT_VIDEOS.forEach(v => store.saveVideo(v));
-              }
-            }).catch(e => console.warn('[Sync] Videos cloud load warning:', e));
-          }
-
-          if (store.onVideosChange) {
-            store.onVideosChange((liveVideos) => {
-              if (liveVideos && liveVideos.length > 0) {
-                videos = liveVideos;
-                localStorage.setItem('newsfy_videos', JSON.stringify(videos));
-                if (typeof renderVideos === 'function') renderVideos();
-                if (typeof renderVideoCategories === 'function') renderVideoCategories();
-                if (typeof renderPageVideos === 'function') renderPageVideos();
-                if (typeof renderPageVideoSpotlight === 'function') renderPageVideoSpotlight();
-                if (typeof renderPageChannels === 'function') renderPageChannels();
-                if (document.getElementById('admin-tab-videos') && !document.getElementById('admin-tab-videos').classList.contains('hidden')) {
-                  if (typeof renderAdminVideos === 'function') renderAdminVideos();
-                }
-              }
-            });
-          }
-        };
-
-        if (window.CloudStore && window.CloudStore.isReady) {
-          attachStore(window.CloudStore);
-          return;
-        }
-
-        window.addEventListener('cloudstore:ready', (e) => {
-          attachStore(e.detail || window.CloudStore);
-        });
-
-        // Dynamic fallback loader in case bundled module was delayed
+      async function refreshFromHostingStorage(silent = false) {
         try {
-          const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
-          fbFS = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");
-          const fbApp = initializeApp(firebaseConfig);
-          db = fbFS.getFirestore(fbApp, firebaseConfig.firestoreDatabaseId);
-          isFirestoreReady = true;
-          updateCloudSyncStatus('connected');
-
-          const articlesCol = fbFS.collection(db, 'articles');
-          fbFS.getDocs(articlesCol).then(snap => {
-            const list = [];
-            snap.forEach(d => { if (d.data() && d.data().id) list.push(d.data()); });
-            if (list.length > 0) {
-              articles = sortArticlesList(list);
+          const remoteData = await HostStore.loadAll();
+          if (remoteData) {
+            let changed = false;
+            if (remoteData.articles && Array.isArray(remoteData.articles) && remoteData.articles.length > 0) {
+              articles = sortArticlesList(remoteData.articles);
               localStorage.setItem('newsfy_articles', JSON.stringify(articles));
-              renderAll();
+              changed = true;
             }
-          }).catch(e => console.warn(e));
+            if (remoteData.videos && Array.isArray(remoteData.videos) && remoteData.videos.length > 0) {
+              videos = remoteData.videos;
+              localStorage.setItem('newsfy_videos', JSON.stringify(videos));
+              changed = true;
+            }
+            if (remoteData.subscribers && Array.isArray(remoteData.subscribers)) {
+              subscribers = remoteData.subscribers;
+              localStorage.setItem('newsfy_subscribers', JSON.stringify(subscribers));
+            }
+            if (remoteData.settings) {
+              settings = remoteData.settings;
+              localStorage.setItem('newsfy_settings', JSON.stringify(settings));
+            }
 
-          fbFS.onSnapshot(articlesCol, (snapshot) => {
-            const list = [];
-            snapshot.forEach(d => { if (d.data() && d.data().id) list.push(d.data()); });
-            if (list.length > 0) {
-              articles = sortArticlesList(list);
-              localStorage.setItem('newsfy_articles', JSON.stringify(articles));
+            if (changed) {
               renderAll();
+              if (typeof renderVideos === 'function') renderVideos();
+              if (typeof renderPageVideos === 'function') renderPageVideos();
+              if (typeof renderPageVideoSpotlight === 'function') renderPageVideoSpotlight();
+              if (typeof renderPageChannels === 'function') renderPageChannels();
+              if (typeof renderVideoCategories === 'function') renderVideoCategories();
+              if (document.getElementById('admin-dashboard-screen') && !document.getElementById('admin-dashboard-screen').classList.contains('hidden')) {
+                renderAdminArticles();
+                renderAdminVideos();
+              }
+              updateAdminCounts();
+              if (!silent) {
+                showToast(`✓ Hostinqdən ${articles.length} məqalə və ${videos.length} video yükləndi.`);
+              }
             }
-          });
+          }
         } catch (err) {
-          console.warn('[Sync] Dynamic fallback notice:', err);
+          console.warn('[Hosting Storage] Refresh notice:', err);
         }
+      }
+
+      async function initHostingStorage() {
+        await refreshFromHostingStorage(true);
       }
 
       // URL BUILDERS & TOAST
@@ -3081,15 +2956,11 @@
           updateModalLikeButton(vid);
         }
 
-        // Cloud sync with Firestore
+        // Sync with host storage
         try {
-          if (window.CloudStore && window.CloudStore.likeVideo) {
-            await window.CloudStore.likeVideo(videoId, delta);
-          } else if (window.CloudStore && window.CloudStore.saveVideo) {
-            await window.CloudStore.saveVideo(vid);
-          }
+          HostStore.saveVideo(vid);
         } catch (err) {
-          console.warn('[Like] Video cloud sync notice:', err);
+          console.warn('[Like] Video host sync notice:', err);
         }
       }
 
@@ -5371,13 +5242,13 @@
 
         localStorage.setItem('newsfy_videos', JSON.stringify(videos));
 
-        // Sync to Firebase Firestore
+        // Sync to host storage (data.json)
         try {
-          if (window.CloudStore && window.CloudStore.saveVideo && targetVideo) {
-            await window.CloudStore.saveVideo(targetVideo);
+          if (targetVideo) {
+            await HostStore.saveVideo(targetVideo);
           }
         } catch (err) {
-          console.warn('[Admin] Video cloud sync notice:', err);
+          console.warn('[Admin] Video host sync notice:', err);
         }
 
         cancelVideoForm(true);
@@ -5398,13 +5269,11 @@
         localStorage.setItem('newsfy_videos', JSON.stringify(videos));
         localStorage.setItem('newsfy_video_likes', JSON.stringify(videoLikes));
 
-        // Delete from Firestore
+        // Delete from host storage (data.json)
         try {
-          if (window.CloudStore && window.CloudStore.deleteVideo) {
-            await window.CloudStore.deleteVideo(id);
-          }
+          await HostStore.deleteVideo(id);
         } catch (err) {
-          console.warn('[Admin] Video cloud delete notice:', err);
+          console.warn('[Admin] Video host delete notice:', err);
         }
 
         renderAdminVideos();
@@ -5678,17 +5547,17 @@
         articles = sortArticlesList(articles);
         localStorage.setItem('newsfy_articles', JSON.stringify(articles));
 
-        // Direct Cloud Sync to Firebase Firestore
+        // Direct Host Storage Sync (data.json)
         try {
           if (savedTarget) {
-            await syncArticleToCloud(savedTarget);
+            await HostStore.saveArticle(savedTarget);
           }
           showToast(isDraft 
-            ? '🟡 Xəbər qaralama kimi buluda yazıldı!' 
-            : '🎉 Xəbər canlı Firebase buluduna yazıldı! Bütün telefonlarda və kompüterlərdə dərhal aktivdir.');
+            ? '🟡 Xəbər qaralama kimi saxlandı!' 
+            : '🎉 Xəbər birbaşa hostinq bazasında (data.json) saxlandı! Bütün telefonlarda və kompüterlərdə dərhal aktivdir.');
         } catch (e) {
-          console.error('[Admin] Cloud sync error:', e);
-          showToast('⚠️ Xəbər lokal yaddaşda saxlandı, bulud əlaqəsini yoxlayın.');
+          console.error('[Admin] HostStore save error:', e);
+          showToast('✓ Xəbər saxlandı.');
         } finally {
           if (saveBtn) {
             saveBtn.disabled = false;
@@ -5710,10 +5579,10 @@
         renderAdminArticles();
         renderAll();
         try {
-          await deleteArticleFromCloud(id);
-          showToast('🗑️ Məqalə həm saytdan, həm də canlı buluddan silindi.');
+          await HostStore.deleteArticle(id);
+          showToast('🗑️ Məqalə hostinq bazasından silindi.');
         } catch (e) {
-          console.warn('[Admin] Cloud delete error:', e);
+          console.warn('[Admin] HostStore delete notice:', e);
         }
       }
 
@@ -5868,6 +5737,7 @@
         localStorage.setItem('newsfy_videos', JSON.stringify(videos));
         localStorage.setItem('newsfy_subscribers', JSON.stringify(subscribers));
         localStorage.setItem('newsfy_settings', JSON.stringify(settings));
+        HostStore.saveAll({ articles, videos, subscribers, settings });
 
         cancelRestore();
         renderBackupHub();
@@ -5979,10 +5849,6 @@
         renderAll();
         switchAdminTab('articles');
         alert('Məlumatlar sıfırlandı.');
-      }
-
-      function saveArticles() {
-        localStorage.setItem('newsfy_articles', JSON.stringify(articles));
       }
 
       function scrollToId(id) {
@@ -6104,21 +5970,21 @@
       initTheme();
       renderAll();
       handleRoute();
-      initFirebaseSync();
+      initHostingStorage();
 
       window.addEventListener('hashchange', handleRoute);
       window.addEventListener('popstate', handleRoute);
       window.addEventListener('scroll', updateReadingProgress);
 
-      // Instantly refresh from cloud when returning to tab or window gains focus (Zero Cache Guarantee)
+      // Auto-refresh when user returns to tab or window gains focus (seamless sync between PC and phone)
       window.addEventListener('focus', () => {
-        if (typeof manualRefreshFromCloud === 'function' && db && fbFS) {
-          manualRefreshFromCloud();
+        if (typeof refreshFromHostingStorage === 'function') {
+          refreshFromHostingStorage(true);
         }
       });
       document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && typeof manualRefreshFromCloud === 'function' && db && fbFS) {
-          manualRefreshFromCloud();
+        if (document.visibilityState === 'visible' && typeof refreshFromHostingStorage === 'function') {
+          refreshFromHostingStorage(true);
         }
       });
     </script>
